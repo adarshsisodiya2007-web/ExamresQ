@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { 
   CandidateNetworkStatus, 
   AssessmentCentre, 
@@ -134,12 +134,22 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return () => clearInterval(timer);
   }, []);
 
+  const recentNotifsRef = useRef<Map<string, number>>(new Map());
+
   const addNotification = useCallback((item: Omit<NotificationItem, 'id' | 'timestamp'>) => {
+    const nowMs = Date.now();
+    const lastSeen = recentNotifsRef.current.get(item.title) || 0;
+    // Suppress identical notifications within 3.5s
+    if (nowMs - lastSeen < 3500) {
+      return;
+    }
+    recentNotifsRef.current.set(item.title, nowMs);
+
     const id = 'notif-' + Math.random().toString(36).substring(2, 9);
     const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     setNotifications(prev => [
       { id, timestamp: now, ...item },
-      ...prev.slice(0, 7) // keep recent 8 notifications
+      ...prev.slice(0, 15) // keep recent 16 notifications for audit history
     ]);
   }, []);
 
