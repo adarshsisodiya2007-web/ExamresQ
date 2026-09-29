@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useResilience, AppView } from '../../context/ResilienceContext';
 import { useTheme } from '../../context/ThemeContext';
 import { 
@@ -26,7 +26,9 @@ import {
   ShieldAlert,
   Award,
   Lock,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -66,6 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   } = useResilience();
 
   const { activeTheme, setIsThemeDrawerOpen } = useTheme();
+  const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
 
   const handleItemClick = (view: AppView) => {
     setCurrentView(view);
@@ -419,6 +422,55 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
         ))}
+
+        {/* 10-PHASE RESILIENCE LIFECYCLE (Compact in Sidebar) */}
+        <div className="space-y-1 pt-1">
+          <div className="flex items-center justify-between px-3 pb-1">
+            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#5A6E8C]">
+              RESILIENCE LIFECYCLE
+            </h2>
+            <button
+              onClick={() => setLifecycleExpanded(!lifecycleExpanded)}
+              className="text-[10px] text-[#38BDF8] hover:underline flex items-center gap-0.5 cursor-pointer font-mono"
+            >
+              <span>{lifecycleExpanded ? 'Hide' : '10 Steps'}</span>
+              {lifecycleExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          </div>
+
+          {lifecycleExpanded && (
+            <div className="p-2 rounded-xl bg-[#050811] border border-[#162033] space-y-1 font-mono text-[11px] animate-in fade-in">
+              {[
+                { step: '01', name: 'Exam Starts', view: 'live_exam' as AppView },
+                { step: '02', name: 'System Monitoring', view: 'operations' as AppView },
+                { step: '03', name: 'Early Detection', view: 'early_detection' as AppView },
+                { step: '04', name: 'Immediate Response', view: 'incidents' as AppView },
+                { step: '05', name: 'Candidate Informed', view: 'live_exam' as AppView },
+                { step: '06', name: 'Response Protected', view: 'live_exam' as AppView },
+                { step: '07', name: 'Backup & Recovery', view: 'recovery' as AppView },
+                { step: '08', name: 'Synchronization', view: 'reconciliation' as AppView },
+                { step: '09', name: 'Audit Integrity', view: 'audit' as AppView },
+                { step: '10', name: 'Trust Sealed', view: 'reports' as AppView },
+              ].map((phase) => (
+                <button
+                  key={phase.step}
+                  onClick={() => handleItemClick(phase.view)}
+                  className={`w-full flex items-center justify-between px-2 py-1 rounded-lg text-left transition-colors cursor-pointer text-[10px] ${
+                    currentView === phase.view 
+                      ? 'bg-[#0C2438] text-[#38BDF8] font-bold border border-[#0284C7]/40'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className="opacity-60">{phase.step}</span>
+                    <span>{phase.name}</span>
+                  </span>
+                  <span className="text-[9px] opacity-40 font-sans">Go →</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* SYSTEM THEME SWITCHER */}
         <div className="space-y-1 pt-1">
