@@ -435,7 +435,7 @@ export const LiveExam: React.FC = () => {
           <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
               <ShieldCheck className="w-3.5 h-3.5 text-[#16803C]" />
-              <span className="hidden sm:inline">EvalTrust Active Protection Daemon</span>
+              <span className="hidden sm:inline">ExamresQ Active Protection Daemon</span>
               <span>•</span>
               <span className="text-[#C62828] font-bold">Anti-Cheating & Outage Controls:</span>
             </div>
@@ -739,7 +739,7 @@ export const LiveExam: React.FC = () => {
                   <span>Submit Exam & View Audit Proof</span>
                 </button>
                 <p className="text-[10px] text-gray-500 text-center">
-                  Protected by EVALTRUST Immutable SHA-256 State Ledger.
+                  Protected by ExamresQ Immutable SHA-256 State Ledger.
                 </p>
               </div>
             </div>

@@ -37,7 +37,7 @@ export const SystemReadinessWidget: React.FC = () => {
               Proactive Health, Detection & Automated Response
             </h2>
             <p className="text-xs sm:text-sm text-[#666666] mt-1">
-              Explore how EvalTrust continuously validates readiness and acts in sub-second timelines.
+              Explore how ExamresQ continuously validates readiness and acts in sub-second timelines.
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export const SystemReadinessWidget: React.FC = () => {
                 <span className="text-xs font-mono text-[#C62828] font-bold uppercase">Principle 01: Prevention</span>
                 <h4 className="text-base font-bold text-gray-900 mt-1">Pre-empt Failures Before Start</h4>
                 <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                  Traditional exam platforms assume clean network conditions. EvalTrust runs automatic pre-flight integrity probes across edge devices, cryptographic keys, and local disk allocations before candidates are admitted.
+                  Traditional exam platforms assume clean network conditions. ExamresQ runs automatic pre-flight integrity probes across edge devices, cryptographic keys, and local disk allocations before candidates are admitted.
                 </p>
               </div>
 
@@ -278,7 +278,7 @@ export const SystemReadinessWidget: React.FC = () => {
                 <span className="text-xs font-mono text-[#C77A00] font-bold uppercase">Principle 02: Detection</span>
                 <h4 className="text-base font-bold text-gray-900 mt-1">1.2 Second Detection Latency</h4>
                 <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                  Instead of waiting for candidates to complain about frozen screens, EvalTrust algorithms evaluate missed TCP ACK pulses, socket disruptions, and carrier signals continuously.
+                  Instead of waiting for candidates to complain about frozen screens, ExamresQ algorithms evaluate missed TCP ACK pulses, socket disruptions, and carrier signals continuously.
                 </p>
               </div>
 
@@ -361,7 +361,7 @@ export const SystemReadinessWidget: React.FC = () => {
                 <span className="text-xs font-mono text-[#C62828] font-bold uppercase">Principle 03: Response</span>
                 <h4 className="text-base font-bold text-gray-900 mt-1">Candidate-First Resilient Experience</h4>
                 <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                  In high-stakes exams, candidate panic is the biggest enemy. EvalTrust never shows blank error screens or destructive reload loops. The candidate can continue answering with guaranteed local protection.
+                  In high-stakes exams, candidate panic is the biggest enemy. ExamresQ never shows blank error screens or destructive reload loops. The candidate can continue answering with guaranteed local protection.
                 </p>
               </div>
 

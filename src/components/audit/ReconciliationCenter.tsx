@@ -115,7 +115,7 @@ export const ReconciliationCenter: React.FC = () => {
             </blockquote>
 
             <p className="text-xs text-gray-300">
-              When network interruptions occur right as an examination ends, answers might exist in local IndexedDB storage while awaiting the central ACK packet. EVALTRUST reconciles both vectors automatically using cryptographic Merkle trees, ensuring 0 missing answers.
+              When network interruptions occur right as an examination ends, answers might exist in local IndexedDB storage while awaiting the central ACK packet. ExamresQ reconciles both vectors automatically using cryptographic Merkle trees, ensuring 0 missing answers.
             </p>
           </div>
         </div>

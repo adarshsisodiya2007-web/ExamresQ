@@ -322,7 +322,7 @@ export const AuditTrust: React.FC = () => {
 
             <div className="space-y-3 text-xs text-gray-700 leading-relaxed">
               <p>
-                This certifies that the candidate session for <strong>{auditTrail.candidateName}</strong> (Roll: <strong>{auditTrail.candidateRoll}</strong>) in <strong>{auditTrail.examName}</strong> at <strong>{auditTrail.centreId}</strong> was monitored under the <strong>EVALTRUST Zero-Loss Protocol</strong>.
+                This certifies that the candidate session for <strong>{auditTrail.candidateName}</strong> (Roll: <strong>{auditTrail.candidateRoll}</strong>) in <strong>{auditTrail.examName}</strong> at <strong>{auditTrail.centreId}</strong> was monitored under the <strong>ExamresQ Zero-Loss Protocol</strong>.
               </p>
               <p>
                 During the examination at 10:42:01, a localized network carrier interruption occurred. All candidate responses submitted prior to, during, and post-restoration were secured via encrypted client-side ledger and validated without data loss.

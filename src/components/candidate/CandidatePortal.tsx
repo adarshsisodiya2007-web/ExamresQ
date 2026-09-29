@@ -96,7 +96,7 @@ export const CandidatePortal: React.FC = () => {
                     Engineering Mathematics III
                   </h2>
                   <p className="text-xs text-gray-600 max-w-xl">
-                    National Higher Technical Assessment 2026. Equipped with EvalTrust Sub-Second Resilience Protocol.
+                    National Higher Technical Assessment 2026. Equipped with ExamresQ Sub-Second Resilience Protocol.
                   </p>
 
                   <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-gray-500">

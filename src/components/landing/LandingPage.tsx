@@ -57,13 +57,13 @@ export const LandingPage: React.FC = () => {
             A resilient online assessment ecosystem designed to maintain exam continuity, protect candidate responses during disruptions, provide real-time operational visibility, and create a transparent audit trail.
           </p>
 
-          {/* CTAs (Per instruction: Primary CTA "Explore EvalTrust", Secondary CTA "See How It Works". DO NOT put "Start Exam" on the hero.) */}
+          {/* CTAs (Per instruction: Primary CTA "Explore ExamresQ", Secondary CTA "See How It Works". DO NOT put "Start Exam" on the hero.) */}
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => scrollToSection('architecture')}
               className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white shadow-lg shadow-[#C62828]/25 hover:shadow-xl hover:shadow-[#C62828]/35 transition-all cursor-pointer hover:scale-105"
             >
-              <span>Explore EvalTrust</span>
+              <span>Explore ExamresQ</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -83,7 +83,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. THE CORE PROBLEM VS EVALTRUST RESILIENCE */}
+      {/* 2. THE CORE PROBLEM VS EXAMRESQ RESILIENCE */}
       <section id="architecture" className="py-14 bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -131,14 +131,14 @@ export const LandingPage: React.FC = () => {
               </ul>
             </div>
 
-            {/* The EvalTrust Resilient Way */}
+            {/* The ExamresQ Resilient Way */}
             <div className="p-6 rounded-2xl border border-emerald-300 bg-emerald-50/30 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-[#16803C]">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-900">The EvalTrust Resilient Ecosystem</h3>
+                  <h3 className="text-base font-bold text-gray-900">The ExamresQ Resilient Ecosystem</h3>
                   <p className="text-xs text-[#16803C] font-medium">Engineered for absolute continuity</p>
                 </div>
               </div>
@@ -260,7 +260,7 @@ export const LandingPage: React.FC = () => {
               Aligned with India's Major Strategic Policies
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">
-              EVALTRUST is architected to advance the digital sovereignty, equity, and transparency missions of key national initiatives.
+              ExamresQ is architected to advance the digital sovereignty, equity, and transparency missions of key national initiatives.
             </p>
           </div>
 

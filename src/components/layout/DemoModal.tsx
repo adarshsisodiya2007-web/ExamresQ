@@ -72,7 +72,7 @@ export const DemoModal: React.FC = () => {
       targetView: "incidents",
       statusBadge: "Detecting",
       icon: <AlertTriangle className="w-6 h-6 text-[#C77A00]" />,
-      description: "EvalTrust edge detection daemon flags 7 candidate sessions at Centre 08 within 1.2 seconds—without needing manual complaints.",
+      description: "ExamresQ edge detection daemon flags 7 candidate sessions at Centre 08 within 1.2 seconds—without needing manual complaints.",
       technicalMechanism: "Threshold algorithm monitors missed keep-alives and TCP socket state transitions.",
       outcome: "Incident #ET-1042 generated automatically with incident level 'Medium'."
     },
@@ -145,7 +145,7 @@ export const DemoModal: React.FC = () => {
           <div className="flex items-center gap-3">
             <span className="w-3 h-3 rounded-full bg-[#C62828] animate-ping" />
             <div>
-              <h2 className="text-base font-bold tracking-tight">EVALTRUST Live Resilience Demonstration</h2>
+              <h2 className="text-base font-bold tracking-tight">ExamresQ Live Resilience Demonstration</h2>
               <p className="text-xs text-gray-400">Interactive 7-Step Hackathon Walkthrough</p>
             </div>
           </div>
@@ -229,7 +229,7 @@ export const DemoModal: React.FC = () => {
             <div className="p-4 rounded-xl bg-white border border-gray-200 space-y-2">
               <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#16803C]" />
-                Under the Hood (EVALTRUST Architecture)
+                Under the Hood (ExamresQ Architecture)
               </h4>
               <p className="text-xs text-gray-700 leading-relaxed font-mono text-[11px]">{currentStepInfo.technicalMechanism}</p>
             </div>

@@ -1,430 +1,137 @@
-import React, { useState } from 'react';
-import { useResilience, AppView } from '../../context/ResilienceContext';
-import { useTheme } from '../../context/ThemeContext';
+import React from 'react';
+import { useResilience } from '../../context/ResilienceContext';
 import { NotificationCenter } from './NotificationCenter';
 import { LifecycleBar } from './LifecycleBar';
-import { HackathonModal } from './HackathonModal';
 import { 
   ShieldCheck, 
-  Activity, 
-  Layers, 
-  Building2, 
-  AlertOctagon, 
-  RotateCcw, 
-  FileCheck2, 
-  BarChart3, 
-  Settings as SettingsIcon,
-  PlayCircle,
-  Wifi,
-  WifiOff,
   Menu,
-  X,
-  FileSpreadsheet,
-  Sparkles,
-  ChevronDown,
-  Globe,
-  User,
-  Sliders,
-  HelpCircle,
-  Radar,
-  Scale,
-  GitCompare,
-  Eye,
-  ArrowRight,
-  Radio,
-  FileText
+  ChevronRight,
+  Lock
 } from 'lucide-react';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenMobileMenu?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const { 
     currentView, 
-    setCurrentView, 
-    networkStatus, 
-    triggerNetworkInterruption, 
-    restoreNetwork, 
-    startDemo 
+    networkStatus
   } = useResilience();
-
-  const { activeTheme, setIsThemeDrawerOpen } = useTheme();
-  const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const [hackathonModalOpen, setHackathonModalOpen] = useState(false);
-
-  // Grouped Navigation by systematic domain - Strictly Ordered 1 to 11
-  const operationsViews: { id: AppView; reqNum: string; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: 'operations', reqNum: '01', label: 'Operations Monitoring & Health', icon: <Activity className="w-4 h-4" /> },
-    { id: 'early_detection', reqNum: '02', label: 'Early Detection & Risk', icon: <Radar className="w-4 h-4 text-amber-500" />, badge: 'AI Predict' },
-    { id: 'incidents', reqNum: '03', label: 'Incident Mgmt & Escalation', icon: <AlertOctagon className="w-4 h-4 text-[#C62828]" />, badge: 'Req 3' },
-    { id: 'recovery', reqNum: '04', label: 'Backup & Disaster Recovery', icon: <RotateCcw className="w-4 h-4 text-blue-600" />, badge: 'Zero-Loss' },
-    { id: 'audit', reqNum: '05', label: 'Tamper-Evident Storage & Audit', icon: <FileCheck2 className="w-4 h-4 text-emerald-600" />, badge: 'WORM' },
-    { id: 'suspicious_patterns', reqNum: '06', label: 'Suspicious Pattern Review', icon: <Eye className="w-4 h-4 text-orange-500" />, badge: 'Evidence' },
-    { id: 'reconciliation', reqNum: '07', label: 'Reconciliation & Validation', icon: <GitCompare className="w-4 h-4 text-purple-600" />, badge: 'Req 7' },
-    { id: 'decision_support', reqNum: '09,10', label: 'Decision Support & Fairness', icon: <Scale className="w-4 h-4 text-blue-500" />, badge: 'Parity' },
-    { id: 'reports', reqNum: '11', label: 'Post-Exam Evidence Reports', icon: <BarChart3 className="w-4 h-4 text-gray-700" />, badge: 'Audit Seal' },
-    { id: 'centres', reqNum: 'LABS', label: 'Assessment Centre Monitoring (38)', icon: <Building2 className="w-4 h-4" />, badge: '38 Online' },
-    { id: 'settings', reqNum: 'CONF', label: 'Governance & Security Settings', icon: <SettingsIcon className="w-4 h-4" /> },
-  ];
-
-  const handleNavClick = (view: AppView) => {
-    setCurrentView(view);
-    setSideMenuOpen(false);
-  };
 
   // Get human readable view name for breadcrumb
   const getCurrentViewLabel = () => {
-    if (currentView === 'landing') return 'Overview & Architecture';
-    if (currentView === 'candidate_portal') return 'Candidate Portal';
-    if (currentView === 'live_exam') return 'Live Examination Room';
-    const found = operationsViews.find(v => v.id === currentView);
-    return found ? `${found.label} (Req ${found.reqNum})` : 'EVALTRUST Ecosystem';
+    switch (currentView) {
+      case 'landing':
+        return 'Platform Architecture & Overview';
+      case 'live_exam':
+        return 'Live Examination Room (ENG-304)';
+      case 'candidate_portal':
+        return 'Candidate Assessment Portal';
+      case 'operations':
+        return 'Mission Control (Req 01)';
+      case 'early_detection':
+        return 'Early Detection & Risk Telemetry (Req 02)';
+      case 'centres':
+        return 'Centre Telemetry Monitoring (38 Labs)';
+      case 'incidents':
+        return 'Incident Management & Escalation (Req 03)';
+      case 'recovery':
+        return 'Disaster Recovery & Redundant Nodes (Req 04)';
+      case 'audit':
+        return 'Tamper-Evident Storage & Audit Ledger (Req 05)';
+      case 'suspicious_patterns':
+        return 'Suspicious Pattern Forensic Review (Req 06)';
+      case 'reconciliation':
+        return 'Response Reconciliation & Verification (Req 07)';
+      case 'decision_support':
+        return 'Decision Support & Equivalence Framework (Req 09, 10)';
+      case 'reports':
+        return 'Post-Exam Evidence & Transparency Reports (Req 11)';
+      case 'settings':
+        return 'Governance & Security Settings';
+      default:
+        return 'ExamresQ Institutional Suite';
+    }
   };
 
   return (
-    <>
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0A0B0E]/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-xs transition-colors duration-300">
-        {/* Top Minimal Notification Bar */}
-        <div className="bg-[#171717] dark:bg-[#050608] text-white px-4 py-1.5 text-xs flex flex-wrap items-center justify-between gap-3 border-b border-gray-800">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#16803C] animate-pulse"></span>
-            <span className="font-bold text-gray-200">EVALTRUST Institutional Ecosystem</span>
-            <span className="hidden sm:inline text-gray-600">•</span>
-            <span className="hidden sm:inline text-gray-400">Zero-Loss Online Assessment Architecture</span>
-            <span className="hidden md:inline px-2 py-0.2 rounded bg-white/10 text-[10px] font-mono text-gray-300">
-              SHA-256 + Merkle State Tree
+    <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0A0B0E]/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-xs transition-colors duration-300">
+      {/* Top Telemetry & Network Status Strip */}
+      <div className="bg-[#050811] text-gray-300 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between gap-3 border-b border-[#151D2E]">
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#16803C] animate-pulse" />
+          <span className="font-bold text-white tracking-wide">ExamresQ Institutional Resilience</span>
+          <span className="hidden sm:inline text-gray-600">•</span>
+          <span className="hidden sm:inline text-gray-400">Zero-Loss Online Assessment Protocol</span>
+          <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-[#38BDF8]">
+            <Lock className="w-2.5 h-2.5" />
+            SHA-256 Ledger
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Live Network Health Status Pill */}
+          <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold border ${
+            networkStatus === 'connected'
+              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+              : networkStatus === 'interrupted'
+              ? 'bg-red-950/80 text-red-300 border-red-800 animate-pulse'
+              : 'bg-amber-950/80 text-amber-300 border-amber-800'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${
+              networkStatus === 'connected' ? 'bg-[#16803C]' : networkStatus === 'interrupted' ? 'bg-[#C62828]' : 'bg-[#C77A00]'
+            }`} />
+            <span>{networkStatus === 'connected' ? '● Connected (16ms)' : '⚠ Offline Protected'}</span>
+          </div>
+
+          <NotificationCenter />
+        </div>
+      </div>
+
+      {/* Main Header Row - Clean, Minimal, NO Desktop Menu Button */}
+      <div className="px-4 sm:px-6 py-2.5 flex items-center justify-between">
+        
+        {/* Left: Mobile hamburger (only on mobile screens) + Active View Breadcrumb */}
+        <div className="flex items-center gap-3">
+          {/* Mobile only toggle (hidden on desktop) */}
+          {onOpenMobileMenu && (
+            <button
+              onClick={onOpenMobileMenu}
+              className="lg:hidden p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors"
+              aria-label="Open mobile navigation"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Active Navigation Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider font-mono text-[10px]">
+              Module
+            </span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="font-bold text-gray-900 dark:text-white sm:text-sm tracking-tight truncate max-w-[280px] sm:max-w-md">
+              {getCurrentViewLabel()}
             </span>
           </div>
-
-          <div className="flex items-center gap-3">
-            {/* Live Network Health Status Pill */}
-            <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
-              networkStatus === 'connected'
-                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
-                : networkStatus === 'interrupted'
-                ? 'bg-red-950/80 text-red-300 border-red-800 animate-pulse'
-                : 'bg-amber-950/80 text-amber-300 border-amber-800'
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${
-                networkStatus === 'connected' ? 'bg-[#16803C]' : networkStatus === 'interrupted' ? 'bg-[#C62828]' : 'bg-[#C77A00]'
-              }`} />
-              <span>{networkStatus === 'connected' ? '● Connected (16ms)' : '⚠ Offline Protected'}</span>
-            </div>
-
-            <NotificationCenter />
-          </div>
         </div>
 
-        {/* Main Clean Header Row with Menu on the LEFT */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            
-            {/* LEFT: Menu Button + Brand Logo */}
-            <div className="flex items-center gap-3">
-              {/* PRIMARY LEFT SIDE MENU TRIGGER BUTTON */}
-              <button
-                onClick={() => setSideMenuOpen(true)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#171717] hover:bg-black text-white dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-all cursor-pointer shadow-md group"
-                aria-label="Open Left Navigation Menu"
-                title="Open organized side menu (Req 1-11 & Controls)"
-              >
-                <Menu className="w-4 h-4 text-[#E53935] group-hover:rotate-90 transition-transform" />
-                <span>Side Menu</span>
-              </button>
-
-              {/* Brand Logo */}
-              <div 
-                onClick={() => handleNavClick('landing')}
-                className="flex items-center gap-2.5 cursor-pointer group"
-              >
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E53935] to-[#C62828] flex items-center justify-center text-white shadow-md shadow-[#C62828]/25 group-hover:scale-105 transition-all">
-                  <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-black text-lg tracking-tight text-[#171717] dark:text-white">
-                      EVAL<span className="text-[#C62828]">TRUST</span>
-                    </span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-red-50 dark:bg-red-950/60 text-[#C62828] border border-red-200 dark:border-red-900/60 font-mono">
-                      2026
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[#666666] dark:text-gray-400 tracking-tight leading-none hidden sm:block">
-                    Resilient Online Assessment Ecosystem
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Center: Current Active View Breadcrumb Indicator */}
-            <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 text-xs">
-              <span className="text-gray-500 font-medium">Active:</span>
-              <span className="font-bold text-gray-900 dark:text-white truncate max-w-[320px]">
-                {getCurrentViewLabel()}
-              </span>
-            </div>
-
-            {/* Right: Clean & Uncluttered Actions */}
-            <div className="flex items-center gap-2.5">
-              {/* Quick Enter Exam Button */}
-              {currentView !== 'live_exam' && (
-                <button
-                  onClick={() => handleNavClick('live_exam')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5" />
-                  <span>Enter Exam</span>
-                </button>
-              )}
-
-              {/* Theme Trigger Pill */}
-              <button
-                onClick={() => setIsThemeDrawerOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 cursor-pointer transition-colors"
-                title="Change luxury aesthetic theme"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#C62828]" />
-                <span className="hidden xl:inline">{activeTheme.name}</span>
-              </button>
-            </div>
+        {/* Right: Institutional Security Badge */}
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl bg-gray-100 dark:bg-[#121B2B] border border-gray-200 dark:border-[#1E2A42] text-[11px] font-mono text-gray-600 dark:text-gray-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#16803C]" />
+            <span>Tamper-Resistant WORM Storage</span>
           </div>
+
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-100 dark:bg-red-950/60 text-[#C62828] font-bold border border-red-200 dark:border-red-900/40">
+            Active Session
+          </span>
         </div>
-      </header>
+      </div>
 
       {/* Persistent Systematic Core Product Story (10-Phase Lifecycle Bar) */}
       <LifecycleBar />
-
-      {/* SLIDE-OVER LEFT SIDE MENU DRAWER */}
-      {sideMenuOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          {/* Backdrop Blur */}
-          <div 
-            onClick={() => setSideMenuOpen(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300" 
-          />
-
-          {/* Left Slide-in Drawer Container */}
-          <div className="fixed inset-y-0 left-0 max-w-full flex pr-10">
-            <div className="w-screen max-w-md bg-white dark:bg-[#13151D] text-gray-900 dark:text-white shadow-2xl flex flex-col border-r border-gray-200 dark:border-gray-800 animate-in slide-in-from-left duration-300">
-              
-              {/* Drawer Header */}
-              <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-[#C62828] text-white flex items-center justify-center shadow-xs">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black tracking-tight">EVALTRUST Command Menu</h3>
-                    <p className="text-[10px] text-gray-500 font-mono">Proper Arranged Navigation & Modules</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setSideMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Drawer Scrollable Content in Strict Proper Order */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-6">
-
-                {/* Primary Action: Direct Exam Room Re-Entry */}
-                <div className="p-3.5 rounded-2xl bg-linear-to-r from-red-950 via-[#1C1313] to-gray-900 border border-red-900/60 text-white space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase text-red-300">
-                      Live Assessment Workstation
-                    </span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  </div>
-                  <h4 className="text-sm font-bold">Engineering Mathematics III (ENG-304)</h4>
-                  <button
-                    onClick={() => handleNavClick('live_exam')}
-                    className="w-full py-2 px-3 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-                  >
-                    <FileSpreadsheet className="w-3.5 h-3.5" />
-                    <span>Enter Live Exam Room</span>
-                    <ArrowRight className="w-3.5 h-3.5 ml-auto" />
-                  </button>
-                </div>
-
-                {/* Group 1: Quick Resilience Simulations & Demo */}
-                <div className="space-y-2.5">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400 font-bold block">
-                    1. Quick Simulation & Evaluator Controls
-                  </span>
-
-                  <div className="grid grid-cols-1 gap-2">
-                    {networkStatus === 'connected' ? (
-                      <button
-                        onClick={triggerNetworkInterruption}
-                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-red-50 dark:bg-red-950/40 text-[#C62828] border border-red-200 dark:border-red-900/60 hover:bg-red-100 transition-colors cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <WifiOff className="w-4 h-4 text-[#C62828]" />
-                          <span>Simulate Network Outage</span>
-                        </div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white dark:bg-black/40">Req 3, 4</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={restoreNetwork}
-                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#16803C] border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors cursor-pointer animate-pulse"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Wifi className="w-4 h-4 text-[#16803C]" />
-                          <span>Restore Network & Auto-Sync</span>
-                        </div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white dark:bg-black/40">Zero Loss</span>
-                      </button>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        setSideMenuOpen(false);
-                        startDemo();
-                      }}
-                      className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <PlayCircle className="w-4 h-4 text-[#C62828]" />
-                        <span>7-Step Hackathon Resilience Demo</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-gray-500">Auto Tour</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setSideMenuOpen(false);
-                        setHackathonModalOpen(true);
-                      }}
-                      className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <HelpCircle className="w-4 h-4 text-blue-500" />
-                        <span>Problem Statement & 7 Challenges</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-gray-500">Architecture</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Group 2: Student & Public Portals */}
-                <div className="space-y-2.5">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400 font-bold block">
-                    2. Core Assessment Portals
-                  </span>
-
-                  <div className="space-y-1">
-                    <button
-                      onClick={() => handleNavClick('landing')}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        currentView === 'landing' ? 'bg-[#C62828] text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Globe className="w-4 h-4" />
-                        <span>Platform Overview & Architecture</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => handleNavClick('candidate_portal')}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        currentView === 'candidate_portal' ? 'bg-[#C62828] text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <User className="w-4 h-4" />
-                        <span>Candidate Assessment Portal</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Group 3: All 11 Systematic Hackathon Requirements (Ordered 1 to 11 Strictly) */}
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400 font-bold block">
-                      3. Hackathon Modules (Requirements 1 - 11)
-                    </span>
-                    <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-red-100 dark:bg-red-950/60 text-[#C62828] font-bold">
-                      Strict Order
-                    </span>
-                  </div>
-
-                  <div className="space-y-1 font-mono text-xs">
-                    {operationsViews.map((view) => (
-                      <button
-                        key={view.id}
-                        onClick={() => handleNavClick(view.id)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
-                          currentView === view.id 
-                            ? 'bg-[#C62828] text-white font-bold shadow-xs' 
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 font-sans">
-                          <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
-                            currentView === view.id ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                          }`}>
-                            {view.reqNum}
-                          </span>
-                          <span className={currentView === view.id ? 'text-white' : 'text-gray-500'}>
-                            {view.icon}
-                          </span>
-                          <span className="truncate">{view.label}</span>
-                        </div>
-
-                        {view.badge && (
-                          <span className={`text-[9px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                            currentView === view.id ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                          }`}>
-                            {view.badge}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Group 4: Appearance & Themes */}
-                <div className="pt-4 border-t border-gray-100 dark:border-gray-800 space-y-2.5">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400 font-bold block">
-                    4. Appearance & Luxury Themes
-                  </span>
-
-                  <button
-                    onClick={() => {
-                      setSideMenuOpen(false);
-                      setIsThemeDrawerOpen(true);
-                    }}
-                    className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-[#C62828]" />
-                      <span>Theme: {activeTheme.name}</span>
-                    </div>
-                    <span className="text-[10px] text-gray-500 font-mono">Customize</span>
-                  </button>
-                </div>
-
-              </div>
-
-              {/* Drawer Footer */}
-              <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between text-xs text-gray-500 font-mono">
-                <span>EVALTRUST v2.6.4</span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold">● System Healthy</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Problem Statement & Hackathon Architecture Modal */}
-      <HackathonModal 
-        isOpen={hackathonModalOpen} 
-        onClose={() => setHackathonModalOpen(false)} 
-      />
-    </>
+    </header>
   );
 };

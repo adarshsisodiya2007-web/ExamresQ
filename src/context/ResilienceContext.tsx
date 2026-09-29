@@ -131,7 +131,7 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       id: 'init-1',
       target: 'admin',
       type: 'info',
-      title: 'EVALTRUST Guardian Active',
+      title: 'ExamresQ Guardian Active',
       message: 'Active monitoring 38 test centres across 6 regional nodes.',
       timestamp: 'Just now'
     }

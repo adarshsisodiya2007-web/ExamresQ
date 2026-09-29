@@ -133,7 +133,7 @@ export const HackathonModal: React.FC<HackathonModalProps> = ({ isOpen, onClose 
                   </div>
                   <h4 className="font-bold text-gray-900 dark:text-white text-sm">Technical Failures</h4>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    <strong>Solution:</strong> EVALTRUST Client-Side Encrypted Ledger (AES-256) locks answers on-device in 0.04s. Zero answers lost even during complete WAN cut.
+                    <strong>Solution:</strong> ExamresQ Client-Side Encrypted Ledger (AES-256) locks answers on-device in 0.04s. Zero answers lost even during complete WAN cut.
                   </p>
                   <button
                     onClick={() => navigateTo('live_exam')}
@@ -185,7 +185,7 @@ export const HackathonModal: React.FC<HackathonModalProps> = ({ isOpen, onClose 
           {activeTab === 'challenge_features' && (
             <div className="space-y-4 animate-in fade-in">
               <span className="text-[11px] font-mono text-gray-400 uppercase font-bold block">
-                Direct Mapping of Challenge Capabilities to EVALTRUST Prototype
+                Direct Mapping of Challenge Capabilities to ExamresQ Prototype
               </span>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">

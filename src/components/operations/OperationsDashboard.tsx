@@ -75,7 +75,7 @@ export const OperationsDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider text-gray-500 font-mono">
-                EVALTRUST Institutional Operations Room
+                ExamresQ Institutional Operations Room
               </span>
             </div>
             <h1 className="text-2xl font-black text-gray-900 mt-1">

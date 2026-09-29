@@ -97,7 +97,7 @@ export const SuspiciousPatternCenter: React.FC = () => {
             </blockquote>
 
             <p className="text-xs text-gray-300">
-              EVALTRUST never abruptly cancels a candidate's session based on automated false positives. Suspicious telemetry (such as rapid IP migration during edge failover) is logged with forensic telemetry into an official review queue for human examination authority sign-off.
+              ExamresQ never abruptly cancels a candidate's session based on automated false positives. Suspicious telemetry (such as rapid IP migration during edge failover) is logged with forensic telemetry into an official review queue for human examination authority sign-off.
             </p>
           </div>
         </div>

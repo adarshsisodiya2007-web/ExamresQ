@@ -72,7 +72,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeThemeId, setActiveThemeId] = useState<LuxuryThemeId>(() => {
-    const saved = localStorage.getItem('evaltrust_luxury_theme');
+    const saved = localStorage.getItem('examresq_luxury_theme') || localStorage.getItem('evaltrust_luxury_theme');
     return (saved && LUXURY_THEMES[saved as LuxuryThemeId]) ? (saved as LuxuryThemeId) : 'imperial_crimson';
   });
 
@@ -81,7 +81,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const activeTheme = LUXURY_THEMES[activeThemeId];
 
   useEffect(() => {
-    localStorage.setItem('evaltrust_luxury_theme', activeThemeId);
+    localStorage.setItem('examresq_luxury_theme', activeThemeId);
     document.documentElement.setAttribute('data-theme', activeThemeId);
     if (activeTheme.isDark) {
       document.documentElement.classList.add('dark');

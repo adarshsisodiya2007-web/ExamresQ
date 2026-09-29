@@ -110,10 +110,10 @@ export const PillarsSection: React.FC = () => {
             <span>The 5 Core Pillars of Resilience</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#171717] tracking-tight">
-            How EvalTrust Re-architects Assessment Continuity
+            How ExamresQ Re-architects Assessment Continuity
           </h2>
           <p className="text-sm text-[#666666] mt-2 leading-relaxed">
-            Most exam platforms fail when the internet hiccups. EvalTrust is engineered from the ground up to prevent, detect, respond, recover, and prove every millisecond of the exam.
+            Most exam platforms fail when the internet hiccups. ExamresQ is engineered from the ground up to prevent, detect, respond, recover, and prove every millisecond of the exam.
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export const PillarsSection: React.FC = () => {
                 {currentPillar.metricValue}
               </div>
               <p className="text-[11px] text-gray-600 max-w-xs">
-                Guaranteed by EVALTRUST distributed consensus & failover daemon.
+                Guaranteed by ExamresQ distributed consensus & failover daemon.
               </p>
               <div className="w-full pt-3 mt-2 border-t border-gray-200 flex items-center justify-center gap-3 text-[11px] text-gray-600">
                 <span className="flex items-center gap-1"><Server className="w-3.5 h-3.5 text-gray-500" /> Multi-Cloud</span>

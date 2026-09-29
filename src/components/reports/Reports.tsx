@@ -90,7 +90,7 @@ export const Reports: React.FC = () => {
             </blockquote>
 
             <p className="text-xs text-gray-300 leading-relaxed">
-              At the close of the exam window, EVALTRUST generates a tamper-evident audit dossier consolidating incident timestamps, notification broadcasts, proctor approvals, response recovery rates (100%), and the formal executive sign-off for judicial and accreditation records.
+              At the close of the exam window, ExamresQ generates a tamper-evident audit dossier consolidating incident timestamps, notification broadcasts, proctor approvals, response recovery rates (100%), and the formal executive sign-off for judicial and accreditation records.
             </p>
           </div>
         </div>
@@ -308,7 +308,7 @@ export const Reports: React.FC = () => {
 
               <div className="space-y-3 text-xs text-gray-700 leading-relaxed">
                 <p>
-                  This official document confirms that <strong>Paper ENG-304 (Engineering Mathematics III)</strong> has formally completed all testing windows across <strong>38 Assessment Centres</strong> under the EVALTRUST Resilient Framework.
+                  This official document confirms that <strong>Paper ENG-304 (Engineering Mathematics III)</strong> has formally completed all testing windows across <strong>38 Assessment Centres</strong> under the ExamresQ Resilient Framework.
                 </p>
 
                 <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 font-mono text-[11px] space-y-1.5">

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ResilienceProvider, useResilience } from './context/ResilienceContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { Sidebar } from './components/layout/Sidebar';
 import { Navbar } from './components/layout/Navbar';
 import { NotificationToast } from './components/layout/NotificationToast';
 import { DemoModal } from './components/layout/DemoModal';
 import { ThemeSwitcher } from './components/layout/ThemeSwitcher';
+import { HackathonModal } from './components/layout/HackathonModal';
 import { LandingPage } from './components/landing/LandingPage';
 import { LiveExam } from './components/candidate/LiveExam';
 import { CandidatePortal } from './components/candidate/CandidatePortal';
@@ -22,6 +24,8 @@ import { Settings } from './components/settings/Settings';
 
 const AppContent: React.FC = () => {
   const { currentView } = useResilience();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [hackathonModalOpen, setHackathonModalOpen] = useState(false);
 
   const renderActiveView = () => {
     switch (currentView) {
@@ -59,14 +63,24 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6] text-[#171717] font-sans antialiased flex flex-col selection:bg-[#C62828] selection:text-white transition-colors duration-300">
-      {/* Universal Top Navigation */}
-      <Navbar />
+    <div className="min-h-screen bg-[#070B14] flex selection:bg-[#C62828] selection:text-white antialiased">
+      {/* Permanent Left Sidebar Navigation (Matching User Screenshot) */}
+      <Sidebar 
+        onOpenHackathonModal={() => setHackathonModalOpen(true)}
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
+      />
 
-      {/* Main View Router */}
-      <main className="flex-1">
-        {renderActiveView()}
-      </main>
+      {/* Main Content Area beside Sidebar */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F8F6] dark:bg-[#0A0B0E] transition-colors duration-300">
+        {/* Minimal Top Header - No desktop menu button */}
+        <Navbar onOpenMobileMenu={() => setMobileSidebarOpen(true)} />
+
+        {/* Main View Router */}
+        <main className="flex-1">
+          {renderActiveView()}
+        </main>
+      </div>
 
       {/* Real-Time Toast Notifications (Candidate & Admin channels) */}
       <NotificationToast />
@@ -76,6 +90,12 @@ const AppContent: React.FC = () => {
 
       {/* Luxury Theme Switcher Floating Pill & Modal */}
       <ThemeSwitcher />
+
+      {/* Architecture & Problem Statement Modal */}
+      <HackathonModal 
+        isOpen={hackathonModalOpen}
+        onClose={() => setHackathonModalOpen(false)}
+      />
     </div>
   );
 };
@@ -89,4 +109,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-
