@@ -58,16 +58,27 @@ export interface AssessmentCentre {
   warningNoticeIssued?: boolean;
 }
 
+export type IncidentCategory = 
+  | 'Network Failure' 
+  | 'Server Failure' 
+  | 'Session Interruption' 
+  | 'Data Mismatch' 
+  | 'Security Alert';
+
 export interface IncidentRecord {
   id: string;
   code: string; // e.g. #ET-1042
   title: string;
+  category?: IncidentCategory;
   centreId: string;
   centreName: string;
   time: string;
   timestamp: Date;
   severity: 'low' | 'medium' | 'high' | 'critical';
   status: 'detecting' | 'protecting' | 'recovering' | 'synchronized' | 'resolved';
+  escalationTarget?: 'Centre Supervisor' | 'Central Examination Authority' | 'Both';
+  escalationStatus?: 'dispatched' | 'acknowledged' | 'in_progress' | 'resolved';
+  resolutionStage?: 'detected' | 'classified' | 'escalated' | 'mitigating' | 'resolved';
   affectedSessions: number;
   timeline: {
     time: string;
