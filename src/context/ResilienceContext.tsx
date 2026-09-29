@@ -5,14 +5,19 @@ import {
   IncidentRecord, 
   AuditRecord, 
   SystemMetrics,
-  ExamQuestion 
+  ExamQuestion,
+  UserRole,
+  ActiveCandidateSession,
+  CandidateTelemetryEvent
 } from '../types';
 import { 
   sampleQuestions, 
   assessmentCentresData, 
   activeIncidentRecord, 
   sampleAuditTrail, 
-  initialSystemMetrics 
+  initialSystemMetrics,
+  initialActiveCandidates,
+  initialTelemetryEvents
 } from '../data/mockData';
 import confetti from 'canvas-confetti';
 
@@ -20,6 +25,7 @@ export type AppView =
   | 'landing' 
   | 'candidate_portal' 
   | 'live_exam' 
+  | 'candidate_monitor'
   | 'operations' 
   | 'early_detection'
   | 'centres' 
@@ -50,9 +56,13 @@ export interface NotificationItem {
 }
 
 interface ResilienceContextType {
+  // Role & View Management
+  userRole: UserRole;
+  setUserRole: (role: UserRole) => void;
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
-  // Candidate Exam State
+
+  // Candidate Exam State (Single Candidate Room)
   questions: ExamQuestion[];
   currentQuestionIndex: number;
   setCurrentQuestionIndex: (idx: number) => void;
@@ -61,6 +71,15 @@ interface ResilienceContextType {
   answerQuestion: (questionId: number, optionId: string) => void;
   toggleMarkForReview: (questionId: number) => void;
   timeRemainingSeconds: number;
+
+  // Multi-Student Live Surveillance & Officer Telemetry
+  activeCandidates: ActiveCandidateSession[];
+  telemetryEvents: CandidateTelemetryEvent[];
+  sendOfficerWarning: (candidateId: string, message: string) => void;
+  grantCandidateCompensatoryTime: (candidateId: string, minutes: number) => void;
+  broadcastOfficerAnnouncement: (message: string) => void;
+  syncCandidateDirect: (candidateId: string) => void;
+
   // Resilience & Network State
   networkStatus: CandidateNetworkStatus;
   protectionStage: ResponseProtectionStage;
@@ -74,6 +93,7 @@ interface ResilienceContextType {
   authorizeCandidateResumption: (candidateId: string) => void;
   executeDisasterFallback: (salvageId: string) => void;
   forcePeriodicSave: () => void;
+
   // Demo Mode
   isDemoActive: boolean;
   demoStep: number;
@@ -82,6 +102,7 @@ interface ResilienceContextType {
   prevDemoStep: () => void;
   stopDemo: () => void;
   setDemoStepDirect: (step: number) => void;
+
   // Admin & Monitoring State
   metrics: SystemMetrics;
   centres: AssessmentCentre[];
@@ -89,10 +110,12 @@ interface ResilienceContextType {
   setSelectedCentre: (c: AssessmentCentre | null) => void;
   incident: IncidentRecord;
   auditTrail: AuditRecord;
+
   // Notifications
   notifications: NotificationItem[];
   dismissNotification: (id: string) => void;
   addNotification: (item: Omit<NotificationItem, 'id' | 'timestamp'>) => void;
+
   // Reset
   resetSystemState: () => void;
 }
@@ -100,13 +123,20 @@ interface ResilienceContextType {
 const ResilienceContext = createContext<ResilienceContextType | undefined>(undefined);
 
 export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentView, setCurrentView] = useState<AppView>('landing');
+  // Primary Role State: Defaults to student for realistic test-taking, easily toggled to officer
+  const [userRole, setUserRoleState] = useState<UserRole>('student');
+  const [currentView, setCurrentView] = useState<AppView>('live_exam');
+
   const [questions] = useState<ExamQuestion[]>(sampleQuestions);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(1); // question 14 is default highlight
   const [answers, setAnswers] = useState<Record<number, string>>({ 1: 'A', 14: 'A' });
   const [markedForReview, setMarkedForReview] = useState<number[]>([15]);
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState<number>(3260); // ~54 mins
   
+  // Multi-Student Live Surveillance & Officer Telemetry
+  const [activeCandidates, setActiveCandidates] = useState<ActiveCandidateSession[]>(initialActiveCandidates);
+  const [telemetryEvents, setTelemetryEvents] = useState<CandidateTelemetryEvent[]>(initialTelemetryEvents);
+
   // Resilience states
   const [networkStatus, setNetworkStatus] = useState<CandidateNetworkStatus>('connected');
   const [protectionStage, setProtectionStage] = useState<ResponseProtectionStage>('normal_saved');
@@ -136,6 +166,16 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       timestamp: 'Just now'
     }
   ]);
+
+  // Set role with intelligent default views
+  const setUserRole = useCallback((newRole: UserRole) => {
+    setUserRoleState(newRole);
+    if (newRole === 'student') {
+      setCurrentView('live_exam');
+    } else {
+      setCurrentView('candidate_monitor');
+    }
+  }, []);
 
   // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {
@@ -172,6 +212,107 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
+  // Append real-time telemetry event for Officer Dashboard
+  const appendTelemetryEvent = useCallback((event: Omit<CandidateTelemetryEvent, 'id' | 'timestamp'>) => {
+    const id = 'evt-' + Math.random().toString(36).substring(2, 9);
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setTelemetryEvents(prev => [
+      { id, timestamp: now, ...event },
+      ...prev.slice(0, 30) // keep last 30 live events in officer stream
+    ]);
+  }, []);
+
+  // Sync Student 1 (Adarsh Singh - isSelf) with the Live Exam State
+  useEffect(() => {
+    const answeredCount = Object.keys(answers).length;
+    const isOffline = networkStatus === 'interrupted';
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    setActiveCandidates(prev => prev.map(cand => {
+      if (cand.isSelf) {
+        return {
+          ...cand,
+          answeredCount,
+          currentQuestion: questions[currentQuestionIndex]?.questionNumber || 14,
+          markedReviewCount: markedForReview.length,
+          status: isOffline ? 'offline_buffering' : 'active',
+          connectionLatency: isOffline ? 999 : 16,
+          pendingOfflineAnswers: offlineQueueCount,
+          lastSavedTimestamp: now,
+          merkleHash: lastSavedHash,
+          lastAction: isOffline 
+            ? `Offline Buffered ${offlineQueueCount} Answers (AES-256 Protected)`
+            : `Synchronized Answer Q${questions[currentQuestionIndex]?.questionNumber || 14}`
+        };
+      }
+      return cand;
+    }));
+  }, [answers, currentQuestionIndex, markedForReview, networkStatus, offlineQueueCount, lastSavedHash, questions]);
+
+  // Periodic Telemetry Simulator for Other Candidates (Priya, Rahul, Ananya)
+  // Demonstrates real-time continuous multi-candidate streaming to the Officer
+  useEffect(() => {
+    const simInterval = setInterval(() => {
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      // Randomly pick one simulated candidate (cand-4419, cand-4420, cand-4421)
+      const candIndices = [1, 2, 3];
+      const targetIdx = candIndices[Math.floor(Math.random() * candIndices.length)];
+
+      setActiveCandidates(prev => {
+        const next = [...prev];
+        const target = next[targetIdx];
+        if (!target) return prev;
+
+        const isRahul = target.id === 'cand-4420';
+
+        // Answering progress
+        const shouldAnswer = Math.random() > 0.35 && target.answeredCount < target.totalQuestions;
+        const newAnsweredCount = shouldAnswer ? target.answeredCount + 1 : target.answeredCount;
+        const nextQ = shouldAnswer && target.currentQuestion < target.totalQuestions 
+          ? target.currentQuestion + 1 
+          : target.currentQuestion;
+
+        // Latency fluctuation
+        const newLatency = isRahul && target.status === 'offline_buffering' 
+          ? 420 + Math.floor(Math.random() * 80)
+          : 16 + Math.floor(Math.random() * 12);
+
+        const newHash = '0x' + Math.random().toString(16).substring(2, 18);
+
+        next[targetIdx] = {
+          ...target,
+          answeredCount: newAnsweredCount,
+          currentQuestion: nextQ,
+          connectionLatency: newLatency,
+          lastSavedTimestamp: now,
+          merkleHash: newHash,
+          lastAction: shouldAnswer 
+            ? `Answered Q${nextQ} (Option ${['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)]})`
+            : target.lastAction
+        };
+
+        // Append live officer telemetry event
+        if (shouldAnswer) {
+          appendTelemetryEvent({
+            candidateId: target.id,
+            candidateName: target.name,
+            rollNo: target.rollNo,
+            type: target.status === 'offline_buffering' ? 'offline_buffer' : 'answer_saved',
+            message: target.status === 'offline_buffering' 
+              ? `Station ${target.stationId}: Buffered answer for Q${nextQ} in edge cache.`
+              : `Station ${target.stationId}: Response for Q${nextQ} synchronized and Merkle sealed.`,
+            severity: target.status === 'offline_buffering' ? 'warning' : 'info'
+          });
+        }
+
+        return next;
+      });
+    }, 4500);
+
+    return () => clearInterval(simInterval);
+  }, [appendTelemetryEvent]);
+
   // Answer question with resilience awareness
   const answerQuestion = useCallback((questionId: number, optionId: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: optionId }));
@@ -182,36 +323,168 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Offline mode: Lock in local tamper-proof cryptographic ledger
       setOfflineQueueCount(prev => prev + 1);
       setProtectionStage('response_protected');
+
       addNotification({
         target: 'candidate',
         type: 'warning',
         title: 'Response Protected Locally',
         message: `Answer for Q${questionId} saved to tamper-evident offline cache (Hash: ${newHash.substring(0, 10)}...). Zero data loss.`
       });
+
+      appendTelemetryEvent({
+        candidateId: 'cand-4418',
+        candidateName: 'Adarsh Singh',
+        rollNo: 'ET-2026-ENG-4418',
+        type: 'offline_buffer',
+        message: `Adarsh Singh answered Q${questionId} (Option ${optionId}) while offline. Saved in AES-256 buffer.`,
+        severity: 'warning'
+      });
     } else {
       // Normal cloud save
       setProtectionStage('normal_saved');
+
       addNotification({
         target: 'candidate',
         type: 'success',
         title: 'Response Saved',
         message: `Question ${questionId} response safely synchronized with central servers.`
       });
+
+      appendTelemetryEvent({
+        candidateId: 'cand-4418',
+        candidateName: 'Adarsh Singh',
+        rollNo: 'ET-2026-ENG-4418',
+        type: 'answer_saved',
+        message: `Adarsh Singh answered Q${questionId} (Option ${optionId}). Merkle state locked.`,
+        severity: 'info'
+      });
     }
-  }, [networkStatus, addNotification]);
+  }, [networkStatus, addNotification, appendTelemetryEvent]);
 
   const toggleMarkForReview = useCallback((questionId: number) => {
     setMarkedForReview(prev => 
-      prev.includes(questionId) ? prev.filter(id => id !== questionId) : [...prev, questionId]
+      prev.includes(questionId) ? prev.filter(q => q !== questionId) : [...prev, questionId]
     );
   }, []);
 
-  // Manual Trigger: Network Interruption
+  // Officer Action 1: Send Direct Warning to Candidate
+  const sendOfficerWarning = useCallback((candidateId: string, message: string) => {
+    setActiveCandidates(prev => prev.map(c => {
+      if (c.id === candidateId) {
+        return {
+          ...c,
+          strikes: c.strikes + 1,
+          status: 'flagged'
+        };
+      }
+      return c;
+    }));
+
+    const cand = activeCandidates.find(c => c.id === candidateId);
+    const candName = cand ? cand.name : candidateId;
+
+    addNotification({
+      target: 'both',
+      type: 'alert',
+      title: `Official Warning Sent: ${candName}`,
+      message: `Invigilator directive: "${message}". Strike incremented on student terminal.`
+    });
+
+    appendTelemetryEvent({
+      candidateId,
+      candidateName: candName,
+      rollNo: cand ? cand.rollNo : 'ET-WARN',
+      type: 'warning_sent',
+      message: `Officer issued warning to ${candName}: "${message}"`,
+      severity: 'critical'
+    });
+  }, [activeCandidates, addNotification, appendTelemetryEvent]);
+
+  // Officer Action 2: Grant Compensatory Time (Req 9, 10)
+  const grantCandidateCompensatoryTime = useCallback((candidateId: string, minutes: number) => {
+    setActiveCandidates(prev => prev.map(c => {
+      if (c.id === candidateId) {
+        return {
+          ...c,
+          compensationMinutes: c.compensationMinutes + minutes
+        };
+      }
+      return c;
+    }));
+
+    const cand = activeCandidates.find(c => c.id === candidateId);
+    const candName = cand ? cand.name : candidateId;
+
+    // If candidate is self (Adarsh Singh), add seconds directly to exam timer!
+    if (cand?.isSelf) {
+      setTimeRemainingSeconds(prev => prev + minutes * 60);
+      setTotalCompensatoryTimeAdded(prev => prev + minutes * 60);
+    }
+
+    addNotification({
+      target: 'both',
+      type: 'success',
+      title: `+${minutes} Mins Compensatory Time Granted`,
+      message: `Equivalence parity applied for ${candName} due to verified disruption.`
+    });
+
+    appendTelemetryEvent({
+      candidateId,
+      candidateName: candName,
+      rollNo: cand ? cand.rollNo : 'ET-COMP',
+      type: 'compensation_granted',
+      message: `Examination Authority granted +${minutes} minutes compensatory buffer to ${candName}.`,
+      severity: 'success'
+    });
+  }, [activeCandidates, addNotification, appendTelemetryEvent]);
+
+  // Officer Action 3: Broadcast Announcement to All Candidates
+  const broadcastOfficerAnnouncement = useCallback((message: string) => {
+    addNotification({
+      target: 'both',
+      type: 'info',
+      title: 'Central Invigilator Announcement',
+      message
+    });
+
+    appendTelemetryEvent({
+      candidateId: 'all',
+      candidateName: 'ALL CANDIDATES',
+      rollNo: 'BROADCAST',
+      type: 'warning_sent',
+      message: `Global announcement broadcast: "${message}"`,
+      severity: 'info'
+    });
+  }, [addNotification, appendTelemetryEvent]);
+
+  // Officer Action 4: Sync Candidate Offline Queue Directly
+  const syncCandidateDirect = useCallback((candidateId: string) => {
+    setActiveCandidates(prev => prev.map(c => {
+      if (c.id === candidateId) {
+        return {
+          ...c,
+          pendingOfflineAnswers: 0,
+          status: 'active',
+          connectionLatency: 18,
+          lastAction: 'Reconciled & Re-synchronized by Officer'
+        };
+      }
+      return c;
+    }));
+
+    addNotification({
+      target: 'admin',
+      type: 'success',
+      title: 'Candidate Re-synchronized',
+      message: `Station ledger for ${candidateId} successfully validated with 0 loss.`
+    });
+  }, [addNotification]);
+
+  // SIMULATE NETWORK OUTAGE (Requirement 3 & 4)
   const triggerNetworkInterruption = useCallback(() => {
-    setIsSimulatingDisruption(true);
     setNetworkStatus('interrupted');
     setProtectionStage('connection_lost');
-    setOfflineQueueCount(1);
+    setIsSimulatingDisruption(true);
     setInterruptionSecondsElapsed(0);
 
     // Update centres data: Centre 08 suffers degraded ping
@@ -238,255 +511,160 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     addNotification({
       target: 'admin',
       type: 'alert',
-      title: 'Centre 08 Network Degradation',
-      message: 'Packet drop detected on WAN Gateway A. Failover protocols initiated.'
+      title: 'Incident #ET-1042: Centre 08 Outage',
+      message: 'Edge anomaly watchdog triggered at Centre 08. 100% WAN drop detected. Candidate stations entering local buffer.'
     });
 
-    setTimeout(() => {
-      setProtectionStage('response_protected');
-    }, 1200);
-  }, [addNotification]);
+    appendTelemetryEvent({
+      candidateId: 'all',
+      candidateName: 'Centre 08 Edge Hub',
+      rollNo: 'CENTRE-08',
+      type: 'offline_buffer',
+      message: 'CRITICAL: Centre 08 primary fiber cut. Local edge gateways engaged.',
+      severity: 'critical'
+    });
+  }, [addNotification, appendTelemetryEvent]);
 
-  // Manual Trigger: Network Restore & Delta Sync
+  // RESTORE NETWORK & AUTO-RECONCILE (Requirement 4 & 7)
   const restoreNetwork = useCallback(() => {
-    setProtectionStage('network_restored');
     setNetworkStatus('reconnecting');
-
-    addNotification({
-      target: 'candidate',
-      type: 'info',
-      title: 'Connection Restored',
-      message: 'Restoring handshake with central cluster...'
-    });
+    setProtectionStage('network_restored');
 
     setTimeout(() => {
       setProtectionStage('synchronizing');
-      
+
       setTimeout(() => {
-        setProtectionStage('response_verified');
         setNetworkStatus('connected');
+        setProtectionStage('response_verified');
         setIsSimulatingDisruption(false);
+
+        // Auto compensatory time formula: 1 min extra for every 10s of interruption
+        const compSeconds = Math.max(60, Math.ceil(interruptionSecondsElapsed / 10) * 60);
+        setTimeRemainingSeconds(prev => prev + compSeconds);
+        setTotalCompensatoryTimeAdded(prev => prev + compSeconds);
+
+        // Flush offline queue
         setOfflineQueueCount(0);
 
-        // Apply automated time compensation (Requirement 4)
-        const compensated = (interruptionSecondsElapsed > 0 ? interruptionSecondsElapsed : 28) + 60;
-        setTimeRemainingSeconds(prev => prev + compensated);
-        setTotalCompensatoryTimeAdded(prev => prev + compensated);
-        setInterruptionSecondsElapsed(0);
-
-        // Update centres
+        // Restore Centre 08 health
         setCentres(prev => prev.map(c => 
           c.id === 'centre-08' 
-            ? { ...c, status: 'operational', networkLatency: 28, edgeGatewayStatus: 'online', openIncidents: 0, lastSync: 'Just now' } 
+            ? { ...c, status: 'operational', networkLatency: 18, edgeGatewayStatus: 'online', openIncidents: 0 } 
             : c
         ));
 
         setMetrics(prev => ({
           ...prev,
-          networkHealthPercent: 99.2,
+          networkHealthPercent: 99.1,
           systemHealthPercent: 99.8,
           openIncidentsCount: 0
         }));
 
-        addNotification({
-          target: 'candidate',
-          type: 'success',
-          title: 'Responses Synchronized',
-          message: 'All buffered responses validated and verified with 0% data loss.'
-        });
-
-        addNotification({
-          target: 'candidate',
-          type: 'info',
-          title: 'Automated Time Compensation Applied',
-          message: `Timer compensated: +${compensated}s credited (interruption duration + 60s stabilization buffer). Zero academic time lost.`
-        });
-
-        addNotification({
-          target: 'admin',
-          type: 'success',
-          title: 'Centre 08 Fully Recovered',
-          message: '7 candidate delta packages reconciled. Central audit log sealed.'
-        });
-
-        // Small celebration confetti
         try {
           confetti({
-            particleCount: 40,
+            particleCount: 80,
             spread: 60,
             origin: { y: 0.8 },
-            colors: ['#C62828', '#16803C', '#E53935']
+            colors: ['#16803C', '#2E7D32', '#4CAF50']
           });
         } catch {
           // ignore
         }
 
-        setTimeout(() => {
-          setProtectionStage('normal_saved');
-        }, 3500);
-      }, 1800);
-    }, 1200);
-  }, [addNotification, interruptionSecondsElapsed]);
+        addNotification({
+          target: 'candidate',
+          type: 'success',
+          title: 'Connection Restored & Responses Reconciled',
+          message: `All offline answers verified with 0 loss. You received +${Math.round(compSeconds / 60)} minutes compensatory time.`
+        });
 
-  // Requirement 4: Controlled Procedure to Resume an Examination
+        addNotification({
+          target: 'admin',
+          type: 'success',
+          title: 'Centre 08 Reconciled (100% Match)',
+          message: 'All 7 candidate sessions at Centre 08 verified against SHA-256 Merkle root. Zero discrepancies.'
+        });
+
+        appendTelemetryEvent({
+          candidateId: 'all',
+          candidateName: 'Centre 08 Edge Hub',
+          rollNo: 'CENTRE-08',
+          type: 'reconnected',
+          message: 'SUCCESS: Network restored. 100% candidate responses reconciled via Merkle Tree.',
+          severity: 'success'
+        });
+      }, 1200);
+    }, 800);
+  }, [interruptionSecondsElapsed, addNotification, appendTelemetryEvent]);
+
+  // Authorize candidate resumption (Supervisor action)
   const authorizeCandidateResumption = useCallback((candidateId: string) => {
-    const compensation = 120; // 2 minutes auto compensatory credit
-    setTimeRemainingSeconds(prev => prev + compensation);
-    setTotalCompensatoryTimeAdded(prev => prev + compensation);
-    setNetworkStatus('connected');
-    setProtectionStage('response_verified');
-    setIsSimulatingDisruption(false);
-
     addNotification({
-      target: 'candidate',
+      target: 'both',
       type: 'success',
-      title: 'Proctor Authorization Approved',
-      message: `Controlled session resume granted for ${candidateId}. Reconnected at Q14 with +${compensation}s compensatory time.`
+      title: 'Session Resumption Authorized',
+      message: `Supervisor verified identity for ${candidateId}. Offline answer ledger decrypted.`
     });
+  }, [addNotification]);
 
+  // Disaster fallback salvage execution
+  const executeDisasterFallback = useCallback((salvageId: string) => {
     addNotification({
       target: 'admin',
       type: 'info',
-      title: 'Controlled Resumption Executed',
-      message: `Proctor token validated for candidate ${candidateId}. Resumed safely from exact saved state.`
+      title: 'Disaster Fallback Executed',
+      message: `Record ${salvageId} exported to secondary node with academic guarantee seal.`
     });
   }, [addNotification]);
 
-  // Requirement 4: Fallback Plan when Recovery is not possible
-  const executeDisasterFallback = useCallback((salvageId: string) => {
-    addNotification({
-      target: 'candidate',
-      type: 'alert',
-      title: 'Disaster Fallback Protocol Activated',
-      message: `Workstation session safely salvaged (${salvageId}). Candidate re-scheduled within 48h. Zero academic penalty guarantee issued.`
-    });
-
-    addNotification({
-      target: 'admin',
-      type: 'warning',
-      title: 'Academic Guarantee Certificate Dispatched',
-      message: `Candidate ${salvageId} safely evacuated. Zero-loss salvage record dispatched to Central Examination Authority.`
-    });
-  }, [addNotification]);
-
-  // Requirement 4: Periodic saving heartbeat manual trigger
   const forcePeriodicSave = useCallback(() => {
-    const newHash = '0x' + Math.random().toString(16).substring(2, 18);
-    setLastSavedHash(newHash);
-    addNotification({
-      target: 'candidate',
-      type: 'success',
-      title: 'Periodic Response Heartbeat Saved',
-      message: `Answers encrypted with AES-256 and committed to local IndexedDB + Cloud Mirror (Seal: ${newHash.substring(0, 10)}...).`
-    });
-  }, [addNotification]);
+    setLastSavedHash('0x' + Math.random().toString(16).substring(2, 18));
+  }, []);
 
-  // Reset entire system to initial state
+  // Demo tour actions
+  const startDemo = useCallback(() => {
+    setIsDemoActive(true);
+    setDemoStep(1);
+    setCurrentView('operations');
+  }, []);
+
+  const nextDemoStep = useCallback(() => {
+    setDemoStep(prev => (prev < 7 ? prev + 1 : 1));
+  }, []);
+
+  const prevDemoStep = useCallback(() => {
+    setDemoStep(prev => (prev > 1 ? prev - 1 : 1));
+  }, []);
+
+  const stopDemo = useCallback(() => {
+    setIsDemoActive(false);
+    setDemoStep(1);
+  }, []);
+
+  const setDemoStepDirect = useCallback((step: number) => {
+    setDemoStep(step);
+  }, []);
+
   const resetSystemState = useCallback(() => {
     setNetworkStatus('connected');
     setProtectionStage('normal_saved');
     setOfflineQueueCount(0);
     setIsSimulatingDisruption(false);
-    setIsDemoActive(false);
-    setDemoStep(1);
-    setCentres(assessmentCentresData);
+    setInterruptionSecondsElapsed(0);
+    setTotalCompensatoryTimeAdded(0);
+    setTimeRemainingSeconds(3600);
     setMetrics(initialSystemMetrics);
+    setCentres(assessmentCentresData);
     setIncident(activeIncidentRecord);
-    setAuditTrail(sampleAuditTrail);
+    setActiveCandidates(initialActiveCandidates);
+    setTelemetryEvents(initialTelemetryEvents);
   }, []);
-
-  // Resilience Demo steps controller
-  const startDemo = useCallback(() => {
-    setIsDemoActive(true);
-    setDemoStep(1);
-    resetSystemState();
-    setIsDemoActive(true);
-  }, [resetSystemState]);
-
-  const stopDemo = useCallback(() => {
-    setIsDemoActive(false);
-  }, []);
-
-  const setDemoStepDirect = useCallback((step: number) => {
-    setDemoStep(step);
-    if (step === 1) {
-      // Normal Operation
-      setNetworkStatus('connected');
-      setProtectionStage('normal_saved');
-      setIsSimulatingDisruption(false);
-      setOfflineQueueCount(0);
-    } else if (step === 2) {
-      // Network Failure
-      setIsSimulatingDisruption(true);
-      setNetworkStatus('interrupted');
-      setProtectionStage('connection_lost');
-    } else if (step === 3) {
-      // Incident Detection
-      setNetworkStatus('interrupted');
-      setProtectionStage('connection_lost');
-      addNotification({
-        target: 'admin',
-        type: 'alert',
-        title: 'Watchdog Alert: Centre 08 Drop',
-        message: 'Mean Time to Detect: 1.2s. 7 active sessions safeguarded.'
-      });
-    } else if (step === 4) {
-      // Response Protection
-      setNetworkStatus('interrupted');
-      setProtectionStage('response_protected');
-      setOfflineQueueCount(2);
-      addNotification({
-        target: 'candidate',
-        type: 'warning',
-        title: 'Local Cryptographic Ledger Engaged',
-        message: 'Candidate offline responses encrypted with zero loss.'
-      });
-    } else if (step === 5) {
-      // Recovery Initiated
-      setProtectionStage('network_restored');
-      setNetworkStatus('reconnecting');
-    } else if (step === 6) {
-      // Synchronization
-      setProtectionStage('synchronizing');
-      setOfflineQueueCount(1);
-    } else if (step === 7) {
-      // Audit Verification
-      setProtectionStage('response_verified');
-      setNetworkStatus('connected');
-      setOfflineQueueCount(0);
-      setIsSimulatingDisruption(false);
-      try {
-        confetti({
-          particleCount: 60,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#C62828', '#16803C', '#E53935']
-        });
-      } catch {
-        // ignore
-      }
-    }
-  }, [addNotification]);
-
-  const nextDemoStep = useCallback(() => {
-    setDemoStep(prev => {
-      const next = prev < 7 ? prev + 1 : 1;
-      setDemoStepDirect(next);
-      return next;
-    });
-  }, [setDemoStepDirect]);
-
-  const prevDemoStep = useCallback(() => {
-    setDemoStep(prev => {
-      const prevStep = prev > 1 ? prev - 1 : 7;
-      setDemoStepDirect(prevStep);
-      return prevStep;
-    });
-  }, [setDemoStepDirect]);
 
   return (
     <ResilienceContext.Provider
       value={{
+        userRole,
+        setUserRole,
         currentView,
         setCurrentView,
         questions,
@@ -497,6 +675,12 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         answerQuestion,
         toggleMarkForReview,
         timeRemainingSeconds,
+        activeCandidates,
+        telemetryEvents,
+        sendOfficerWarning,
+        grantCandidateCompensatoryTime,
+        broadcastOfficerAnnouncement,
+        syncCandidateDirect,
         networkStatus,
         protectionStage,
         offlineQueueCount,

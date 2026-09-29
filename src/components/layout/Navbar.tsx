@@ -6,7 +6,9 @@ import {
   ShieldCheck, 
   Menu,
   ChevronRight,
-  Lock
+  Lock,
+  GraduationCap,
+  Users
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -15,6 +17,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const { 
+    userRole,
+    setUserRole,
     currentView, 
     networkStatus
   } = useResilience();
@@ -28,6 +32,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         return 'Live Examination Room (ENG-304)';
       case 'candidate_portal':
         return 'Candidate Assessment Portal';
+      case 'candidate_monitor':
+        return 'Multi-Student Live Telemetry & Surveillance';
       case 'operations':
         return 'Mission Control (Req 01)';
       case 'early_detection':
@@ -39,7 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       case 'recovery':
         return 'Disaster Recovery & Redundant Nodes (Req 04)';
       case 'audit':
-        return 'Tamper-Evident Storage & Audit Ledger (Req 05)';
+        return userRole === 'student' ? 'My Cryptographic Submission Proof' : 'Tamper-Evident Storage & Audit Ledger (Req 05)';
       case 'suspicious_patterns':
         return 'Suspicious Pattern Forensic Review (Req 06)';
       case 'reconciliation':
@@ -90,15 +96,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
       </div>
 
       {/* Main Header Row - Clean, Minimal, NO Desktop Menu Button */}
-      <div className="px-4 sm:px-6 py-2.5 flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-2 flex items-center justify-between gap-4">
         
         {/* Left: Mobile hamburger (only on mobile screens) + Active View Breadcrumb */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {/* Mobile only toggle (hidden on desktop) */}
           {onOpenMobileMenu && (
             <button
               onClick={onOpenMobileMenu}
-              className="lg:hidden p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors"
+              className="lg:hidden p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors shrink-0"
               aria-label="Open mobile navigation"
             >
               <Menu className="w-4 h-4" />
@@ -106,27 +112,53 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
           )}
 
           {/* Active Navigation Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider font-mono text-[10px]">
+          <div className="flex items-center gap-2 text-xs truncate">
+            <span className="font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider font-mono text-[10px] shrink-0">
               Module
             </span>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <span className="font-bold text-gray-900 dark:text-white sm:text-sm tracking-tight truncate max-w-[280px] sm:max-w-md">
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+            <span className="font-bold text-gray-900 dark:text-white sm:text-sm tracking-tight truncate">
               {getCurrentViewLabel()}
             </span>
           </div>
         </div>
 
-        {/* Right: Institutional Security Badge */}
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl bg-gray-100 dark:bg-[#121B2B] border border-gray-200 dark:border-[#1E2A42] text-[11px] font-mono text-gray-600 dark:text-gray-300">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#16803C]" />
-            <span>Tamper-Resistant WORM Storage</span>
+        {/* Right: Dedicated Role Toggle & Security Badge */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          
+          {/* Direct Role Switcher (Student vs Officer) */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-[#121B2B] border border-gray-200 dark:border-[#1E2A42]">
+            <button
+              onClick={() => setUserRole('student')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                userRole === 'student' 
+                  ? 'bg-[#C62828] text-white shadow-xs' 
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+              title="Switch to Student Exam Terminal"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Student</span>
+            </button>
+
+            <button
+              onClick={() => setUserRole('officer')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                userRole === 'officer' 
+                  ? 'bg-[#0284C7] text-white shadow-xs' 
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+              title="Switch to Officer Surveillance & Operations"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Officer</span>
+            </button>
           </div>
 
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-100 dark:bg-red-950/60 text-[#C62828] font-bold border border-red-200 dark:border-red-900/40">
-            Active Session
-          </span>
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-[#121B2B] border border-gray-200 dark:border-[#1E2A42] text-[11px] font-mono text-gray-600 dark:text-gray-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#16803C]" />
+            <span>WORM Verified</span>
+          </div>
         </div>
       </div>
 

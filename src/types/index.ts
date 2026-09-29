@@ -1,5 +1,45 @@
 export type SystemHealthStatus = 'healthy' | 'degraded' | 'critical' | 'recovering';
 
+export type UserRole = 'student' | 'officer';
+
+export interface ActiveCandidateSession {
+  id: string;
+  rollNo: string;
+  name: string;
+  avatar: string;
+  stationId: string;
+  centreId: string;
+  centreName: string;
+  currentQuestion: number;
+  totalQuestions: number;
+  answeredCount: number;
+  markedReviewCount: number;
+  status: 'active' | 'offline_buffering' | 'flagged' | 'submitted';
+  connectionLatency: number; // ms
+  strikes: number;
+  faceStatus: 'verified' | 'multiple_faces' | 'no_face' | 'looking_away';
+  lastSavedTimestamp: string;
+  lastSyncedTimestamp: string;
+  pendingOfflineAnswers: number;
+  compensationMinutes: number;
+  ipAddress: string;
+  lastAction: string;
+  merkleHash: string;
+  deviceInfo: string;
+  isSelf?: boolean;
+}
+
+export interface CandidateTelemetryEvent {
+  id: string;
+  candidateId: string;
+  candidateName: string;
+  rollNo: string;
+  timestamp: string;
+  type: 'answer_saved' | 'offline_buffer' | 'strike_issued' | 'tab_switched' | 'reconnected' | 'compensation_granted' | 'warning_sent';
+  message: string;
+  severity: 'info' | 'warning' | 'critical' | 'success';
+}
+
 export type DemoStep = 
   | 1 // Normal Operation
   | 2 // Network Failure

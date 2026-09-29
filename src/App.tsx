@@ -10,6 +10,7 @@ import { HackathonModal } from './components/layout/HackathonModal';
 import { LandingPage } from './components/landing/LandingPage';
 import { LiveExam } from './components/candidate/LiveExam';
 import { CandidatePortal } from './components/candidate/CandidatePortal';
+import { LiveCandidateMonitor } from './components/officer/LiveCandidateMonitor';
 import { OperationsDashboard } from './components/operations/OperationsDashboard';
 import { CentreMonitoring } from './components/centres/CentreMonitoring';
 import { IncidentCenter } from './components/incidents/IncidentCenter';
@@ -35,6 +36,8 @@ const AppContent: React.FC = () => {
         return <LiveExam />;
       case 'candidate_portal':
         return <CandidatePortal />;
+      case 'candidate_monitor':
+        return <LiveCandidateMonitor />;
       case 'operations':
         return <OperationsDashboard />;
       case 'early_detection':
