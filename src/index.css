@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --color-brand-primary: #C62828;
+  --color-brand-secondary: #E53935;
+  --color-brand-dark: #8E1B1B;
+  --color-brand-bg: #F8F8F6;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-text: #171717;
+  --color-brand-muted: #666666;
+  --color-brand-success: #16803C;
+  --color-brand-warning: #C77A00;
+  --color-brand-border: #E5E7EB;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: #171717;
+  background-color: #F8F8F6;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #F8F8F6;
+  color: #171717;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Luxury Card & Glassmorphism styles */
+.luxury-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.luxury-card:hover {
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+}
+
+.luxury-glow-red {
+  box-shadow: 0 0 35px -5px rgba(198, 40, 40, 0.25);
+}
+
+.luxury-badge {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.6875rem;
+}
+
+/* Dark mode luxury styling for Obsidian Noir */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0A0B0E !important;
+  color: #F3F4F6 !important;
+}
+
+html.dark .bg-white {
+  background-color: #13151D !important;
+  border-color: #232736 !important;
+  color: #F3F4F6 !important;
+}
+
+html.dark .bg-\[\#F8F8F6\] {
+  background-color: #0A0B0E !important;
+}
+
+html.dark .border-gray-200,
+html.dark .border-gray-100 {
+  border-color: #232736 !important;
+}
+
+html.dark .text-gray-900 {
+  color: #F9FAFB !important;
+}
+
+html.dark .text-gray-800,
+html.dark .text-gray-700 {
+  color: #E5E7EB !important;
+}
+
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+  color: #9CA3AF !important;
+}
+
+html.dark .bg-gray-50,
+html.dark .bg-gray-100 {
+  background-color: #181B26 !important;
+}
+
+html.dark .bg-gray-200 {
+  background-color: #262B3D !important;
+}
+
+html.dark .luxury-card {
+  background: rgba(19, 21, 29, 0.95);
+  border: 1px solid rgba(45, 52, 70, 0.7);
+  box-shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .luxury-card:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 12px 35px -4px rgba(239, 68, 68, 0.15);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Keyframes */
+@keyframes laser-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-laser {
+  animation: laser-flow 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
