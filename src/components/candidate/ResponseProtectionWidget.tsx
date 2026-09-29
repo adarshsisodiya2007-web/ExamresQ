@@ -16,7 +16,9 @@ export const ResponseProtectionWidget: React.FC = () => {
     protectionStage, 
     networkStatus, 
     offlineQueueCount, 
-    lastSavedHash 
+    lastSavedHash,
+    compensatoryTimeAdded,
+    forcePeriodicSave
   } = useResilience();
 
   const stages: { stage: ResponseProtectionStage; label: string; sub: string; icon: React.ReactNode }[] = [
@@ -80,21 +82,35 @@ export const ResponseProtectionWidget: React.FC = () => {
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-gray-900 tracking-tight">RESPONSE PROTECTION ENGINE</h4>
-            <p className="text-[10px] text-gray-500 font-mono">Client-Side Resilience Subsystem</p>
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-gray-900 tracking-tight">RESPONSE PROTECTION ENGINE</h4>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Periodic auto-save heartbeat active (every 3s)" />
+            </div>
+            <p className="text-[10px] text-gray-500 font-mono">Client-Side AES-256 GCM + IndexedDB Sandbox (Req 4.1)</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {compensatoryTimeAdded > 0 && (
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center gap-1">
+              +{compensatoryTimeAdded}s Compensatory Credit
+            </span>
+          )}
+
           {offlineQueueCount > 0 && (
             <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold flex items-center gap-1">
               <Lock className="w-3 h-3 text-amber-700" />
-              {offlineQueueCount} Protected in Local Cache
+              {offlineQueueCount} Protected Locally
             </span>
           )}
-          <span className="text-[11px] font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-            Hash: {lastSavedHash.substring(0, 10)}...
-          </span>
+
+          <button
+            onClick={forcePeriodicSave}
+            className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 cursor-pointer transition-colors"
+            title="Force immediate periodic response commit"
+          >
+            Seal: {lastSavedHash.substring(0, 8)}...
+          </button>
         </div>
       </div>
 

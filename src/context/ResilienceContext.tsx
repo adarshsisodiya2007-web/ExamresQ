@@ -64,8 +64,13 @@ interface ResilienceContextType {
   offlineQueueCount: number;
   lastSavedHash: string;
   isSimulatingDisruption: boolean;
+  interruptionSecondsElapsed: number;
+  compensatoryTimeAdded: number;
   triggerNetworkInterruption: () => void;
   restoreNetwork: () => void;
+  authorizeCandidateResumption: (candidateId: string) => void;
+  executeDisasterFallback: (salvageId: string) => void;
+  forcePeriodicSave: () => void;
   // Demo Mode
   isDemoActive: boolean;
   demoStep: number;
@@ -105,6 +110,8 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [offlineQueueCount, setOfflineQueueCount] = useState<number>(0);
   const [lastSavedHash, setLastSavedHash] = useState<string>('0x7f9a842b109e4d58');
   const [isSimulatingDisruption, setIsSimulatingDisruption] = useState<boolean>(false);
+  const [interruptionSecondsElapsed, setInterruptionSecondsElapsed] = useState<number>(0);
+  const [compensatoryTimeAdded, setTotalCompensatoryTimeAdded] = useState<number>(0);
 
   // Demo mode states
   const [isDemoActive, setIsDemoActive] = useState<boolean>(false);
@@ -127,13 +134,17 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   ]);
 
-  // Exam timer countdown
+  // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemainingSeconds(prev => (prev > 0 ? prev - 1 : 0));
+      if (networkStatus === 'interrupted') {
+        setInterruptionSecondsElapsed(prev => prev + 1);
+      } else {
+        setTimeRemainingSeconds(prev => (prev > 0 ? prev - 1 : 0));
+      }
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [networkStatus]);
 
   const recentNotifsRef = useRef<Map<string, number>>(new Map());
 
@@ -198,6 +209,7 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setNetworkStatus('interrupted');
     setProtectionStage('connection_lost');
     setOfflineQueueCount(1);
+    setInterruptionSecondsElapsed(0);
 
     // Update centres data: Centre 08 suffers degraded ping
     setCentres(prev => prev.map(c => 
@@ -216,8 +228,8 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     addNotification({
       target: 'candidate',
       type: 'warning',
-      title: 'Connection Interrupted',
-      message: 'Your response is protected. EvalTrust offline resilience layer is active.'
+      title: 'Connection Interrupted (Timer Frozen)',
+      message: 'Uplink severed. Exam timer frozen. Client encryption ledger activated. Zero data loss.'
     });
 
     addNotification({
@@ -253,6 +265,12 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setIsSimulatingDisruption(false);
         setOfflineQueueCount(0);
 
+        // Apply automated time compensation (Requirement 4)
+        const compensated = (interruptionSecondsElapsed > 0 ? interruptionSecondsElapsed : 28) + 60;
+        setTimeRemainingSeconds(prev => prev + compensated);
+        setTotalCompensatoryTimeAdded(prev => prev + compensated);
+        setInterruptionSecondsElapsed(0);
+
         // Update centres
         setCentres(prev => prev.map(c => 
           c.id === 'centre-08' 
@@ -272,6 +290,13 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           type: 'success',
           title: 'Responses Synchronized',
           message: 'All buffered responses validated and verified with 0% data loss.'
+        });
+
+        addNotification({
+          target: 'candidate',
+          type: 'info',
+          title: 'Automated Time Compensation Applied',
+          message: `Timer compensated: +${compensated}s credited (interruption duration + 60s stabilization buffer). Zero academic time lost.`
         });
 
         addNotification({
@@ -298,6 +323,59 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }, 3500);
       }, 1800);
     }, 1200);
+  }, [addNotification, interruptionSecondsElapsed]);
+
+  // Requirement 4: Controlled Procedure to Resume an Examination
+  const authorizeCandidateResumption = useCallback((candidateId: string) => {
+    const compensation = 120; // 2 minutes auto compensatory credit
+    setTimeRemainingSeconds(prev => prev + compensation);
+    setTotalCompensatoryTimeAdded(prev => prev + compensation);
+    setNetworkStatus('connected');
+    setProtectionStage('response_verified');
+    setIsSimulatingDisruption(false);
+
+    addNotification({
+      target: 'candidate',
+      type: 'success',
+      title: 'Proctor Authorization Approved',
+      message: `Controlled session resume granted for ${candidateId}. Reconnected at Q14 with +${compensation}s compensatory time.`
+    });
+
+    addNotification({
+      target: 'admin',
+      type: 'info',
+      title: 'Controlled Resumption Executed',
+      message: `Proctor token validated for candidate ${candidateId}. Resumed safely from exact saved state.`
+    });
+  }, [addNotification]);
+
+  // Requirement 4: Fallback Plan when Recovery is not possible
+  const executeDisasterFallback = useCallback((salvageId: string) => {
+    addNotification({
+      target: 'candidate',
+      type: 'alert',
+      title: 'Disaster Fallback Protocol Activated',
+      message: `Workstation session safely salvaged (${salvageId}). Candidate re-scheduled within 48h. Zero academic penalty guarantee issued.`
+    });
+
+    addNotification({
+      target: 'admin',
+      type: 'warning',
+      title: 'Academic Guarantee Certificate Dispatched',
+      message: `Candidate ${salvageId} safely evacuated. Zero-loss salvage record dispatched to Central Examination Authority.`
+    });
+  }, [addNotification]);
+
+  // Requirement 4: Periodic saving heartbeat manual trigger
+  const forcePeriodicSave = useCallback(() => {
+    const newHash = '0x' + Math.random().toString(16).substring(2, 18);
+    setLastSavedHash(newHash);
+    addNotification({
+      target: 'candidate',
+      type: 'success',
+      title: 'Periodic Response Heartbeat Saved',
+      message: `Answers encrypted with AES-256 and committed to local IndexedDB + Cloud Mirror (Seal: ${newHash.substring(0, 10)}...).`
+    });
   }, [addNotification]);
 
   // Reset entire system to initial state
@@ -421,8 +499,13 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         offlineQueueCount,
         lastSavedHash,
         isSimulatingDisruption,
+        interruptionSecondsElapsed,
+        compensatoryTimeAdded,
         triggerNetworkInterruption,
         restoreNetwork,
+        authorizeCandidateResumption,
+        executeDisasterFallback,
+        forcePeriodicSave,
         isDemoActive,
         demoStep,
         startDemo,

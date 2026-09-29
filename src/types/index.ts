@@ -121,6 +121,48 @@ export interface SystemMetrics {
   meanTimeToRecoverSeconds: number; // 48s
 }
 
+// Requirement 4: Backup & Disaster Recovery Architecture Types
+export interface BackupTierConfig {
+  id: string;
+  name: string;
+  layer: 'Tier 1' | 'Tier 2' | 'Tier 3' | 'Tier 4';
+  storageTech: string;
+  syncLatency: string;
+  redundancyLevel: string;
+  capacityUsed: string;
+  status: 'operational' | 'syncing' | 'standby' | 'failover';
+  encryption: string;
+  immutable: boolean;
+  description: string;
+}
+
+export interface ControlledResumeRecord {
+  candidateId: string;
+  candidateName: string;
+  rollNumber: string;
+  lastQuestionIndex: number;
+  lastSavedOption: string;
+  interruptionDurationSeconds: number;
+  compensatoryTimeSeconds: number;
+  proctorToken: string;
+  proctorName: string;
+  integrityVerified: boolean;
+  status: 'pending' | 'authorized' | 'resumed' | 'evacuated';
+}
+
+export interface DisasterFallbackRecord {
+  salvageId: string;
+  candidateName: string;
+  rollNumber: string;
+  affectedSubject: string;
+  reason: string;
+  encryptedBlobHash: string;
+  rescheduledSlot: string;
+  academicGuaranteeCertificateId: string;
+  notifiedAt: string;
+  status: 'evacuated' | 'rebooked' | 'certified';
+}
+
 export type LuxuryThemeId = 'imperial_crimson' | 'obsidian_noir' | 'swiss_platinum' | 'sovereign_gold';
 
 export interface LuxuryTheme {

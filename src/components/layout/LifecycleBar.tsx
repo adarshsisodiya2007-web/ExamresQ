@@ -87,11 +87,11 @@ export const LifecycleBar: React.FC = () => {
     },
     {
       step: 7,
-      label: 'RECOVERY',
-      sub: 'Multi-WAN Link',
+      label: 'BACKUP & RECOVERY',
+      sub: 'Zero-Loss Sync (Req 4)',
       targetView: 'recovery',
       icon: <RotateCcw className="w-3.5 h-3.5" />,
-      isActive: () => protectionStage === 'network_restored' || networkStatus === 'reconnecting'
+      isActive: () => currentView === 'recovery' || protectionStage === 'network_restored' || networkStatus === 'reconnecting'
     },
     {
       step: 8,
