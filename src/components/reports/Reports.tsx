@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useResilience } from '../../context/ResilienceContext';
+import { samplePostExamAuditReport } from '../../data/governanceSecurityData';
 import { 
   BarChart3, 
   Download, 
@@ -12,12 +13,18 @@ import {
   RotateCcw, 
   FileCheck2,
   Calendar,
-  Filter
+  Filter,
+  FileText,
+  Award,
+  Sparkles,
+  Printer,
+  X
 } from 'lucide-react';
 
 export const Reports: React.FC = () => {
-  const { metrics, centres } = useResilience();
+  const { metrics, centres, auditTrail } = useResilience();
   const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false);
+  const [closureModalOpen, setClosureModalOpen] = useState<boolean>(false);
 
   const handleExport = () => {
     setDownloadSuccess(true);
@@ -27,51 +34,84 @@ export const Reports: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
+
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-gray-200 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gray-900" />
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-gray-500">
-                Institutional Reporting & Analytics
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
+                Requirement 11: Post-Exam Audit Trail & Reporting
+              </span>
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">
+                Evidence-Based Certification
               </span>
             </div>
-            <h1 className="text-2xl font-black text-gray-900 mt-1">
-              Assessment Health & Resilience Reports
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
+              Post-Examination Audit Trail & Executive Closure
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Comprehensive post-examination verification, centre uptime benchmarks, and incident summaries
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
+              Maintains an immutable chronological record of what occurred before, during, and after examination sessions with complete empirical evidence.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setClosureModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white transition-colors cursor-pointer shadow-xs"
+            >
+              <Award className="w-4 h-4 text-amber-400" />
+              <span>View Executive Closure Seal</span>
+            </button>
+
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-4 h-4" />
-              <span>{downloadSuccess ? 'Report Exported (PDF/CSV)' : 'Export Official Audit Report'}</span>
+              <span>{downloadSuccess ? 'Report Exported (PDF/CSV)' : 'Export Official Incident Report'}</span>
             </button>
           </div>
         </div>
 
-        {/* TRUST SCORE / SYSTEM STATUS (Requirement 13) */}
+        {/* Featured Requirement 11 Callout Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-950 via-[#101928] to-gray-900 border border-blue-900/60 p-6 text-white shadow-lg">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1">
+                <FileText className="w-3 h-3 text-blue-400" />
+                Requirement 11 Mandated Example
+              </span>
+              <span className="text-xs text-gray-400 font-mono">Full Incident Lifecycle Documentation</span>
+            </div>
+
+            <blockquote className="text-base sm:text-lg font-bold text-gray-100 italic border-l-4 border-blue-500 pl-3.5 leading-snug">
+              “An administrator generates a final incident report showing the disruption, response, recovery process, and final decision.”
+            </blockquote>
+
+            <p className="text-xs text-gray-300 leading-relaxed">
+              At the close of the exam window, EVALTRUST generates a tamper-evident audit dossier consolidating incident timestamps, notification broadcasts, proctor approvals, response recovery rates (100%), and the formal executive sign-off for judicial and accreditation records.
+            </p>
+          </div>
+        </div>
+
+        {/* TRUST SCORE / SYSTEM STATUS */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Health Score Gauge (5 cols) */}
             <div className="lg:col-span-5 p-6 rounded-xl bg-[#F8F8F6] border border-gray-200 text-center space-y-3">
               <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block">
-                OVERALL ASSESSMENT HEALTH
+                OVERALL POST-EXAMINATION HEALTH
               </span>
               <div className="text-5xl font-black text-gray-900 font-mono tracking-tight">
-                98.7%
+                99.4%
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-[#16803C] text-xs font-bold">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>Fully Operational</span>
+                <span>100% Reconciled Zero-Loss</span>
               </div>
               <p className="text-[11px] text-gray-500 max-w-xs mx-auto leading-relaxed">
-                Aggregated system-status metric computed across multi-node telemetry and zero data loss confirmation.
+                Certified across 38 test centres, 14,820 candidate sessions, and 1 recovered WAN disruption.
               </p>
             </div>
 
@@ -84,7 +124,7 @@ export const Reports: React.FC = () => {
               <div className="space-y-2 text-xs">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-gray-700">1. Reliability (Server & Clusters)</span>
+                    <span className="font-semibold text-gray-700">1. Reliability (Edge & Cloud Clusters)</span>
                     <span className="font-mono font-bold text-gray-900">99.8%</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -94,7 +134,7 @@ export const Reports: React.FC = () => {
 
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-gray-700">2. Security (Encrypted Ledgers & Sandboxes)</span>
+                    <span className="font-semibold text-gray-700">2. Security (WORM Encrypted Ledgers)</span>
                     <span className="font-mono font-bold text-gray-900">100.0%</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -104,27 +144,27 @@ export const Reports: React.FC = () => {
 
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-gray-700">3. Connectivity (Multi-WAN Mesh & Carrier Uptime)</span>
-                    <span className="font-mono font-bold text-gray-900">98.4%</span>
+                    <span className="font-semibold text-gray-700">3. Speed (1.2s MTTD / 48s MTTR)</span>
+                    <span className="font-mono font-bold text-gray-900">99.1%</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '98.4%' }} />
+                    <div className="bg-[#16803C] h-full rounded-full" style={{ width: '99.1%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-gray-700">4. Recovery (Automated Failover & Delta Queues)</span>
-                    <span className="font-mono font-bold text-gray-900">97.6%</span>
+                    <span className="font-semibold text-gray-700">4. Precision (Data Reconciliation Parity)</span>
+                    <span className="font-mono font-bold text-[#16803C]">100.00% Zero-Loss</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div className="bg-amber-500 h-full rounded-full" style={{ width: '97.6%' }} />
+                    <div className="bg-[#16803C] h-full rounded-full" style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-gray-700">5. Audit (Merkle Root Consistency & Verification)</span>
+                    <span className="font-semibold text-gray-700">5. Fairness (Parity Score Across Disruptions)</span>
                     <span className="font-mono font-bold text-gray-900">100.0%</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -136,46 +176,46 @@ export const Reports: React.FC = () => {
           </div>
         </div>
 
-        {/* 6 REPORT SECTIONS (Requirement 12) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {/* Section 1: Assessment Summary */}
+        {/* 6 Comprehensive Post-Examination Report Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Section 1: Candidate Verification */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-red-50 text-[#C62828] flex items-center justify-center">
-                <FileSpreadsheet className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#16803C] flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4" />
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">1. Assessment Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">1. Response Verification</h3>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Paper ENG-304: Engineering Mathematics III. 14,820 total candidates registered across 38 centres with 0% unrecovered dropout.
+              14,820 of 14,820 candidates had 100% of their responses cross-verified against client-side IndexedDB sandboxes. Zero answers dropped.
             </p>
             <div className="pt-2 border-t border-gray-100 text-[11px] font-mono text-gray-500 space-y-1">
-              <div>Scheduled Duration: 60 Minutes</div>
-              <div>Submissions Received: 14,820</div>
+              <div>Verified Candidates: 14,820 / 14,820</div>
+              <div>Unreconciled Responses: 0</div>
             </div>
           </div>
 
-          {/* Section 2: Candidate Activity */}
+          {/* Section 2: Disruption & MTTD/MTTR */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                <TrendingUp className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-lg bg-red-50 text-[#C62828] flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4" />
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">2. Candidate Activity</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">2. Disruption Recovery</h3>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Total clicks registered: 412,890. Mean answer response time: 24.2 seconds. Real-time client heartbeats acknowledged with zero timeout.
+              1 disruption recorded at Centre 08. Detected in 1.2s; failover to secondary microwave completed in 48s. Exam timer was frozen during outage.
             </p>
             <div className="pt-2 border-t border-gray-100 text-[11px] font-mono text-gray-500 space-y-1">
-              <div>Average Progress: 72%</div>
-              <div>Marked for Review: 8.4%</div>
+              <div>Detection (MTTD): 1.2s</div>
+              <div>Recovery (MTTR): 48.0s</div>
             </div>
           </div>
 
           {/* Section 3: Centre Performance */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#16803C] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                 <Building2 className="w-4 h-4" />
               </div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">3. Centre Performance</h3>
@@ -189,57 +229,127 @@ export const Reports: React.FC = () => {
             </div>
           </div>
 
-          {/* Section 4: Incident Summary */}
+          {/* Section 4: Incident & Notification Log */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#C77A00] flex items-center justify-center">
                 <AlertTriangle className="w-4 h-4" />
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">4. Incident Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">4. Incident & Advisory Log</h3>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Incident #ET-1042 triggered automatically at 10:42:01. Sub-second threshold flagged ISP carrier severance. 7 workstations protected.
+              Incident #ET-1042 triggered automatically. 4 on-screen candidate advisories dispatched instructing calm; proctors approved time extension.
             </p>
             <div className="pt-2 border-t border-gray-100 text-[11px] font-mono text-gray-500 space-y-1">
               <div>Incident Severity: Medium</div>
-              <div>Human Intervention Needed: 0</div>
+              <div>Candidate Notifications: 4 Logged</div>
             </div>
           </div>
 
-          {/* Section 5: Recovery Summary */}
+          {/* Section 5: Authority Decision Sign-off */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
                 <RotateCcw className="w-4 h-4" />
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">5. Recovery Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">5. Authority Decisions</h3>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Delta stream reconciliation completed across all 7 affected nodes. All buffered responses committed to the central cluster with 0 conflicts.
+              Central Examination Authority authorized 'Extend' for Centre 08 (+312s compensatory time). 0 arbitrary invalidations executed.
             </p>
             <div className="pt-2 border-t border-gray-100 text-[11px] font-mono text-gray-500 space-y-1">
-              <div>Recovery Duration: 48s</div>
-              <div>Data Loss Rate: 0.00%</div>
+              <div>Sign-off Authority: Dr. R. C. Varma</div>
+              <div>Decision Status: Approved & Executed</div>
             </div>
           </div>
 
-          {/* Section 6: Audit Summary */}
+          {/* Section 6: Cryptographic Merkle Archive */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-gray-100 text-gray-900 flex items-center justify-center">
                 <FileCheck2 className="w-4 h-4" />
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">6. Audit Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900">6. Merkle Archive Sealed</h3>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Merkle tree state roots computed for all 14,820 candidate sessions. Cryptographically sealed for dispute-free judicial and institutional validity.
+              Merkle tree state roots computed for all 14,820 candidate sessions. Cryptographically sealed for dispute-free judicial validity.
             </p>
             <div className="pt-2 border-t border-gray-100 text-[11px] font-mono text-gray-500 space-y-1">
-              <div>Merkle Verification: 100% Passed</div>
-              <div>Audit Authority: National Board</div>
+              <div>Archive Seal: 0x3f9a...012a</div>
+              <div>Legal Integrity: 100% Immutable</div>
             </div>
           </div>
         </div>
+
+        {/* EXECUTIVE CLOSURE MODAL */}
+        {closureModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in">
+            <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border-4 border-blue-600 relative space-y-6">
+              <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Award className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-blue-700 font-bold block">
+                      CENTRAL BOARD OF ONLINE ASSESSMENTS
+                    </span>
+                    <h3 className="text-lg font-black text-gray-900">Official Examination Closure & Audit Seal</h3>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setClosureModalOpen(false)}
+                  className="p-1 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs text-gray-700 leading-relaxed">
+                <p>
+                  This official document confirms that <strong>Paper ENG-304 (Engineering Mathematics III)</strong> has formally completed all testing windows across <strong>38 Assessment Centres</strong> under the EVALTRUST Resilient Framework.
+                </p>
+
+                <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 font-mono text-[11px] space-y-1.5">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Report Code:</span>
+                    <span className="font-bold text-gray-900">{samplePostExamAuditReport.reportId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Total Validated Candidates:</span>
+                    <span className="font-bold text-gray-900">{samplePostExamAuditReport.totalCandidates}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Response Reconciliation:</span>
+                    <span className="font-bold text-[#16803C]">100.00% Zero-Loss Match</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Audit Merkle Seal:</span>
+                    <span className="font-bold text-gray-900 truncate max-w-xs">{samplePostExamAuditReport.merkleArchiveRoot}</span>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-gray-500">
+                  Certified with zero unauthorized edits, zero candidate loss, and complete empirical audit trails.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <span className="text-xs text-[#16803C] font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4" /> Formally Certified & Sealed
+                </span>
+                <button
+                  onClick={() => setClosureModalOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Close Document
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

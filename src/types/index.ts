@@ -163,6 +163,132 @@ export interface DisasterFallbackRecord {
   status: 'evacuated' | 'rebooked' | 'certified';
 }
 
+// Requirement 5: Secure & Tamper-Evident Storage
+export interface AuditAccessRecord {
+  id: string;
+  accessorName: string;
+  role: 'Central Auditor' | 'Chief Invigilator' | 'Security Officer' | 'Read-Only Inspector';
+  action: 'INSPECT_LEDGER' | 'VERIFY_HASH' | 'EXPORT_CERTIFICATE' | 'ATTEMPT_EDIT_REJECTED';
+  targetCandidate: string;
+  timestamp: string;
+  ipAddress: string;
+  authLevel: string;
+  outcome: 'PERMITTED_READ_ONLY' | 'TAMPER_PREVENTED' | 'AUTHENTICATED';
+}
+
+// Requirement 6: Intelligent Identification of Suspicious Patterns
+export interface SuspiciousPatternAlert {
+  id: string;
+  candidateId: string;
+  candidateName: string;
+  rollNumber: string;
+  centreId: string;
+  category: 'Unusual Keystroke Cadence' | 'Speed Anomaly (<2s/answer)' | 'Rapid IP Hop' | 'Repeated Abnormal Login' | 'Concurrent Session Breach';
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  flaggedAt: string;
+  confidenceScore: number; // 0 - 100%
+  evidenceDetails: string[];
+  status: 'Flagged for Review' | 'Under Investigation' | 'Cleared (Legitimate)' | 'Sanction Recommended';
+  reviewedBy?: string;
+  reviewRemarks?: string;
+}
+
+// Requirement 7: Automated Reconciliation and Validation
+export interface ReconciliationRecord {
+  id: string;
+  candidateId: string;
+  candidateName: string;
+  rollNumber: string;
+  examId: string;
+  savedResponsesCount: number;
+  finalSubmittedCount: number;
+  unreconciledDeltas: number;
+  discrepancyType: 'None (Exact Match)' | 'Missing Answer' | 'Option Conflict' | 'Timestamp Mismatch';
+  details: string;
+  merkleSealMatch: boolean;
+  status: 'Verified Reconciled' | 'Discrepancy Pending Review' | 'Manually Overridden';
+}
+
+// Requirement 8: Candidate Communication and Real-Time Status
+export interface CandidateCommunicationMessage {
+  id: string;
+  timestamp: string;
+  sessionState: 'Connected' | 'Interrupted' | 'Recovering' | 'Resumed';
+  title: string;
+  instruction: string;
+  isPaused: boolean;
+  deliveryChannel: 'On-Screen Banner' | 'Auditory Prompt' | 'SMS Backup';
+  acknowledged: boolean;
+}
+
+// Requirement 9: Decision Support for Rescheduling or Re-Conducting Exams
+export interface DecisionSupportRecord {
+  id: string;
+  incidentId: string;
+  centreId: string;
+  centreName: string;
+  affectedCandidates: number;
+  incidentDurationMinutes: number;
+  responseRecoveryPercent: number;
+  systemRecommendation: 'Resume' | 'Extend' | 'Pause' | 'Reschedule' | 'Re-Conduct';
+  confidenceScore: number;
+  authorityDecision?: 'Resume' | 'Extend' | 'Pause' | 'Reschedule' | 'Re-Conduct';
+  decisionRationale?: string;
+  authorizedOfficial?: string;
+  authorizedAt?: string;
+  status: 'Pending Authority Decision' | 'Approved & Executed' | 'Overridden';
+}
+
+// Requirement 10: Fairness and Consistency During Disruptions
+export interface FairnessComparisonItem {
+  id: string;
+  incidentGroup: string;
+  candidateA: {
+    name: string;
+    roll: string;
+    interruptionSeconds: number;
+    compensationGrantedSeconds: number;
+  };
+  candidateB: {
+    name: string;
+    roll: string;
+    interruptionSeconds: number;
+    compensationGrantedSeconds: number;
+  };
+  parityScore: number; // 100% means equal treatment
+  policyCompliance: boolean;
+  standardFormula: string;
+}
+
+export interface StudentGrievanceTicket {
+  ticketId: string;
+  candidateName: string;
+  rollNumber: string;
+  centreName: string;
+  incidentTime: string;
+  claimedLossMinutes: number;
+  automatedCompensationMinutes: number;
+  grievanceReason: string;
+  status: 'Submitted' | 'Under Official Review' | 'Resolved - Extra Buffer Granted' | 'Dismissed with Evidence';
+  resolvedBy?: string;
+}
+
+// Requirement 11: Post-Examination Audit Trail and Evidence-Based Reporting
+export interface PostExamAuditReport {
+  reportId: string;
+  examId: string;
+  totalCandidates: number;
+  totalCentres: number;
+  reconciliationRate: number; // 100%
+  totalDisruptionsLogged: number;
+  averageMTTD: string;
+  averageMTTR: string;
+  dataLossRate: string; // 0.00%
+  executiveClosureStatus: 'Formally Certified & Sealed' | 'In Audit Review';
+  generatedAt: string;
+  merkleArchiveRoot: string;
+}
+
 export type LuxuryThemeId = 'imperial_crimson' | 'obsidian_noir' | 'swiss_platinum' | 'sovereign_gold';
 
 export interface LuxuryTheme {

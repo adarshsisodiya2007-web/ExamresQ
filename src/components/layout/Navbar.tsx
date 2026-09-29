@@ -26,7 +26,10 @@ import {
   User,
   Sliders,
   HelpCircle,
-  Radar
+  Radar,
+  Scale,
+  GitCompare,
+  Eye
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -49,10 +52,13 @@ export const Navbar: React.FC = () => {
     { id: 'operations', label: 'Operations Dashboard', icon: <Activity className="w-4 h-4" /> },
     { id: 'early_detection', label: 'Early Detection & Risk (Req 2)', icon: <Radar className="w-4 h-4 text-amber-500" />, badge: 'AI Predict' },
     { id: 'centres', label: 'Centre Monitoring (38)', icon: <Building2 className="w-4 h-4" />, badge: '38 Online' },
-    { id: 'incidents', label: 'Incident Mgmt & Escalation (Req 3)', icon: <AlertOctagon className="w-4 h-4 text-[#C62828]" />, badge: '1 Active' },
-    { id: 'recovery', label: 'Backup & Disaster Recovery (Req 4)', icon: <RotateCcw className="w-4 h-4 text-blue-600" />, badge: 'Zero-Loss' },
-    { id: 'audit', label: 'Cryptographic Audit', icon: <FileCheck2 className="w-4 h-4" /> },
-    { id: 'reports', label: 'Analytical Reports', icon: <BarChart3 className="w-4 h-4" /> },
+    { id: 'incidents', label: 'Incident Mgmt & Escalation (Req 3)', icon: <AlertOctagon className="w-4 h-4 text-[#C62828]" />, badge: 'Req 3' },
+    { id: 'recovery', label: 'Backup & Disaster Recovery (Req 4)', icon: <RotateCcw className="w-4 h-4 text-blue-600" />, badge: 'Req 4' },
+    { id: 'audit', label: 'Tamper-Evident Storage (Req 5)', icon: <FileCheck2 className="w-4 h-4 text-emerald-600" />, badge: 'Req 5' },
+    { id: 'suspicious_patterns', label: 'Suspicious Pattern Review (Req 6)', icon: <Eye className="w-4 h-4 text-orange-500" />, badge: 'Req 6' },
+    { id: 'reconciliation', label: 'Reconciliation & Validation (Req 7)', icon: <GitCompare className="w-4 h-4 text-purple-600" />, badge: 'Req 7' },
+    { id: 'decision_support', label: 'Decision Support & Fairness (Req 9, 10)', icon: <Scale className="w-4 h-4 text-blue-500" />, badge: 'Req 9, 10' },
+    { id: 'reports', label: 'Post-Exam Evidence Reports (Req 11)', icon: <BarChart3 className="w-4 h-4 text-gray-700" />, badge: 'Req 11' },
     { id: 'settings', label: 'Governance Settings', icon: <SettingsIcon className="w-4 h-4" /> },
   ];
 

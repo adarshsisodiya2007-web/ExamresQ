@@ -26,6 +26,9 @@ export type AppView =
   | 'incidents' 
   | 'recovery' 
   | 'audit' 
+  | 'suspicious_patterns'
+  | 'reconciliation'
+  | 'decision_support'
   | 'reports' 
   | 'settings';
 

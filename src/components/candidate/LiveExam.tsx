@@ -24,8 +24,12 @@ import {
   Minimize,
   AlertOctagon,
   RotateCcw,
-  ExternalLink
+  ExternalLink,
+  MessageSquare,
+  Radio,
+  Volume2
 } from 'lucide-react';
+import { sampleCandidateBroadcastHistory } from '../../data/governanceSecurityData';
 
 export const LiveExam: React.FC = () => {
   const { 
@@ -53,6 +57,7 @@ export const LiveExam: React.FC = () => {
   const [terminationTime, setTerminationTime] = useState<string>('');
   const [warningBanner, setWarningBanner] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [communicationHistoryOpen, setCommunicationHistoryOpen] = useState<boolean>(false);
 
   // Format time MM:SS
   const formatTime = (secs: number) => {
@@ -470,6 +475,74 @@ export const LiveExam: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT: QUESTION WORKSPACE (8 cols) */}
           <div className="lg:col-span-8 space-y-5">
+
+            {/* REQUIREMENT 8: CANDIDATE COMMUNICATION & REAL-TIME STATUS BANNER */}
+            <div className={`p-4 rounded-2xl border transition-all duration-300 ${
+              networkStatus === 'interrupted' 
+                ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200' 
+                : networkStatus === 'reconnecting'
+                ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-200'
+                : 'bg-white dark:bg-[#13151D] border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white shadow-xs'
+            }`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-start sm:items-center gap-2.5">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    networkStatus === 'interrupted' ? 'bg-amber-100 dark:bg-amber-900/60 text-[#C77A00]' :
+                    networkStatus === 'reconnecting' ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-600 animate-spin' :
+                    'bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C]'
+                  }`}>
+                    {networkStatus === 'interrupted' ? <AlertTriangle className="w-4 h-4" /> :
+                     networkStatus === 'reconnecting' ? <RotateCcw className="w-4 h-4" /> :
+                     <Radio className="w-4 h-4 animate-pulse" />}
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                        Requirement 8: Candidate Advisory
+                      </span>
+                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                        networkStatus === 'interrupted' ? 'bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-100' :
+                        networkStatus === 'reconnecting' ? 'bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100' :
+                        'bg-emerald-100 dark:bg-emerald-900 text-[#16803C] dark:text-emerald-200'
+                      }`}>
+                        Status: {networkStatus.toUpperCase()} • {networkStatus === 'interrupted' ? 'EXAM PAUSED (TIMER FROZEN)' : 'EXAM CONTINUING'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs mt-1 font-medium leading-relaxed">
+                      {networkStatus === 'interrupted' && (
+                        <span>
+                          <strong>Please remain seated and calm.</strong> Your session has been interrupted, and your saved responses are safely encrypted locally. The central authority is checking your records and establishing secondary link.
+                        </span>
+                      )}
+                      {networkStatus === 'reconnecting' && (
+                        <span>
+                          <strong>Secondary route connected.</strong> Reconciling candidate buffered responses with the central cluster before resuming your test paper.
+                        </span>
+                      )}
+                      {networkStatus === 'connected' && (
+                        <span>
+                          <strong>Active session operational.</strong> Periodic auto-save heartbeat commits answers every 3 seconds with zero interruption.
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-2">
+                  <button
+                    onClick={() => setCommunicationHistoryOpen(true)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors cursor-pointer flex items-center gap-1.5"
+                    title="View candidate communication history"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Advisory History (4)</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Question Card */}
             <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-7 shadow-xs relative">
               {/* Security Shield Watermark Pill */}
@@ -684,6 +757,71 @@ export const LiveExam: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* REQUIREMENT 8: CANDIDATE COMMUNICATION HISTORY MODAL */}
+      {communicationHistoryOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#13151D] text-gray-900 dark:text-white rounded-3xl max-w-lg w-full border border-gray-200 dark:border-gray-800 shadow-2xl p-6 sm:p-7 space-y-6">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold">Candidate Advisory & Status History</h3>
+                  <p className="text-xs text-gray-500 font-mono">Requirement 8 Chronological Broadcast Log</p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setCommunicationHistoryOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+              {sampleCandidateBroadcastHistory.map((msg) => (
+                <div 
+                  key={msg.id}
+                  className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/60 dark:bg-[#1A1E2B] space-y-2 text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${
+                        msg.sessionState === 'Interrupted' ? 'bg-[#C62828]' :
+                        msg.sessionState === 'Recovering' ? 'bg-blue-600 animate-spin' :
+                        'bg-[#16803C]'
+                      }`} />
+                      {msg.title}
+                    </span>
+                    <span className="font-mono text-gray-500 text-[11px]">{msg.timestamp}</span>
+                  </div>
+
+                  <p className="text-gray-600 dark:text-gray-300 text-[11px] leading-relaxed">
+                    {msg.instruction}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-gray-700 text-[10px] text-gray-500 font-mono">
+                    <span>Channel: {msg.deliveryChannel}</span>
+                    <span className="text-[#16803C] font-bold">✓ Delivered & Displayed</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-end pt-2">
+              <button
+                onClick={() => setCommunicationHistoryOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white dark:bg-white dark:text-black cursor-pointer"
+              >
+                Close Advisory Log
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

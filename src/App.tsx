@@ -14,6 +14,9 @@ import { IncidentCenter } from './components/incidents/IncidentCenter';
 import { RecoveryCenter } from './components/recovery/RecoveryCenter';
 import { EarlyDetectionDashboard } from './components/operations/EarlyDetectionDashboard';
 import { AuditTrust } from './components/audit/AuditTrust';
+import { SuspiciousPatternCenter } from './components/security/SuspiciousPatternCenter';
+import { ReconciliationCenter } from './components/audit/ReconciliationCenter';
+import { DecisionSupportCenter } from './components/operations/DecisionSupportCenter';
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
 
@@ -40,6 +43,12 @@ const AppContent: React.FC = () => {
         return <RecoveryCenter />;
       case 'audit':
         return <AuditTrust />;
+      case 'suspicious_patterns':
+        return <SuspiciousPatternCenter />;
+      case 'reconciliation':
+        return <ReconciliationCenter />;
+      case 'decision_support':
+        return <DecisionSupportCenter />;
       case 'reports':
         return <Reports />;
       case 'settings':
