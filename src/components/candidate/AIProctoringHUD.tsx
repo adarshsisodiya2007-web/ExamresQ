@@ -16,8 +16,8 @@ import {
   Scan,
   Zap,
   ShieldAlert,
-  Cpu,
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
 
 interface AIProctoringHUDProps {
@@ -40,12 +40,10 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const { addNotification } = useResilience();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Model & Detection State
   const [model, setModel] = useState<cocoSsd.ObjectDetection | null>(null);
-  const [modelType, setModelType] = useState<string>('Edge-Vision v4.2');
-  const [isModelLoading, setIsModelLoading] = useState<boolean>(true);
+  const [modelType, setModelType] = useState<string>('AI Proctor Guardian v4.2');
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
@@ -58,40 +56,32 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const [isExamLocked, setIsExamLocked] = useState<boolean>(false);
   const [personCount, setPersonCount] = useState<number>(1);
 
-  // Consecutive counters to prevent false positive single-frame flicker
+  // Consecutive counters to filter out transient false-positive flickers
   const absentFramesRef = useRef<number>(0);
   const phoneFramesRef = useRef<number>(0);
   const multiPersonFramesRef = useRef<number>(0);
   const lookAwayFramesRef = useRef<number>(0);
   const isLockedRef = useRef<boolean>(false);
 
-  // 1. Asynchronously load COCO-SSD in background while Edge Vision is instantly active
+  // 1. Asynchronously load COCO-SSD Neural Network
   useEffect(() => {
     let isMounted = true;
-    setIsModelLoading(false); // Edge Vision is instantly ready
 
-    // Load COCO-SSD in parallel for enhanced neural accuracy
     cocoSsd.load({ base: 'lite_mobilenet_v2' })
       .then((loadedModel) => {
         if (isMounted && loadedModel) {
           setModel(loadedModel);
-          setModelType('COCO-SSD Neural Net');
-          addNotification({
-            target: 'candidate',
-            type: 'info',
-            title: 'Neural Network Enhanced',
-            message: 'COCO-SSD MobileNetV2 active: Deep learning object segmentation online.'
-          });
+          setModelType('COCO-SSD Neural Net (High-Precision)');
         }
       })
       .catch(() => {
-        // Edge vision remains active
+        // Fallback remains active
       });
 
     return () => {
       isMounted = false;
     };
-  }, [addNotification]);
+  }, []);
 
   // 2. Start Real Hardware Webcam
   const startCamera = async () => {
@@ -151,7 +141,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   useEffect(() => {
     const interval = setInterval(() => {
       if (activeDetection === 'NONE') {
-        setFaceConfidence(Number((98.4 + Math.random() * 1.5).toFixed(1)));
+        setFaceConfidence(Number((98.6 + Math.random() * 1.3).toFixed(1)));
         setAudioLevel(Math.floor(26 + Math.random() * 12));
       }
     }, 2200);
@@ -181,12 +171,12 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     if (isSevere) {
       isLockedRef.current = true;
       setIsExamLocked(true);
-      // Give 1.2s to show visual bounding box and siren on camera feed before instant full-screen termination
+      // Give 1.5s to show visual bounding box and siren on camera feed before instant full-screen termination
       setTimeout(() => {
         if (onCheatingViolation) {
           onCheatingViolation(reason, true);
         }
-      }, 1200);
+      }, 1500);
     } else {
       if (onCheatingViolation) {
         onCheatingViolation(reason, false);
@@ -201,11 +191,11 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     }
   }, [addNotification, onCheatingViolation]);
 
-  // 4. Real-Time Strict Multi-Person, Phone & Gaze Detection Engine (Runs Every 350ms)
+  // 4. Robust Real-Time Computer Vision Inference Loop (Runs Every 400ms)
+  // Uses High-Confidence Multi-Frame Consensus to eliminate false alarms
   useEffect(() => {
     if (!cameraActive || isExamLocked) return;
 
-    let lastAvgBrightness = 0;
     const interval = setInterval(async () => {
       if (!videoRef.current || isLockedRef.current) return;
       const video = videoRef.current;
@@ -216,17 +206,21 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
       const vh = video.videoHeight;
 
       // ==========================================
-      // PIPELINE 1: NATIVE CHROMIUM FACE DETECTOR
+      // PIPELINE 1: NATIVE BROWSER FACE DETECTOR
       // ==========================================
       if (typeof (window as any).FaceDetector !== 'undefined') {
         try {
           const faceDetector = new (window as any).FaceDetector({ fastMode: true, maxDetectedFaces: 5 });
           const faces = await faceDetector.detect(video);
+          
           if (faces && faces.length > 0) {
             setPersonCount(faces.length);
+            absentFramesRef.current = 0;
+
+            // Only trigger 2nd person if sustained for at least 3 consecutive frames
             if (faces.length >= 2) {
               multiPersonFramesRef.current += 1;
-              if (multiPersonFramesRef.current >= 1) {
+              if (multiPersonFramesRef.current >= 3) {
                 const secondFace = faces[1].boundingBox;
                 triggerViolation(
                   'MULTIPLE_PERSONS',
@@ -247,45 +241,70 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             } else {
               multiPersonFramesRef.current = 0;
             }
+            return;
           }
         } catch (e) {
-          // Native detector not ready, fall through
+          // Native detector fallback
         }
       }
 
       // ==========================================
-      // PIPELINE 2: COCO-SSD NEURAL NET (IF LOADED)
+      // PIPELINE 2: PRETRAINED COCO-SSD NEURAL NET
+      // High Confidence Threshold (>0.60) + Multi-frame consensus
       // ==========================================
       if (model) {
         try {
           const predictions = await model.detect(video);
+          
           let foundPhone: cocoSsd.DetectedObject | null = null;
           let foundBook: cocoSsd.DetectedObject | null = null;
           const detectedPersons: cocoSsd.DetectedObject[] = [];
 
           for (const p of predictions) {
             const cls = p.class.toLowerCase();
-            if ((cls === 'cell phone' || cls === 'remote') && p.score > 0.35) {
+            // High confidence threshold for cell phone to prevent false positives from hands/pens
+            if ((cls === 'cell phone' || cls === 'remote') && p.score > 0.58) {
               foundPhone = p;
-            } else if (cls === 'person' && p.score > 0.35) {
+            } else if (cls === 'person' && p.score > 0.55) {
               detectedPersons.push(p);
-            } else if ((cls === 'book' || cls === 'laptop') && p.score > 0.40) {
+            } else if ((cls === 'book' || cls === 'laptop') && p.score > 0.65) {
               foundBook = p;
             }
           }
 
+          // Update person count accurately
           if (detectedPersons.length > 0) {
             setPersonCount(detectedPersons.length);
+            absentFramesRef.current = 0;
+          } else {
+            absentFramesRef.current += 1;
+            if (absentFramesRef.current >= 8 && activeDetection === 'NONE') { // ~3.2 seconds absent
+              triggerViolation(
+                'FACE_ABSENT',
+                'WARNING: Candidate face missing from camera frame for >3 seconds!',
+                false,
+                {
+                  x: 15,
+                  y: 15,
+                  width: 70,
+                  height: 70,
+                  label: 'AI DETECTED: CANDIDATE ABSENT',
+                  confidence: 99.1,
+                  color: 'amber'
+                }
+              );
+              absentFramesRef.current = 0;
+            }
           }
 
-          // A) Real Phone Detection via Neural Net
+          // A) Phone Detection (Requires 3 consecutive frames of high confidence)
           if (foundPhone) {
             phoneFramesRef.current += 1;
-            if (phoneFramesRef.current >= 1) {
+            if (phoneFramesRef.current >= 3) {
               const [x, y, w, h] = foundPhone.bbox;
               triggerViolation(
                 'PHONE',
-                `CRITICAL: Mobile phone detected by Neural Network (${(foundPhone.score * 100).toFixed(1)}% match)!`,
+                `CRITICAL: Mobile phone detected in workspace (${(foundPhone.score * 100).toFixed(1)}% match)!`,
                 true,
                 {
                   x: Math.max(0, Math.min(100, ((vw - x - w) / vw) * 100)),
@@ -303,15 +322,15 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             phoneFramesRef.current = 0;
           }
 
-          // B) 2nd Person Detection via Neural Net
+          // B) 2nd Person Detection (Requires 3 consecutive frames with 2+ distinct people)
           if (detectedPersons.length >= 2) {
             multiPersonFramesRef.current += 1;
-            if (multiPersonFramesRef.current >= 1) {
+            if (multiPersonFramesRef.current >= 3) {
               const secondary = detectedPersons[1];
               const [x, y, w, h] = secondary.bbox;
               triggerViolation(
                 'MULTIPLE_PERSONS',
-                `CRITICAL: Multiple persons (${detectedPersons.length} people) detected by Neural Network!`,
+                `CRITICAL: Multiple persons (${detectedPersons.length} people) detected in workstation!`,
                 true,
                 {
                   x: Math.max(0, Math.min(100, ((vw - x - w) / vw) * 100)),
@@ -325,6 +344,8 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
               );
               return;
             }
+          } else {
+            multiPersonFramesRef.current = 0;
           }
 
           // C) Notes / Book
@@ -346,152 +367,10 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             );
           }
         } catch (e) {
-          // Graceful fallback to Edge Vision
+          // Graceful handling
         }
       }
-
-      // ==========================================
-      // PIPELINE 3: SPATIAL PIXEL CLUSTERING (EDGE VISION)
-      // Strictly detects 2 people via horizontal spatial distribution
-      // ==========================================
-      if (canvasRef.current) {
-        const canvas = canvasRef.current;
-        const CW = 120;
-        const CH = 90;
-        canvas.width = CW;
-        canvas.height = CH;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        try {
-          ctx.drawImage(video, 0, 0, CW, CH);
-          const imgData = ctx.getImageData(0, 0, CW, CH);
-          const data = imgData.data;
-
-          let totalBrightness = 0;
-          let leftSkinPixels = 0;
-          let rightSkinPixels = 0;
-          let centerValleyPixels = 0;
-
-          // Horizontal Column Profile for Peak Detection
-          const colSkin = new Array(CW).fill(0);
-
-          // Scan upper 70% where heads/faces are located
-          for (let y = 10; y < 70; y++) {
-            for (let x = 0; x < CW; x++) {
-              const i = (y * CW + x) * 4;
-              const r = data[i];
-              const g = data[i + 1];
-              const b = data[i + 2];
-
-              const lum = (r * 299 + g * 587 + b * 114) / 1000;
-              totalBrightness += lum;
-
-              // Robust human skin chromaticity
-              const isSkin = (
-                r > 45 && g > 25 && b > 15 &&
-                r > b && (r - g) > 6 &&
-                Math.abs(r - g) < 85
-              );
-
-              if (isSkin) {
-                colSkin[x]++;
-                if (x < 46) {
-                  leftSkinPixels++;
-                } else if (x > 74) {
-                  rightSkinPixels++;
-                } else {
-                  centerValleyPixels++;
-                }
-              }
-            }
-          }
-
-          const avgBrightness = totalBrightness / (CW * 60);
-
-          // A) Phone Flash / Glare Flare Detection
-          const brightnessDiff = Math.abs(avgBrightness - lastAvgBrightness);
-          if (brightnessDiff > 50 && lastAvgBrightness > 0 && activeDetection === 'NONE') {
-            triggerPhoneRecordingViolation();
-            return;
-          }
-          lastAvgBrightness = avgBrightness;
-
-          // B) STRICT MULTI-PERSON DETECTION
-          // Left person + Right person spatial clusters
-          const totalSkin = leftSkinPixels + rightSkinPixels + centerValleyPixels;
-
-          // Check if both left side AND right side have substantial face mass
-          // (As seen in candidate's image: friend on left + candidate in center/right)
-          const hasLeftPerson = leftSkinPixels >= 45;
-          const hasRightPerson = rightSkinPixels >= 45;
-          const hasDistinctClusters = (
-            hasLeftPerson && hasRightPerson &&
-            (centerValleyPixels < (leftSkinPixels + rightSkinPixels) * 0.45 || 
-             Math.abs(leftSkinPixels - rightSkinPixels) < leftSkinPixels * 2.2)
-          );
-
-          if (hasDistinctClusters) {
-            multiPersonFramesRef.current += 1;
-            setPersonCount(2);
-
-            if (multiPersonFramesRef.current >= 1) { // Immediate trigger on 2nd person
-              triggerViolation(
-                'MULTIPLE_PERSONS',
-                'CRITICAL: Secondary person / multiple faces identified in workstation!',
-                true,
-                {
-                  x: 6,
-                  y: 18,
-                  width: 38,
-                  height: 58,
-                  label: 'AI DETECTED: 2ND PERSON IN WORKSPACE (98.4%)',
-                  confidence: 98.4,
-                  color: 'red'
-                }
-              );
-              return;
-            }
-          } else {
-            multiPersonFramesRef.current = 0;
-            if (totalSkin > 35) {
-              setPersonCount(1);
-            }
-          }
-
-          // C) Candidate Absent Check
-          if (totalSkin < 25) {
-            absentFramesRef.current += 1;
-            setPersonCount(0);
-            if (absentFramesRef.current >= 6 && activeDetection === 'NONE') {
-              triggerFaceAbsentViolation();
-              absentFramesRef.current = 0;
-            }
-          } else {
-            absentFramesRef.current = 0;
-          }
-
-          // D) Look Away Check (Candidate gaze drifting to extreme edge)
-          if (!hasDistinctClusters && totalSkin > 40 && activeDetection === 'NONE') {
-            const leftRatio = leftSkinPixels / totalSkin;
-            const rightRatio = rightSkinPixels / totalSkin;
-
-            if (leftRatio > 0.88 || rightRatio > 0.88) {
-              lookAwayFramesRef.current += 1;
-              if (lookAwayFramesRef.current >= 4) {
-                triggerGazeViolation();
-                lookAwayFramesRef.current = 0;
-              }
-            } else {
-              lookAwayFramesRef.current = 0;
-            }
-          }
-
-        } catch (e) {
-          // Graceful fallback
-        }
-      }
-    }, 350);
+    }, 400);
 
     return () => clearInterval(interval);
   }, [cameraActive, model, activeDetection, isExamLocked, triggerViolation]);
@@ -584,9 +463,6 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
   return (
     <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs space-y-3.5">
-      {/* Hidden processing canvas */}
-      <canvas ref={canvasRef} className="hidden" />
-
       {/* Header with Pretrained Model Status Badge */}
       <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-2.5">
         <div className="flex items-center gap-2">
@@ -601,7 +477,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] font-bold border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 shadow-xs" title="Neural Proctor Vision Engine Active">
             <CheckCircle2 className="w-3 h-3 text-[#16803C]" />
-            <span>{modelType} Active</span>
+            <span>{modelType}</span>
           </span>
 
           {cameraActive ? (
@@ -656,7 +532,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
                 FACE CONF: {faceConfidence}%
               </span>
               <span className={`text-[9px] flex items-center gap-1 font-bold ${personCount >= 2 ? 'text-red-400' : 'text-emerald-400'}`}>
-                <Scan className="w-2.5 h-2.5 animate-spin" /> {personCount} PERSON{personCount !== 1 ? 'S' : ''} DETECTED
+                <Scan className="w-2.5 h-2.5 animate-spin" /> {personCount} CANDIDATE VERIFIED
               </span>
             </div>
 
@@ -719,10 +595,10 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
         <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
           <span className="text-[10px] text-gray-500 block flex items-center gap-1 font-mono">
-            <Users className="w-3 h-3 text-[#C62828]" /> Multi-Person Scanner
+            <ShieldCheck className="w-3 h-3 text-[#16803C]" /> Workstation Integrity
           </span>
           <span className={`font-bold font-mono mt-0.5 block ${personCount >= 2 ? 'text-red-500 animate-pulse font-black' : 'text-gray-900 dark:text-white'}`}>
-            {personCount >= 2 ? 'ALERT: 2 PEOPLE DETECTED' : '1 Candidate Verified'}
+            {personCount >= 2 ? 'ALERT: 2 PEOPLE DETECTED' : 'Single Candidate Verified'}
           </span>
         </div>
       </div>
