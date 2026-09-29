@@ -25,7 +25,8 @@ import {
   Globe,
   User,
   Sliders,
-  HelpCircle
+  HelpCircle,
+  Radar
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -46,6 +47,7 @@ export const Navbar: React.FC = () => {
   // Grouped Navigation by systematic domain
   const operationsViews: { id: AppView; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'operations', label: 'Operations Dashboard', icon: <Activity className="w-4 h-4" /> },
+    { id: 'early_detection', label: 'Early Detection & Risk (Req 2)', icon: <Radar className="w-4 h-4 text-amber-500" />, badge: 'AI Predict' },
     { id: 'centres', label: 'Centre Monitoring (38)', icon: <Building2 className="w-4 h-4" />, badge: '38 Online' },
     { id: 'incidents', label: 'Incident Center', icon: <AlertOctagon className="w-4 h-4" />, badge: '1 Active' },
     { id: 'recovery', label: 'Recovery & Failover', icon: <RotateCcw className="w-4 h-4" /> },
@@ -184,6 +186,23 @@ export const Navbar: React.FC = () => {
                 <FileSpreadsheet className="w-3.5 h-3.5 text-[#C62828]" />
                 <span>Live Exam</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16803C] animate-pulse" />
+              </button>
+
+              {/* Requirement 2: Early Detection & Predictive Risk Direct Button */}
+              <button
+                onClick={() => handleNavClick('early_detection')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  currentView === 'early_detection'
+                    ? 'bg-white dark:bg-[#181B26] text-[#C62828] shadow-xs'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+                title="Requirement 2: Identify potential technical or operational failures before they cause widespread disruption"
+              >
+                <Radar className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                <span>Early Detection</span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300">
+                  Req 2
+                </span>
               </button>
 
               {/* Domain 3: Operations & Governance Dropdown */}
@@ -337,6 +356,20 @@ export const Navbar: React.FC = () => {
               >
                 <FileSpreadsheet className="w-4 h-4 text-[#C62828]" />
                 <span>Live Examination Room</span>
+              </button>
+              <button
+                onClick={() => handleNavClick('early_detection')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold ${
+                  currentView === 'early_detection' ? 'bg-red-50 text-[#C62828]' : 'text-gray-700 dark:text-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Radar className="w-4 h-4 text-amber-500" />
+                  <span>Early Detection & Risk</span>
+                </div>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-700">
+                  Req 2
+                </span>
               </button>
             </div>
 

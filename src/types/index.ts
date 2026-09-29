@@ -46,6 +46,16 @@ export interface AssessmentCentre {
   lastSync: string;
   ipRange: string;
   edgeGatewayStatus: 'online' | 'degraded' | 'failover';
+  // Requirement 2: Early Detection & Predictive Risk Fields
+  riskCategory?: 'low' | 'moderate' | 'high' | 'critical';
+  stabilityScore?: number; // 0 - 100%
+  repeatedDisconnections?: number; // count in last 60 mins
+  predictedDisruptionProbability?: number; // % chance of disruption before next session
+  packetLossPercent?: number;
+  jitterMs?: number;
+  observedIndicators?: string[];
+  preventiveRecommendations?: string[];
+  warningNoticeIssued?: boolean;
 }
 
 export interface IncidentRecord {

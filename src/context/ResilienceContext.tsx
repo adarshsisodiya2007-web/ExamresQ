@@ -21,6 +21,7 @@ export type AppView =
   | 'candidate_portal' 
   | 'live_exam' 
   | 'operations' 
+  | 'early_detection'
   | 'centres' 
   | 'incidents' 
   | 'recovery' 

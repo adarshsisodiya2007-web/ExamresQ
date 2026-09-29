@@ -13,7 +13,8 @@ import {
   Award,
   ChevronDown,
   ChevronUp,
-  ArrowRight
+  ArrowRight,
+  Radar
 } from 'lucide-react';
 
 interface LifecycleNode {
@@ -54,11 +55,11 @@ export const LifecycleBar: React.FC = () => {
     },
     {
       step: 3,
-      label: 'PROBLEM DETECTED',
-      sub: '1.2s Watchdog',
-      targetView: 'incidents',
-      icon: <AlertTriangle className="w-3.5 h-3.5" />,
-      isActive: () => networkStatus === 'interrupted' || protectionStage === 'connection_lost'
+      label: 'EARLY DETECTION',
+      sub: 'Predictive Risk (Req 2)',
+      targetView: 'early_detection',
+      icon: <Radar className="w-3.5 h-3.5" />,
+      isActive: () => currentView === 'early_detection' || networkStatus === 'interrupted' || protectionStage === 'connection_lost'
     },
     {
       step: 4,

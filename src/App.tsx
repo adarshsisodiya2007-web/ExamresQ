@@ -12,6 +12,7 @@ import { OperationsDashboard } from './components/operations/OperationsDashboard
 import { CentreMonitoring } from './components/centres/CentreMonitoring';
 import { IncidentCenter } from './components/incidents/IncidentCenter';
 import { RecoveryCenter } from './components/recovery/RecoveryCenter';
+import { EarlyDetectionDashboard } from './components/operations/EarlyDetectionDashboard';
 import { AuditTrust } from './components/audit/AuditTrust';
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
@@ -29,6 +30,8 @@ const AppContent: React.FC = () => {
         return <CandidatePortal />;
       case 'operations':
         return <OperationsDashboard />;
+      case 'early_detection':
+        return <EarlyDetectionDashboard />;
       case 'centres':
         return <CentreMonitoring />;
       case 'incidents':
