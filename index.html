@@ -9,8 +9,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F8F8F6] text-[#171717] antialiased selection:bg-[#C62828] selection:text-white">
-    <div id="root"></div>
+  <body class="bg-[#FFFBFB] text-[#171717] antialiased selection:bg-[#C62828] selection:text-white">
+    <div id="root">
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #FFFBFB; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px;">
+        <div style="position: relative; width: 80px; height: 80px; margin-bottom: 24px;">
+          <div style="position: absolute; inset: 0; border: 4px solid #FEE2E2; border-top-color: #C62828; border-radius: 50%; animation: examresq-spin 1s linear infinite;"></div>
+          <div style="position: absolute; inset: 12px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(198, 40, 40, 0.15);">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: #C62828;"></div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 800; color: #111827; letter-spacing: -0.02em;">
+            Exam<span style="color: #C62828;">resQ</span>
+          </h2>
+          <p style="margin: 0; font-size: 12px; font-weight: 600; color: #6B7280; font-family: monospace; letter-spacing: 0.05em; text-transform: uppercase;">
+            Initializing Resilient Assessment Terminal...
+          </p>
+        </div>
+      </div>
+      <style>
+        @keyframes examresq-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

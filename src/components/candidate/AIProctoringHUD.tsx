@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import * as cocoSsd from '@tensorflow-models/coco-ssd';
-import '@tensorflow/tfjs';
 import { useResilience } from '../../context/ResilienceContext';
 import { 
   Camera, 
@@ -38,13 +36,19 @@ interface BoundingBox {
   color: 'red' | 'amber' | 'emerald';
 }
 
+interface DetectedObject {
+  bbox: [number, number, number, number];
+  class: string;
+  score: number;
+}
+
 export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViolation }) => {
   const { addNotification } = useResilience();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Model & Detection State
-  const [model, setModel] = useState<cocoSsd.ObjectDetection | null>(null);
+  // Model & Detection State (Loaded lazily to guarantee instant app startup & no WebGL crashes)
+  const [model, setModel] = useState<any | null>(null);
   const [modelType, setModelType] = useState<string>('AI Proctor Guardian v4.2');
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -65,20 +69,25 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const lookAwayFramesRef = useRef<number>(0);
   const isLockedRef = useRef<boolean>(false);
 
-  // 1. Asynchronously load COCO-SSD Neural Network
+  // 1. Asynchronously load COCO-SSD Neural Network lazily (no main chunk bloat)
   useEffect(() => {
     let isMounted = true;
 
-    cocoSsd.load({ base: 'lite_mobilenet_v2' })
-      .then((loadedModel) => {
+    const loadCocoModel = async () => {
+      try {
+        await import('@tensorflow/tfjs');
+        const cocoSsd = await import('@tensorflow-models/coco-ssd');
+        const loadedModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
         if (isMounted && loadedModel) {
           setModel(loadedModel);
           setModelType('COCO-SSD Neural Net (High-Precision)');
         }
-      })
-      .catch(() => {
-        // Fallback remains active
-      });
+      } catch (err) {
+        console.warn('AI Computer Vision model initialized in fallback mode:', err);
+      }
+    };
+
+    loadCocoModel();
 
     return () => {
       isMounted = false;
@@ -260,9 +269,9 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         try {
           const predictions = await model.detect(video);
           
-          let foundPhone: cocoSsd.DetectedObject | null = null;
-          let foundBook: cocoSsd.DetectedObject | null = null;
-          const detectedPersons: cocoSsd.DetectedObject[] = [];
+          let foundPhone: DetectedObject | null = null;
+          let foundBook: DetectedObject | null = null;
+          const detectedPersons: DetectedObject[] = [];
 
           for (const p of predictions) {
             const cls = p.class.toLowerCase();

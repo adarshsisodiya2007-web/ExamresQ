@@ -10,7 +10,8 @@ import {
   Zap, 
   Activity, 
   Cpu,
-  User
+  User,
+  X
 } from 'lucide-react';
 
 export const RoleTransitionSplash: React.FC = () => {
@@ -32,6 +33,10 @@ export const RoleTransitionSplash: React.FC = () => {
     const startTime = Date.now();
     const duration = 3000; // 3 seconds
 
+    const fallbackTimeout = setTimeout(() => {
+      setTransitioningRole(null);
+    }, 3200);
+
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const pct = Math.min(100, Math.floor((elapsed / duration) * 100));
@@ -50,11 +55,16 @@ export const RoleTransitionSplash: React.FC = () => {
 
       if (elapsed >= duration) {
         clearInterval(interval);
+        clearTimeout(fallbackTimeout);
+        setTransitioningRole(null);
       }
     }, 50);
 
-    return () => clearInterval(interval);
-  }, [transitioningRole]);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fallbackTimeout);
+    };
+  }, [transitioningRole, setTransitioningRole]);
 
   if (!transitioningRole) return null;
 
@@ -97,7 +107,7 @@ export const RoleTransitionSplash: React.FC = () => {
   ];
 
   const steps = isStudent ? studentSteps : officerSteps;
-  const currentStep = steps[currentStepIndex];
+  const currentStep = steps[currentStepIndex] || steps[0];
 
   return (
     <div className={`
@@ -118,6 +128,15 @@ export const RoleTransitionSplash: React.FC = () => {
           ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
           : 'bg-white border-red-200 shadow-[0_20px_60px_rgba(198,40,40,0.12)]'}
       `}>
+        {/* Top-right quick dismiss button */}
+        <button
+          onClick={() => setTransitioningRole(null)}
+          className="absolute top-3.5 right-3.5 p-1 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors z-30"
+          title="Dismiss splash"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
         
         {/* Top Progress Track */}
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-red-50'}`}>
