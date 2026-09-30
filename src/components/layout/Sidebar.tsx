@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useResilience, AppView } from '../../context/ResilienceContext';
+import { BrandLogoSimulation } from './BrandLogoSimulation';
 import { 
   ShieldCheck, 
   Activity, 
@@ -12,8 +13,6 @@ import {
   Wifi, 
   WifiOff, 
   FileSpreadsheet, 
-  Sparkles, 
-  Globe, 
   User, 
   Radar, 
   Scale, 
@@ -22,12 +21,9 @@ import {
   Compass, 
   Users,
   GraduationCap,
-  ShieldAlert,
-  Award,
-  Lock,
-  ArrowRight,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  LogOut
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -62,8 +58,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     networkStatus, 
     triggerNetworkInterruption, 
     restoreNetwork, 
-    startDemo,
-    activeCandidates
+    activeCandidates,
+    isOfficerAuthenticated,
+    logoutOfficer
   } = useResilience();
 
   const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
@@ -82,108 +79,102 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  // Student Navigation: Minimal, Distraction-Free, ONLY What Student Needs
+  // Student Navigation: Clean, Short & Focused
   const studentSections: SidebarSection[] = [
     {
-      title: 'EXAMINATION WORKSPACE',
+      title: 'EXAMINATION TERMINAL',
       items: [
         {
           id: 'live_exam',
           label: 'Live Exam Room',
           icon: <FileSpreadsheet className="w-4 h-4 text-[#E53935]" />,
-          badge: 'ACTIVE NOW',
+          badge: 'ACTIVE',
           badgeColor: 'bg-red-950/90 text-red-300 border-red-700 animate-pulse'
         },
         {
           id: 'candidate_portal',
-          label: 'Candidate Portal & Admit Card',
+          label: 'Candidate Portal',
           icon: <User className="w-4 h-4 text-indigo-400" />
         },
         {
           id: 'audit',
-          label: 'My Submission Proof (WORM)',
+          label: 'Submission Proof',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
-          badge: 'VERIFIED',
+          badge: 'SHA-256',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
         }
       ]
     }
   ];
 
-  // Officer Navigation: Multi-Student Surveillance, Anomaly Detection, Disaster Recovery, Governance
+  // Officer Navigation: Short, Crisp, Enterprise Grade
   const officerSections: SidebarSection[] = [
     {
-      title: 'LIVE SURVEILLANCE',
+      title: 'SURVEILLANCE & MONITOR',
       items: [
         {
           id: 'candidate_monitor',
-          label: 'Multi-Student Monitor',
+          label: 'Live Student Monitor',
           icon: <Users className="w-4 h-4 text-[#38BDF8]" />,
           badge: `${activeCandidates.length} ONLINE`,
           badgeColor: 'bg-cyan-950/90 text-[#38BDF8] border-cyan-800 animate-pulse'
-        }
-      ]
-    },
-    {
-      title: 'OPERATIONS & RISK',
-      items: [
+        },
         {
           id: 'operations',
-          label: 'Mission Control',
+          label: 'Operations Center',
           icon: <Compass className="w-4 h-4 text-cyan-400" />,
           badge: 'ACTIVE',
           badgeColor: 'bg-cyan-950/80 text-cyan-300 border-cyan-800'
         },
         {
+          id: 'centres',
+          label: 'Centre Monitoring',
+          icon: <Building2 className="w-4 h-4 text-blue-400" />
+        }
+      ]
+    },
+    {
+      title: 'INCIDENT & RECOVERY',
+      items: [
+        {
           id: 'early_detection',
-          label: 'Early Detection (Req 2)',
+          label: 'Early Detection',
           icon: <Radar className="w-4 h-4 text-amber-400" />,
           badge: 'AI PREDICT',
           badgeColor: 'bg-amber-950/80 text-amber-300 border-amber-800'
         },
         {
-          id: 'centres',
-          label: 'Centre Telemetry',
-          icon: <Building2 className="w-4 h-4 text-blue-400" />,
-          badge: '38 LABS',
-          badgeColor: 'bg-blue-950/80 text-blue-300 border-blue-800'
+          id: 'incidents',
+          label: 'Incident Center',
+          icon: <AlertOctagon className="w-4 h-4 text-red-400" />,
+          badge: '1 OPEN',
+          badgeColor: 'bg-red-950/80 text-red-300 border-red-800'
         },
         {
-          id: 'incidents',
-          label: 'Incident Mgmt (Req 3)',
-          icon: <AlertOctagon className="w-4 h-4 text-red-400" />,
-          badge: '1 ACTIVE',
-          badgeColor: 'bg-red-950/80 text-red-300 border-red-800'
+          id: 'recovery',
+          label: 'Disaster Recovery',
+          icon: <RotateCcw className="w-4 h-4 text-blue-400" />
         }
       ]
     },
     {
-      title: 'RESILIENCE & RECOVERY',
+      title: 'FORENSICS & AUDIT',
       items: [
         {
-          id: 'recovery',
-          label: 'Disaster Recovery (Req 4)',
-          icon: <RotateCcw className="w-4 h-4 text-blue-400" />,
-          badge: 'ZERO-LOSS',
-          badgeColor: 'bg-blue-950/80 text-blue-300 border-blue-800'
-        },
-        {
           id: 'audit',
-          label: 'Tamper Storage (Req 5)',
+          label: 'Audit Ledger',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'WORM',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
         },
         {
           id: 'suspicious_patterns',
-          label: 'Suspicious Review (Req 6)',
-          icon: <Eye className="w-4 h-4 text-orange-400" />,
-          badge: 'EVIDENCE',
-          badgeColor: 'bg-orange-950/80 text-orange-300 border-orange-800'
+          label: 'Suspicious Patterns',
+          icon: <Eye className="w-4 h-4 text-orange-400" />
         },
         {
           id: 'reconciliation',
-          label: 'Reconciliation (Req 7)',
+          label: 'Reconciliation',
           icon: <GitCompare className="w-4 h-4 text-purple-400" />,
           badge: '100% MATCH',
           badgeColor: 'bg-purple-950/80 text-purple-300 border-purple-800'
@@ -191,18 +182,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ]
     },
     {
-      title: 'GOVERNANCE & FAIRNESS',
+      title: 'GOVERNANCE',
       items: [
         {
           id: 'decision_support',
-          label: 'Decision Support (Req 9,10)',
-          icon: <Scale className="w-4 h-4 text-cyan-400" />,
-          badge: 'PARITY',
-          badgeColor: 'bg-cyan-950/80 text-cyan-300 border-cyan-800'
+          label: 'Decision Support',
+          icon: <Scale className="w-4 h-4 text-cyan-400" />
         },
         {
           id: 'reports',
-          label: 'Post-Exam Reports (Req 11)',
+          label: 'Evidence Reports',
           icon: <BarChart3 className="w-4 h-4 text-gray-300" />,
           badge: 'SEALED',
           badgeColor: 'bg-gray-800 text-gray-300 border-gray-700'
@@ -224,30 +213,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 shrink-0
       ${mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
     `}>
-      {/* Top Branding matching reference style */}
+      {/* Top Branding with Dynamic Logo Simulation (Student vs Officer) */}
       <div className="p-4 border-b border-[#151D2E] flex items-center justify-between">
-        <div 
-          onClick={() => handleItemClick(userRole === 'student' ? 'live_exam' : 'candidate_monitor')}
-          className="flex items-center gap-3 cursor-pointer group"
-        >
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#1E293B] via-[#0F172A] to-[#E53935]/80 p-0.5 border border-[#334155] flex items-center justify-center shadow-lg group-hover:border-[#E53935] transition-colors">
-            <div className="w-full h-full rounded-[10px] bg-[#0A0F1D] flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-[#E53935]" />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h1 className="font-black text-base tracking-wider text-white font-mono uppercase">
-                ExamresQ
-              </h1>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#16803C] animate-pulse" />
-            </div>
-            <p className="text-[10px] font-mono tracking-widest text-[#38BDF8] uppercase font-bold">
-              RESILIENT SUITE
-            </p>
-          </div>
-        </div>
+        <BrandLogoSimulation 
+          onNavigateHome={() => handleItemClick(userRole === 'student' ? 'live_exam' : 'candidate_monitor')} 
+        />
 
         {/* Mobile close button */}
         {onCloseMobile && (
@@ -460,11 +430,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom Footer Status */}
       <div className="p-3 border-t border-[#151D2E] bg-[#05080F] flex items-center justify-between text-[11px] font-mono text-gray-400">
-        <div className="flex items-center gap-2">
-          <Activity className="w-3.5 h-3.5 text-[#16803C]" />
-          <span>{userRole === 'student' ? 'Terminal Armed' : 'Surveillance Active'}</span>
-        </div>
-        <span className="text-[#38BDF8] font-bold">SHA-256</span>
+        {userRole === 'officer' && isOfficerAuthenticated ? (
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-1.5 truncate">
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+              <span className="text-white font-bold truncate">OFF-9042</span>
+              <span className="text-[9px] text-[#38BDF8] opacity-75">CMD</span>
+            </div>
+            <button
+              onClick={logoutOfficer}
+              className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-300 font-bold transition-colors cursor-pointer"
+              title="Lock Officer Console and return to Student Portal"
+            >
+              <LogOut className="w-3 h-3" />
+              <span>Sign Out</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5 text-[#16803C]" />
+              <span>{userRole === 'student' ? 'Terminal Armed' : 'Surveillance Active'}</span>
+            </div>
+            <span className="text-[#38BDF8] font-bold">SHA-256</span>
+          </>
+        )}
       </div>
     </aside>
   );

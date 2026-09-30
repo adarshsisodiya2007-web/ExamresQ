@@ -17,6 +17,7 @@ import { EarlyDetectionDashboard } from './components/operations/EarlyDetectionD
 import { AuditTrust } from './components/audit/AuditTrust';
 import { SuspiciousPatternCenter } from './components/security/SuspiciousPatternCenter';
 import { ReconciliationCenter } from './components/audit/ReconciliationCenter';
+import { OfficerLoginModal } from './components/layout/OfficerLoginModal';
 import { DecisionSupportCenter } from './components/operations/DecisionSupportCenter';
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
@@ -64,7 +65,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070B14] flex selection:bg-[#C62828] selection:text-white antialiased">
+    <div className="min-h-screen bg-[#F8F8F6] dark:bg-[#070B14] flex selection:bg-[#C62828] selection:text-white antialiased transition-colors">
       {/* Permanent Left Sidebar Navigation (Matching User Screenshot) */}
       <Sidebar 
         onOpenHackathonModal={() => setHackathonModalOpen(true)}
@@ -85,6 +86,9 @@ const AppContent: React.FC = () => {
 
       {/* Real-Time Toast Notifications (Candidate & Admin channels) */}
       <NotificationToast />
+
+      {/* Officer-Only Authentication Modal */}
+      <OfficerLoginModal />
 
       {/* Architecture & Problem Statement Modal */}
       <HackathonModal 

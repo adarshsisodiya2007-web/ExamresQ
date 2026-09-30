@@ -108,34 +108,21 @@ export const DecisionSupportCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* Requirement 9 & 10 Dual Callout Banners */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-2xl bg-linear-to-r from-emerald-950 via-[#121E16] to-gray-900 border border-emerald-900/60 p-5 text-white space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
-                Requirement 9: Decision Support
-              </span>
+        {/* Short & Clean Decision & Parity Guidance */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/50 text-gray-200">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+            <div>
+              <strong className="text-emerald-300">Human Sign-Off: </strong>
+              <span>Empirical evidence provided; system never cancels without official authority authorization.</span>
             </div>
-            <blockquote className="text-sm font-bold text-gray-100 italic border-l-3 border-[#16803C] pl-2.5">
-              “The system presents evidence about the disruption and the authority decides whether the affected candidates can resume fairly.”
-            </blockquote>
-            <p className="text-[11px] text-gray-300 leading-relaxed">
-              <strong>Mandatory Rule:</strong> The system supports the decision with empirical metrics; it never independently cancels an exam without official human sign-off.
-            </p>
           </div>
-
-          <div className="rounded-2xl bg-linear-to-r from-blue-950 via-[#121722] to-gray-900 border border-blue-900/60 p-5 text-white space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
-                Requirement 10: Fairness & Consistency
-              </span>
+          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-sky-950/40 border border-sky-800/50 text-gray-200">
+            <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0" />
+            <div>
+              <strong className="text-sky-300">Fairness Parity: </strong>
+              <span>Standardized formula [T_comp = T_outage + 60s] guarantees equal compensation across labs.</span>
             </div>
-            <blockquote className="text-sm font-bold text-gray-100 italic border-l-3 border-blue-500 pl-2.5">
-              “Two candidates experiencing equivalent disruptions are evaluated under the same approved recovery policy.”
-            </blockquote>
-            <p className="text-[11px] text-gray-300 leading-relaxed">
-              Standardized Compensation Formula [T_comp = T_outage + 60s] guarantees mathematical parity across all candidates and centres.
-            </p>
           </div>
         </div>
 

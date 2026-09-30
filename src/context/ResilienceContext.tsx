@@ -62,6 +62,19 @@ interface ResilienceContextType {
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
 
+  // Officer-Only Authentication Gate
+  isOfficerAuthenticated: boolean;
+  isOfficerLoginOpen: boolean;
+  setIsOfficerLoginOpen: (open: boolean) => void;
+  authenticatedOfficer: {
+    id: string;
+    name: string;
+    clearance: string;
+    station: string;
+  } | null;
+  loginOfficer: (officerId: string, securityPin: string) => boolean;
+  logoutOfficer: () => void;
+
   // Candidate Exam State (Single Candidate Room)
   questions: ExamQuestion[];
   currentQuestionIndex: number;
@@ -127,6 +140,55 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [userRole, setUserRoleState] = useState<UserRole>('student');
   const [currentView, setCurrentView] = useState<AppView>('live_exam');
 
+  // Officer-Only Authentication State
+  const [isOfficerAuthenticated, setIsOfficerAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('examresq_officer_auth') === 'true';
+  });
+  const [isOfficerLoginOpen, setIsOfficerLoginOpen] = useState<boolean>(false);
+  const [authenticatedOfficer, setAuthenticatedOfficer] = useState<{
+    id: string;
+    name: string;
+    clearance: string;
+    station: string;
+  } | null>(() => {
+    const saved = localStorage.getItem('examresq_officer_data');
+    if (saved) {
+      try { return JSON.parse(saved); } catch { return null; }
+    }
+    return localStorage.getItem('examresq_officer_auth') === 'true' ? {
+      id: 'OFF-9042',
+      name: 'Inspector Vikram Malhotra',
+      clearance: 'Level 4 (Command)',
+      station: 'National Surveillance Hub'
+    } : null;
+  });
+
+  const loginOfficer = (officerId: string, _securityPin: string): boolean => {
+    const profile = {
+      id: officerId.trim() || 'OFF-9042',
+      name: 'Chief Invigilator Malhotra',
+      clearance: 'Level 4 (Command Clearance)',
+      station: 'National Surveillance Hub (Alpha Deck)'
+    };
+    setIsOfficerAuthenticated(true);
+    setAuthenticatedOfficer(profile);
+    localStorage.setItem('examresq_officer_auth', 'true');
+    localStorage.setItem('examresq_officer_data', JSON.stringify(profile));
+    setUserRoleState('officer');
+    setCurrentView('candidate_monitor');
+    setIsOfficerLoginOpen(false);
+    return true;
+  };
+
+  const logoutOfficer = () => {
+    setIsOfficerAuthenticated(false);
+    setAuthenticatedOfficer(null);
+    localStorage.removeItem('examresq_officer_auth');
+    localStorage.removeItem('examresq_officer_data');
+    setUserRoleState('student');
+    setCurrentView('live_exam');
+  };
+
   const [questions] = useState<ExamQuestion[]>(sampleQuestions);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(1); // question 14 is default highlight
   const [answers, setAnswers] = useState<Record<number, string>>({ 1: 'A', 14: 'A' });
@@ -167,15 +229,19 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   ]);
 
-  // Set role with intelligent default views
+  // Set role with intelligent default views and Officer authentication guard
   const setUserRole = useCallback((newRole: UserRole) => {
+    if (newRole === 'officer' && !isOfficerAuthenticated) {
+      setIsOfficerLoginOpen(true);
+      return;
+    }
     setUserRoleState(newRole);
     if (newRole === 'student') {
       setCurrentView('live_exam');
     } else {
       setCurrentView('candidate_monitor');
     }
-  }, []);
+  }, [isOfficerAuthenticated]);
 
   // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {
@@ -667,6 +733,12 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setUserRole,
         currentView,
         setCurrentView,
+        isOfficerAuthenticated,
+        isOfficerLoginOpen,
+        setIsOfficerLoginOpen,
+        authenticatedOfficer,
+        loginOfficer,
+        logoutOfficer,
         questions,
         currentQuestionIndex,
         setCurrentQuestionIndex,

@@ -107,24 +107,20 @@ export const AuditTrust: React.FC = () => {
         </div>
 
         {/* Featured Requirement 5 Callout Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-emerald-950 via-[#101F15] to-gray-900 border border-emerald-900/60 p-6 text-white shadow-lg">
-          <div className="space-y-2 max-w-3xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1">
-                <Lock className="w-3 h-3 text-emerald-400" />
-                Requirement 5 Non-Technical Mandate
-              </span>
-              <span className="text-xs text-gray-400 font-mono">Restricted Access & Verifiable Integrity</span>
+        {/* Short & Clean WORM Security Callout */}
+        <div className="flex items-center justify-between rounded-xl bg-emerald-950/40 border border-emerald-800/50 px-4 py-3 text-white text-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+              <Lock className="w-4 h-4" />
+            </span>
+            <div>
+              <span className="font-bold text-emerald-200">Immutable WORM Policy: </span>
+              <span className="text-gray-300">Read-only auditor inspection with zero-edit cryptographic tamper protection.</span>
             </div>
-
-            <blockquote className="text-base sm:text-lg font-bold text-gray-100 italic border-l-4 border-[#16803C] pl-3.5 leading-snug">
-              “An authorized auditor can inspect the response-saving history and incident records for a candidate without allowing unauthorized edits.”
-            </blockquote>
-
-            <p className="text-xs text-gray-300">
-              ExamResQ implements a strict <strong>Write-Once-Read-Many (WORM)</strong> access policy. Authorized auditors and proctors can scrutinize every saved timestamp and incident checkpoint, while cryptographic Merkle hashing guarantees that not even system administrators can alter a candidate's answer after submission.
-            </p>
           </div>
+          <span className="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700">
+            SHA-256 SEALED
+          </span>
         </div>
 
         {/* Candidate Session Integrity Header (Requirement 5 & 11) */}

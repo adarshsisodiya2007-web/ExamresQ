@@ -63,7 +63,9 @@ export const LUXURY_THEMES: Record<LuxuryThemeId, LuxuryTheme> = {
 interface ThemeContextType {
   activeThemeId: LuxuryThemeId;
   activeTheme: LuxuryTheme;
+  isDark: boolean;
   setTheme: (id: LuxuryThemeId) => void;
+  toggleDarkMode: () => void;
   isThemeDrawerOpen: boolean;
   setIsThemeDrawerOpen: (open: boolean) => void;
 }
@@ -73,12 +75,21 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeThemeId, setActiveThemeId] = useState<LuxuryThemeId>(() => {
     const saved = localStorage.getItem('examresq_luxury_theme') || localStorage.getItem('evaltrust_luxury_theme');
-    return (saved && LUXURY_THEMES[saved as LuxuryThemeId]) ? (saved as LuxuryThemeId) : 'imperial_crimson';
+    return (saved && LUXURY_THEMES[saved as LuxuryThemeId]) ? (saved as LuxuryThemeId) : 'obsidian_noir';
   });
 
   const [isThemeDrawerOpen, setIsThemeDrawerOpen] = useState<boolean>(false);
 
   const activeTheme = LUXURY_THEMES[activeThemeId];
+  const isDark = activeTheme.isDark;
+
+  const toggleDarkMode = () => {
+    if (isDark) {
+      setActiveThemeId('imperial_crimson');
+    } else {
+      setActiveThemeId('obsidian_noir');
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('examresq_luxury_theme', activeThemeId);
@@ -103,7 +114,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       value={{
         activeThemeId,
         activeTheme,
+        isDark,
         setTheme,
+        toggleDarkMode,
         isThemeDrawerOpen,
         setIsThemeDrawerOpen
       }}
