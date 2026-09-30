@@ -19,7 +19,8 @@ import {
   Eye,
   Scan,
   ShieldCheck,
-  FileCheck
+  FileCheck,
+  VideoOff
 } from 'lucide-react';
 
 interface CCTVSurveillanceModalProps {
@@ -169,50 +170,75 @@ export const CCTVSurveillanceModal: React.FC<CCTVSurveillanceModalProps> = ({
           {/* LEFT: Video Viewport & AI Proctored HUD (8 cols) */}
           <div className="lg:col-span-8 p-5 bg-black flex flex-col justify-between relative overflow-hidden min-h-[360px] sm:min-h-[440px]">
             
-            {/* 1. The Live Video Player for Local Hardware */}
-            {candidate.isSelf && (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className={`w-full h-full object-cover transform scale-x-[-1] absolute inset-0 ${isLiveHardware ? 'block' : 'hidden'}`}
-              />
-            )}
-
-            {/* 2. WebRTC Live Video Stream from Another Laptop */}
-            {remoteStream && (
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover transform scale-x-[-1] absolute inset-0 block"
-              />
-            )}
-
-            {/* 3. Multi-Tab Real-time Frame from Another Tab */}
-            {!remoteStream && frameDataUrl && (
-              <img
-                src={frameDataUrl}
-                alt={candidate.name}
-                className="w-full h-full object-cover transform scale-x-[-1] absolute inset-0 block"
-              />
-            )}
-
-            {/* 4. Simulated / Standby Feed */}
-            {!candidate.isSelf && !remoteStream && !frameDataUrl && (
-              <div className="absolute inset-0">
-                <img
-                  src={candidate.avatar}
-                  alt={candidate.name}
-                  className="w-full h-full object-cover filter brightness-95"
-                />
+            {/* 0. MALPRACTICE EVICTION: CCTV Stream Severed */}
+            {candidate.isTerminated ? (
+              <div className="absolute inset-0 z-30 bg-red-950/95 flex flex-col items-center justify-center p-6 text-center space-y-3 border-4 border-red-600 animate-pulse">
+                <div className="w-16 h-16 rounded-full bg-red-600/30 border-2 border-red-500 flex items-center justify-center text-red-400">
+                  <VideoOff className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-base font-mono font-black text-white tracking-widest uppercase">
+                    CCTV STREAM & RECORDING TERMINATED
+                  </h3>
+                  <div className="inline-block mt-1 px-3 py-1 rounded bg-red-900/90 text-red-200 border border-red-700 font-mono text-xs font-bold">
+                    CANDIDATE DISQUALIFIED FOR MALPRACTICE
+                  </div>
+                </div>
+                <p className="text-xs text-gray-300 max-w-md font-mono bg-black/50 p-2.5 rounded-xl border border-red-900">
+                  Violation Record: {candidate.terminationReason || 'Critical Anti-Cheating Threshold Breached'}
+                </p>
+                <span className="text-[11px] text-red-400 font-mono">
+                  Hardware stream cutoff initiated by central security daemon.
+                </span>
               </div>
-            )}
+            ) : (
+              <>
+                {/* 1. The Live Video Player for Local Hardware */}
+                {candidate.isSelf && (
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className={`w-full h-full object-cover transform scale-x-[-1] absolute inset-0 ${isLiveHardware ? 'block' : 'hidden'}`}
+                  />
+                )}
 
-            {/* Scanlines / CCTV Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-size-[100%_4px] pointer-events-none opacity-50" />
+                {/* 2. WebRTC Live Video Stream from Another Laptop */}
+                {remoteStream && (
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover transform scale-x-[-1] absolute inset-0 block"
+                  />
+                )}
+
+                {/* 3. Multi-Tab Real-time Frame from Another Tab */}
+                {!remoteStream && frameDataUrl && (
+                  <img
+                    src={frameDataUrl}
+                    alt={candidate.name}
+                    className="w-full h-full object-cover transform scale-x-[-1] absolute inset-0 block"
+                  />
+                )}
+
+                {/* 4. Simulated / Standby Feed */}
+                {!candidate.isSelf && !remoteStream && !frameDataUrl && (
+                  <div className="absolute inset-0">
+                    <img
+                      src={candidate.avatar}
+                      alt={candidate.name}
+                      className="w-full h-full object-cover filter brightness-95"
+                    />
+                  </div>
+                )}
+
+                {/* Scanlines / CCTV Overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-size-[100%_4px] pointer-events-none opacity-50" />
+              </>
+            )}
 
             {/* Top Video HUD Information */}
             <div className="relative z-10 flex items-center justify-between">

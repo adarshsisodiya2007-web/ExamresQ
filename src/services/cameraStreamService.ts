@@ -74,6 +74,10 @@ class CameraStreamService {
     }
   }
 
+  public clearStream(): void {
+    this.stopStream();
+  }
+
   public getLastError(): string | null {
     return this.error;
   }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActiveCandidateSession } from '../../types';
 import { cameraStreamService } from '../../services/cameraStreamService';
-import { Camera, Scan, Maximize2, Zap, AlertTriangle, ShieldCheck, Eye } from 'lucide-react';
+import { Camera, Scan, Maximize2, Zap, AlertTriangle, ShieldCheck, Eye, VideoOff } from 'lucide-react';
 
 interface CandidateLiveVideoTileProps {
   candidate: ActiveCandidateSession;
@@ -84,52 +84,72 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
       `}
       title="Click to open full-screen CCTV Surveillance Console with Intercom"
     >
-      {/* 1. Real Hardware Webcam for Local Tab */}
-      {candidate.isSelf && (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className={`w-full h-full object-cover transform scale-x-[-1] ${isLiveHardware ? 'block' : 'hidden'}`}
-        />
-      )}
-
-      {/* 2. WebRTC Live Video Stream from Another Laptop */}
-      {remoteStream && (
-        <video
-          ref={remoteVideoRef}
-          autoPlay
-          playsInline
-          muted
-          className="w-full h-full object-cover transform scale-x-[-1] block"
-        />
-      )}
-
-      {/* 3. Real-time Multi-Tab Canvas Live Frame from Another Tab */}
-      {!remoteStream && frameDataUrl && (
-        <img
-          src={frameDataUrl}
-          alt={candidate.name}
-          className="w-full h-full object-cover transform scale-x-[-1] block"
-        />
-      )}
-
-      {/* 4. Fallback / Simulated Feed */}
-      {!candidate.isSelf && !remoteStream && !frameDataUrl && (
-        <div className="relative w-full h-full">
-          <img
-            src={candidate.avatar}
-            alt={candidate.name}
-            className="w-full h-full object-cover filter brightness-90 contrast-105"
-          />
-          {/* Subtle scanning line effect */}
-          <div className="absolute inset-0 bg-linear-to-b from-transparent via-cyan-500/10 to-transparent opacity-50 animate-pulse pointer-events-none" />
+      {/* 0. MALPRACTICE EVICTION: Live Stream Severed */}
+      {candidate.isTerminated ? (
+        <div className="absolute inset-0 z-30 bg-red-950/95 flex flex-col items-center justify-center p-3 text-center space-y-1.5 border-2 border-red-600 animate-pulse">
+          <div className="w-9 h-9 rounded-full bg-red-600/30 border border-red-500 flex items-center justify-center text-red-400">
+            <VideoOff className="w-5 h-5" />
+          </div>
+          <span className="text-[10px] font-mono font-black text-white tracking-wider">
+            RECORDING TERMINATED
+          </span>
+          <span className="text-[8px] font-mono text-red-200 bg-red-900/90 px-2 py-0.5 rounded border border-red-700 font-bold">
+            CHEATING DISQUALIFICATION
+          </span>
+          <p className="text-[8px] text-gray-300 max-w-[180px] truncate">
+            {candidate.terminationReason || 'Malpractice Flagged - Camera Cut Off'}
+          </p>
         </div>
-      )}
+      ) : (
+        <>
+          {/* 1. Real Hardware Webcam for Local Tab */}
+          {candidate.isSelf && (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover transform scale-x-[-1] ${isLiveHardware ? 'block' : 'hidden'}`}
+            />
+          )}
 
-      {/* CCTV Grain / Scanlines Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-size-[100%_4px] pointer-events-none opacity-40" />
+          {/* 2. WebRTC Live Video Stream from Another Laptop */}
+          {remoteStream && (
+            <video
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover transform scale-x-[-1] block"
+            />
+          )}
+
+          {/* 3. Real-time Multi-Tab Canvas Live Frame from Another Tab */}
+          {!remoteStream && frameDataUrl && (
+            <img
+              src={frameDataUrl}
+              alt={candidate.name}
+              className="w-full h-full object-cover transform scale-x-[-1] block"
+            />
+          )}
+
+          {/* 4. Fallback / Simulated Feed */}
+          {!candidate.isSelf && !remoteStream && !frameDataUrl && (
+            <div className="relative w-full h-full">
+              <img
+                src={candidate.avatar}
+                alt={candidate.name}
+                className="w-full h-full object-cover filter brightness-90 contrast-105"
+              />
+              {/* Subtle scanning line effect */}
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-cyan-500/10 to-transparent opacity-50 animate-pulse pointer-events-none" />
+            </div>
+          )}
+
+          {/* CCTV Grain / Scanlines Overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-size-[100%_4px] pointer-events-none opacity-40" />
+        </>
+      )}
 
       {/* Top Banner: Station ID + Live Rec Badge */}
       <div className="absolute top-1.5 inset-x-1.5 flex items-center justify-between pointer-events-none z-10">

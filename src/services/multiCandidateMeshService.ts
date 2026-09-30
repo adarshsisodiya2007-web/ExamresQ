@@ -2,7 +2,7 @@ import { ActiveCandidateSession, StudentHelpRequest } from '../types';
 import Peer from 'peerjs';
 
 export interface CandidateMeshMessage {
-  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT' | 'HELP_REQUEST' | 'MOTION_ALERT';
+  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT' | 'HELP_REQUEST' | 'MOTION_ALERT' | 'CHEATING_TERMINATION';
   candidateId: string;
   candidate?: ActiveCandidateSession;
   frameDataUrl?: string;
@@ -11,12 +11,14 @@ export interface CandidateMeshMessage {
   minutes?: number;
   motionScore?: number;
   helpRequest?: StudentHelpRequest;
+  reason?: string;
   timestamp: number;
 }
 
 type MeshListener = (candidates: ActiveCandidateSession[]) => void;
 type WarningListener = (message: string) => void;
 type HelpRequestListener = (request: StudentHelpRequest) => void;
+type CheatingListener = (event: { candidateId: string; candidateName: string; stationId: string; rollNo: string; reason: string }) => void;
 
 class MultiCandidateMeshService {
   private channel: BroadcastChannel | null = null;
@@ -25,6 +27,7 @@ class MultiCandidateMeshService {
   private meshListeners: Set<MeshListener> = new Set();
   private warningListeners: Set<WarningListener> = new Set();
   private helpRequestListeners: Set<HelpRequestListener> = new Set();
+  private cheatingListeners: Set<CheatingListener> = new Set();
   private frameCaptureCanvas: HTMLCanvasElement | null = null;
   private frameBroadcastInterval: number | null = null;
   private heartbeatInterval: number | null = null;
@@ -391,7 +394,75 @@ class MultiCandidateMeshService {
         this.notifyListeners();
         break;
       }
+
+      case 'CHEATING_TERMINATION': {
+        const candidate = msg.candidate || this.remoteCandidates.get(msg.candidateId);
+        if (candidate) {
+          candidate.status = 'flagged';
+          candidate.isTerminated = true;
+          candidate.terminationReason = msg.reason || 'Malpractice Disqualification';
+          candidate.lastAction = `CHEATING DETECTED: ${msg.reason || 'Terminated by System'}`;
+          delete (candidate as any).lastFrameDataUrl;
+          if ((candidate as any).remoteMediaStream) {
+            try {
+              (candidate as any).remoteMediaStream.getTracks?.().forEach((t: any) => t.stop());
+            } catch {}
+            delete (candidate as any).remoteMediaStream;
+          }
+          this.remoteCandidates.set(msg.candidateId, candidate);
+          this.notifyListeners();
+        }
+
+        const event = {
+          candidateId: msg.candidateId,
+          candidateName: candidate?.name || 'Candidate',
+          stationId: candidate?.stationId || 'Station',
+          rollNo: candidate?.rollNo || 'N/A',
+          reason: msg.reason || 'Malpractice Violation'
+        };
+        this.cheatingListeners.forEach(fn => fn(event));
+        break;
+      }
     }
+  }
+
+  public broadcastCheatingTermination(reason: string): void {
+    if (!this.currentCandidate) return;
+
+    this.stopWebcamBroadcast();
+
+    this.currentCandidate.status = 'flagged';
+    this.currentCandidate.isTerminated = true;
+    this.currentCandidate.terminationReason = reason;
+    this.currentCandidate.lastAction = `DISQUALIFIED FOR MALPRACTICE: ${reason}`;
+    delete (this.currentCandidate as any).lastFrameDataUrl;
+
+    if (this.studentPeer) {
+      try {
+        this.studentPeer.destroy();
+      } catch {}
+    }
+
+    try {
+      sessionStorage.setItem('examresq_tab_candidate', JSON.stringify(this.currentCandidate));
+    } catch {}
+
+    this.postMessage({
+      type: 'CHEATING_TERMINATION',
+      candidateId: this.currentCandidate.id,
+      candidate: this.currentCandidate,
+      reason,
+      timestamp: Date.now()
+    });
+
+    this.notifyListeners();
+  }
+
+  public subscribeToCheating(listener: CheatingListener): () => void {
+    this.cheatingListeners.add(listener);
+    return () => {
+      this.cheatingListeners.delete(listener);
+    };
   }
 
   public sendMotionAlert(motionScore: number): void {

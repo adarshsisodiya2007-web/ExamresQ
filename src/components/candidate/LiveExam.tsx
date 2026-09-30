@@ -117,6 +117,9 @@ export const LiveExam: React.FC = () => {
     setTerminationReason(reason);
     setTerminationTime(now);
 
+    // Broadcast Cheating Disqualification & Sever Live Video to Officer and Mesh
+    multiCandidateMeshService.broadcastCheatingTermination(reason);
+
     addNotification({
       target: 'candidate',
       type: 'alert',
@@ -127,8 +130,8 @@ export const LiveExam: React.FC = () => {
     addNotification({
       target: 'admin',
       type: 'alert',
-      title: 'CANDIDATE DISQUALIFIED: ET-2026-ENG-4418',
-      message: `Workstation WS-08-41 locked down due to critical integrity breach: ${reason}`
+      title: '🚨 CHEATING CAUGHT: CANDIDATE DISQUALIFIED',
+      message: `Workstation locked down and camera recording terminated: ${reason}`
     });
   }, [addNotification]);
 
@@ -707,7 +710,7 @@ export const LiveExam: React.FC = () => {
           {/* RIGHT: AI PROCTORING & QUESTION PALETTE (4 cols) */}
           <div className={`lg:col-span-4 space-y-5 ${paletteMobileOpen ? 'block' : 'hidden lg:block'}`}>
             {/* AI-Powered Proctoring & Live WebCam */}
-            <AIProctoringHUD onCheatingViolation={handleSecurityStrike} />
+            <AIProctoringHUD onCheatingViolation={handleSecurityStrike} isTerminated={isTerminated} />
 
             {/* Question Palette */}
             <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-red-100 dark:border-gray-800 p-5 shadow-xs">

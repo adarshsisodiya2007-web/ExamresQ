@@ -24,6 +24,7 @@ import { multiCandidateMeshService } from '../../services/multiCandidateMeshServ
 
 interface AIProctoringHUDProps {
   onCheatingViolation?: (reason: string, isSevere?: boolean) => void;
+  isTerminated?: boolean;
 }
 
 type DetectionType = 'NONE' | 'PHONE' | 'MULTIPLE_PERSONS' | 'GAZE_AWAY' | 'FACE_ABSENT' | 'UNAUTHORIZED_NOTES';
@@ -44,7 +45,7 @@ interface DetectedObject {
   score: number;
 }
 
-export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViolation }) => {
+export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViolation, isTerminated }) => {
   const { addNotification } = useResilience();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -77,6 +78,24 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const multiPersonFramesRef = useRef<number>(0);
   const lookAwayFramesRef = useRef<number>(0);
   const isLockedRef = useRef<boolean>(false);
+
+  // Immediately cease and destroy camera feed if student is caught cheating & disqualified
+  useEffect(() => {
+    if (isTerminated) {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => {
+          try {
+            track.stop();
+          } catch {}
+        });
+        streamRef.current = null;
+      }
+      cameraStreamService.clearStream();
+      multiCandidateMeshService.stopWebcamBroadcast();
+      setCameraActive(false);
+      setIsExamLocked(true);
+    }
+  }, [isTerminated]);
 
   // 1. Asynchronously load COCO-SSD Neural Network lazily (no main chunk bloat)
   useEffect(() => {
@@ -608,11 +627,26 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           autoPlay
           playsInline
           muted
-          className={`w-full h-full object-cover transform scale-x-[-1] ${cameraActive ? 'block' : 'hidden'}`}
+          className={`w-full h-full object-cover transform scale-x-[-1] ${cameraActive && !isTerminated ? 'block' : 'hidden'}`}
         />
 
-        {/* Fallback / Error State */}
-        {!cameraActive && (
+        {/* MALPRACTICE EVICTION LOCKOUT: Camera Severed */}
+        {isTerminated ? (
+          <div className="absolute inset-0 z-40 bg-red-950/95 flex flex-col items-center justify-center p-4 text-center space-y-2 border-2 border-red-600 animate-pulse">
+            <div className="w-12 h-12 rounded-full bg-red-600/30 border-2 border-red-500 flex items-center justify-center text-red-400">
+              <VideoOff className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-mono font-black text-white tracking-wider">
+              WEBCAM RECORDING TERMINATED
+            </span>
+            <span className="text-[10px] font-mono text-red-200 bg-red-900/90 px-3 py-0.5 rounded-full border border-red-700 font-bold">
+              MALPRACTICE DISQUALIFICATION
+            </span>
+            <p className="text-[10px] text-gray-300 max-w-[220px]">
+              Live camera feed severed and officer alert dispatched.
+            </p>
+          </div>
+        ) : !cameraActive ? (
           <div className="text-center p-4 space-y-2">
             <VideoOff className="w-8 h-8 text-gray-500 mx-auto" />
             <p className="text-xs text-gray-300 font-medium leading-relaxed">
@@ -626,7 +660,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
               <span>Allow Camera Access</span>
             </button>
           </div>
-        )}
+        ) : null}
 
         {/* Live Motion Sensor Alert Banner */}
         {isMotionAlert && (
