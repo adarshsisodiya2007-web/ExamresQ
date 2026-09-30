@@ -2,7 +2,7 @@ import { ActiveCandidateSession, StudentHelpRequest } from '../types';
 import Peer from 'peerjs';
 
 export interface CandidateMeshMessage {
-  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT' | 'HELP_REQUEST' | 'MOTION_ALERT' | 'CHEATING_TERMINATION';
+  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT' | 'HELP_REQUEST' | 'MOTION_ALERT' | 'AUDIO_ALERT' | 'CHEATING_TERMINATION';
   candidateId: string;
   candidate?: ActiveCandidateSession;
   frameDataUrl?: string;
@@ -10,6 +10,8 @@ export interface CandidateMeshMessage {
   message?: string;
   minutes?: number;
   motionScore?: number;
+  audioLevel?: number;
+  audioReason?: string;
   helpRequest?: StudentHelpRequest;
   reason?: string;
   timestamp: number;
@@ -19,6 +21,7 @@ type MeshListener = (candidates: ActiveCandidateSession[]) => void;
 type WarningListener = (message: string) => void;
 type HelpRequestListener = (request: StudentHelpRequest) => void;
 type CheatingListener = (event: { candidateId: string; candidateName: string; stationId: string; rollNo: string; reason: string }) => void;
+type AudioAlertListener = (event: { candidateId: string; candidateName: string; stationId: string; audioLevel: number; reason: string }) => void;
 
 class MultiCandidateMeshService {
   private channel: BroadcastChannel | null = null;
@@ -28,6 +31,7 @@ class MultiCandidateMeshService {
   private warningListeners: Set<WarningListener> = new Set();
   private helpRequestListeners: Set<HelpRequestListener> = new Set();
   private cheatingListeners: Set<CheatingListener> = new Set();
+  private audioAlertListeners: Set<AudioAlertListener> = new Set();
   private frameCaptureCanvas: HTMLCanvasElement | null = null;
   private frameBroadcastInterval: number | null = null;
   private heartbeatInterval: number | null = null;
@@ -368,6 +372,33 @@ class MultiCandidateMeshService {
         break;
       }
 
+      case 'AUDIO_ALERT': {
+        if (this.remoteCandidates.has(msg.candidateId)) {
+          const cand = this.remoteCandidates.get(msg.candidateId)!;
+          cand.audioLevel = msg.audioLevel || 68;
+          cand.isAudioAlert = true;
+          cand.audioAlertReason = msg.audioReason || 'Acoustic / Speech disturbance detected';
+          // Auto reset visual audio alert badge after 4.5s
+          setTimeout(() => {
+            if (this.remoteCandidates.has(msg.candidateId)) {
+              this.remoteCandidates.get(msg.candidateId)!.isAudioAlert = false;
+              this.notifyListeners();
+            }
+          }, 4500);
+          this.notifyListeners();
+
+          const event = {
+            candidateId: msg.candidateId,
+            candidateName: cand.name,
+            stationId: cand.stationId,
+            audioLevel: msg.audioLevel || 68,
+            reason: msg.audioReason || 'Acoustic disturbance'
+          };
+          this.audioAlertListeners.forEach(fn => fn(event));
+        }
+        break;
+      }
+
       case 'HELP_REQUEST': {
         if (msg.helpRequest) {
           this.helpRequestListeners.forEach(fn => fn(msg.helpRequest!));
@@ -473,6 +504,25 @@ class MultiCandidateMeshService {
       motionScore,
       timestamp: Date.now()
     });
+  }
+
+  public sendAudioAlert(audioLevel: number, reason: string): void {
+    if (!this.currentCandidate) return;
+    this.currentCandidate.audioLevel = audioLevel;
+    this.postMessage({
+      type: 'AUDIO_ALERT',
+      candidateId: this.currentCandidate.id,
+      audioLevel,
+      audioReason: reason,
+      timestamp: Date.now()
+    });
+  }
+
+  public subscribeToAudio(listener: AudioAlertListener): () => void {
+    this.audioAlertListeners.add(listener);
+    return () => {
+      this.audioAlertListeners.delete(listener);
+    };
   }
 
   public sendHelpRequest(req: StudentHelpRequest): void {

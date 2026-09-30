@@ -33,6 +33,9 @@ export interface ActiveCandidateSession {
   remoteMediaStream?: any;
   motionScore?: number;
   isMotionAlert?: boolean;
+  audioLevel?: number;
+  isAudioAlert?: boolean;
+  audioAlertReason?: string;
   isTerminated?: boolean;
   terminationReason?: string;
   attendance?: {

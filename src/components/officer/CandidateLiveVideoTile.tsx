@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActiveCandidateSession } from '../../types';
 import { cameraStreamService } from '../../services/cameraStreamService';
-import { Camera, Scan, Maximize2, Zap, AlertTriangle, ShieldCheck, Eye, VideoOff } from 'lucide-react';
+import { Camera, Scan, Maximize2, Zap, AlertTriangle, ShieldCheck, Eye, VideoOff, Volume2, Mic } from 'lucide-react';
 
 interface CandidateLiveVideoTileProps {
   candidate: ActiveCandidateSession;
@@ -165,6 +165,17 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
         </div>
       </div>
 
+      {/* Live Acoustic / Speech Detection Alert Banner */}
+      {candidate.isAudioAlert && (
+        <div className="absolute top-7 inset-x-1.5 z-20 bg-amber-600/95 text-white px-2 py-0.5 rounded text-[8px] font-mono font-black flex items-center justify-between shadow-lg animate-bounce">
+          <span className="flex items-center gap-1">
+            <Volume2 className="w-2.5 h-2.5 text-white animate-pulse" />
+            <span>SOUND DETECTED: {candidate.audioLevel || 68} dB</span>
+          </span>
+          <span className="bg-black/60 px-1 rounded text-[7px] text-yellow-300">SPEECH</span>
+        </div>
+      )}
+
       {/* Live AI Face Tracking Bounding Box */}
       <div className="absolute inset-x-6 inset-y-4 pointer-events-none flex flex-col justify-between p-1 z-10">
         <div className={`border-2 rounded-lg transition-all duration-300 ${
@@ -193,7 +204,17 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
           <span className="truncate max-w-[90px]">{candidate.name.split(' ')[0]}</span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
+          <span className={`flex items-center gap-0.5 text-[8px] ${
+            candidate.isAudioAlert 
+              ? 'text-red-400 font-black animate-pulse' 
+              : (candidate.audioLevel || 28) >= 56 
+                ? 'text-amber-400 font-bold' 
+                : 'text-gray-400'
+          }`}>
+            <Volume2 className="w-2.5 h-2.5" />
+            {candidate.audioLevel || 28}dB
+          </span>
           <span className="text-gray-400">{timeString}</span>
           <Maximize2 className="w-2.5 h-2.5 text-gray-400 group-hover:text-white transition-colors" />
         </div>

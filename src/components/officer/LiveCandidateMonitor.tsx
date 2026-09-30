@@ -20,7 +20,9 @@ import {
   Camera, 
   Megaphone,
   UserCheck,
-  Activity
+  Activity,
+  Volume2,
+  Mic
 } from 'lucide-react';
 import examresqLogo from '../../assets/examresq-logo.png';
 import { ActiveCandidateSession } from '../../types';
@@ -72,9 +74,19 @@ export const LiveCandidateMonitor: React.FC = () => {
       });
     });
 
+    const unsubAudio = multiCandidateMeshService.subscribeToAudio((event) => {
+      addNotification({
+        target: 'admin',
+        type: 'warning',
+        title: `🔊 SPEECH / SOUND DETECTED: ${event.candidateName}`,
+        message: `Station ${event.stationId} detected sound leak (${event.audioLevel} dB): ${event.reason}`
+      });
+    });
+
     return () => {
       unsubscribe();
       unsubCheating();
+      unsubAudio();
     };
   }, [addNotification]);
 
@@ -461,6 +473,17 @@ export const LiveCandidateMonitor: React.FC = () => {
                     </div>
                   )}
 
+                  {/* Sound / Acoustic Alert Badge in CCTV */}
+                  {candidate.isAudioAlert && (
+                    <div className="flex items-center justify-between px-2.5 py-1 rounded-lg bg-amber-600 text-white font-mono text-[10px] font-black animate-pulse shadow-md">
+                      <span className="flex items-center gap-1">
+                        <Volume2 className="w-3 h-3 text-white" />
+                        <span>SOUND DETECTED ({candidate.audioLevel || 68} dB - आवाज पकड़ी गई)</span>
+                      </span>
+                      <span className="bg-black/30 px-1.5 py-0.5 rounded text-[9px]">SPEECH</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between pt-1 text-[11px] font-mono text-gray-400">
                     <span>Q{candidate.currentQuestion} ({candidate.answeredCount}/{candidate.totalQuestions} Solved)</span>
                     <span className={candidate.isTerminated ? 'text-red-500 font-black' : candidate.strikes > 0 ? 'text-red-400 font-bold' : 'text-emerald-400'}>
@@ -586,6 +609,17 @@ export const LiveCandidateMonitor: React.FC = () => {
                             <span>MOTION DETECTED (शारीरिक हलचल पकड़ी गई)</span>
                           </span>
                           <span className="text-[9px] bg-white/25 px-1.5 py-0.5 rounded font-bold">ALERT</span>
+                        </div>
+                      )}
+
+                      {/* Acoustic / Sound Detection Alert Banner in Card */}
+                      {candidate.isAudioAlert && (
+                        <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-amber-600 text-white font-mono text-[11px] font-black animate-pulse shadow-md">
+                          <span className="flex items-center gap-1.5">
+                            <Volume2 className="w-3.5 h-3.5 text-white" />
+                            <span>SPEECH / SOUND DETECTED ({candidate.audioLevel || 68} dB - आवाज पकड़ी गई)</span>
+                          </span>
+                          <span className="text-[9px] bg-black/30 px-1.5 py-0.5 rounded font-bold">ACOUSTIC</span>
                         </div>
                       )}
                     </div>

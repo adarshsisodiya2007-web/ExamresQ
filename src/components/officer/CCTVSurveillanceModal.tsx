@@ -70,11 +70,16 @@ export const CCTVSurveillanceModal: React.FC<CCTVSurveillanceModalProps> = ({
 
   // Audio level fluctuation
   useEffect(() => {
+    if (!candidate) return;
+    if (candidate.audioLevel) {
+      setAudioLevel(candidate.audioLevel);
+      return;
+    }
     const interval = setInterval(() => {
       setAudioLevel(Math.floor(24 + Math.random() * 12));
     }, 400);
     return () => clearInterval(interval);
-  }, []);
+  }, [candidate?.audioLevel]);
 
   // Bind real webcam for candidate.isSelf
   useEffect(() => {
@@ -281,7 +286,9 @@ export const CCTVSurveillanceModal: React.FC<CCTVSurveillanceModalProps> = ({
                     <Eye className="w-3 h-3 text-[#16803C]" />
                     <span>GAZE: CENTERED (0°)</span>
                   </span>
-                  <span>AUDIO: {audioLevel} dB</span>
+                  <span className={candidate.isAudioAlert ? 'text-red-400 font-black animate-pulse' : (candidate.audioLevel || audioLevel) >= 56 ? 'text-amber-400 font-bold' : 'text-emerald-300'}>
+                    AUDIO: {candidate.audioLevel || audioLevel} dB {candidate.isAudioAlert ? '(SPEECH!)' : ''}
+                  </span>
                 </div>
               </div>
             </div>

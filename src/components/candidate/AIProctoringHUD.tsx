@@ -16,7 +16,10 @@ import {
   ShieldAlert,
   CheckCircle2,
   ShieldCheck,
-  Activity
+  Activity,
+  Mic,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 import { cameraStreamService } from '../../services/cameraStreamService';
@@ -27,7 +30,7 @@ interface AIProctoringHUDProps {
   isTerminated?: boolean;
 }
 
-type DetectionType = 'NONE' | 'PHONE' | 'MULTIPLE_PERSONS' | 'GAZE_AWAY' | 'FACE_ABSENT' | 'UNAUTHORIZED_NOTES';
+type DetectionType = 'NONE' | 'PHONE' | 'MULTIPLE_PERSONS' | 'GAZE_AWAY' | 'FACE_ABSENT' | 'UNAUTHORIZED_NOTES' | 'AUDIO_DISTURBANCE';
 
 interface BoundingBox {
   x: number; // percentage (0 - 100)
@@ -72,6 +75,15 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const prevFramePixelsRef = useRef<Float32Array | null>(null);
   const lastMotionAlertTimeRef = useRef<number>(0);
 
+  // Real-Time Web Audio API Sound / Voice Detector State
+  const [isAudioAlert, setIsAudioAlert] = useState<boolean>(false);
+  const [audioSensorActive, setAudioSensorActive] = useState<boolean>(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
+  const audioIntervalRef = useRef<number | null>(null);
+  const lastAudioAlertTimeRef = useRef<number>(0);
+
   // Consecutive counters to filter out transient false-positive flickers
   const absentFramesRef = useRef<number>(0);
   const phoneFramesRef = useRef<number>(0);
@@ -79,7 +91,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const lookAwayFramesRef = useRef<number>(0);
   const isLockedRef = useRef<boolean>(false);
 
-  // Immediately cease and destroy camera feed if student is caught cheating & disqualified
+  // Immediately cease and destroy camera feed & mic if student is caught cheating & disqualified
   useEffect(() => {
     if (isTerminated) {
       if (streamRef.current) {
@@ -90,9 +102,28 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         });
         streamRef.current = null;
       }
+      if (audioStreamRef.current) {
+        audioStreamRef.current.getTracks().forEach(track => {
+          try {
+            track.stop();
+          } catch {}
+        });
+        audioStreamRef.current = null;
+      }
+      if (audioIntervalRef.current) {
+        clearInterval(audioIntervalRef.current);
+        audioIntervalRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close();
+        } catch {}
+        audioContextRef.current = null;
+      }
       cameraStreamService.clearStream();
       multiCandidateMeshService.stopWebcamBroadcast();
       setCameraActive(false);
+      setAudioSensorActive(false);
       setIsExamLocked(true);
     }
   }, [isTerminated]);
@@ -261,16 +292,124 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     return () => clearInterval(motionInterval);
   }, [cameraActive, isExamLocked, addNotification]);
 
-  // Subtle fluctuation to make AI proctoring telemetry feel authentic
+  // 2C. Real Hardware Microphone Acoustic & Speech Sensor (Web Audio API)
+  useEffect(() => {
+    if (isExamLocked) return;
+
+    let isMounted = true;
+
+    const initMicrophone = async () => {
+      try {
+        if (typeof window === 'undefined' || !navigator.mediaDevices?.getUserMedia) return;
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioCtx) return;
+
+        const micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        if (!isMounted) {
+          micStream.getTracks().forEach(t => t.stop());
+          return;
+        }
+
+        audioStreamRef.current = micStream;
+        const audioCtx = new AudioCtx();
+        audioContextRef.current = audioCtx;
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.3;
+        analyserRef.current = analyser;
+
+        const source = audioCtx.createMediaStreamSource(micStream);
+        source.connect(analyser);
+        setAudioSensorActive(true);
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        let sustainedSpeechCount = 0;
+
+        const interval = window.setInterval(() => {
+          if (!analyserRef.current || isLockedRef.current) return;
+          analyserRef.current.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            sum += dataArray[i] * dataArray[i];
+          }
+          const rms = Math.sqrt(sum / bufferLength);
+          // Map RMS amplitude (0-255) to realistic dB SPL (approx 28 dB to 92 dB)
+          const computedDb = Math.min(95, Math.max(26, Math.round(28 + (rms / 255) * 65)));
+          setAudioLevel(computedDb);
+
+          // Speech Detection Threshold (> 56 dB indicates talking, whispering or room murmur)
+          if (computedDb >= 56) {
+            sustainedSpeechCount++;
+            if (sustainedSpeechCount >= 2) {
+              setIsAudioAlert(true);
+              const now = Date.now();
+              if (now - lastAudioAlertTimeRef.current > 4000) {
+                lastAudioAlertTimeRef.current = now;
+                const reason = `Voice / speech disturbance detected in workstation (${computedDb} dB)! Please maintain absolute silence.`;
+                addNotification({
+                  target: 'candidate',
+                  type: 'warning',
+                  title: 'ACOUSTIC DETECTOR: SPEECH ALERT',
+                  message: reason
+                });
+                // Broadcast live acoustic alert across mesh to Officer Dashboard
+                multiCandidateMeshService.sendAudioAlert(computedDb, reason);
+              }
+            }
+          } else {
+            sustainedSpeechCount = Math.max(0, sustainedSpeechCount - 1);
+            if (sustainedSpeechCount === 0) {
+              setIsAudioAlert(false);
+            }
+          }
+        }, 150);
+
+        audioIntervalRef.current = interval;
+      } catch (err) {
+        console.warn('Microphone device unavailable or access denied; using ambient proctoring acoustic baseline:', err);
+        setAudioSensorActive(false);
+      }
+    };
+
+    initMicrophone();
+
+    return () => {
+      isMounted = false;
+      if (audioIntervalRef.current) {
+        clearInterval(audioIntervalRef.current);
+        audioIntervalRef.current = null;
+      }
+      if (audioStreamRef.current) {
+        audioStreamRef.current.getTracks().forEach(t => {
+          try { t.stop(); } catch {}
+        });
+        audioStreamRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try { audioContextRef.current.close(); } catch {}
+        audioContextRef.current = null;
+      }
+    };
+  }, [isExamLocked, addNotification]);
+
+  // Subtle fluctuation to make AI proctoring telemetry feel authentic when hardware mic is on standby
   useEffect(() => {
     const interval = setInterval(() => {
       if (activeDetection === 'NONE') {
         setFaceConfidence(Number((98.6 + Math.random() * 1.3).toFixed(1)));
-        setAudioLevel(Math.floor(26 + Math.random() * 12));
+        if (!audioSensorActive) {
+          setAudioLevel(Math.floor(26 + Math.random() * 10));
+        }
       }
     }, 2200);
     return () => clearInterval(interval);
-  }, [activeDetection]);
+  }, [activeDetection, audioSensorActive]);
 
   // 3. Central Violation Dispatcher
   const triggerViolation = useCallback((
@@ -585,6 +724,26 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     );
   };
 
+  const triggerAudioViolation = () => {
+    setIsAudioAlert(true);
+    setAudioLevel(74);
+    multiCandidateMeshService.sendAudioAlert(74, 'ACOUSTIC VIOLATION: Excessive human speech detected in workstation');
+    triggerViolation(
+      'AUDIO_DISTURBANCE',
+      'WARNING: Acoustic sensor detected human speech / voice communication in workstation (74 dB)!',
+      false,
+      {
+        x: 20,
+        y: 35,
+        width: 60,
+        height: 35,
+        label: 'ACOUSTIC DETECTOR: SPEECH LEAK (74 dB)',
+        confidence: 96.8,
+        color: 'amber'
+      }
+    );
+  };
+
   return (
     <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs space-y-3.5">
       {/* Header with Pretrained Model Status Badge */}
@@ -599,6 +758,13 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
         {/* Model Status Pill */}
         <div className="flex items-center gap-1.5">
+          {audioSensorActive && (
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] font-bold border border-emerald-200 dark:border-emerald-800 flex items-center gap-1" title="Real-time Microphone Analysis Active">
+              <Mic className="w-3 h-3 text-[#16803C] animate-pulse" />
+              <span>Mic Live</span>
+            </span>
+          )}
+
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] font-bold border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 shadow-xs" title="Neural Proctor Vision Engine Active">
             <CheckCircle2 className="w-3 h-3 text-[#16803C]" />
             <span>{modelType}</span>
@@ -673,6 +839,17 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           </div>
         )}
 
+        {/* Live Acoustic / Sound Sensor Alert Banner */}
+        {isAudioAlert && (
+          <div className="absolute top-10 inset-x-2 bg-red-600/95 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold flex items-center justify-between shadow-xl animate-bounce z-30">
+            <span className="flex items-center gap-1.5">
+              <Volume2 className="w-3.5 h-3.5 text-white animate-pulse" />
+              <span>SOUND DETECTED: SPEECH / WHISPER ({audioLevel} dB)</span>
+            </span>
+            <span className="text-[9px] bg-black text-yellow-300 px-2 py-0.5 rounded font-black">MAINTAIN SILENCE</span>
+          </div>
+        )}
+
         {/* Standard Live HUD Tracking Crosshair */}
         {cameraActive && activeDetection === 'NONE' && (
           <div className="absolute inset-3 border border-dashed border-emerald-400/40 rounded-lg pointer-events-none flex flex-col justify-between p-2">
@@ -691,7 +868,12 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
             <div className="flex justify-between items-center text-[9px] font-mono text-emerald-300 bg-black/50 backdrop-blur-xs px-2 py-0.5 rounded">
               <span>ROLL: ET-2026-4418</span>
-              <span>MIC: {audioLevel} dB</span>
+              <span className={`flex items-center gap-1 ${
+                isAudioAlert ? 'text-red-400 font-black' : audioLevel >= 56 ? 'text-amber-300 font-bold' : 'text-emerald-300'
+              }`}>
+                <Volume2 className="w-2.5 h-2.5" />
+                MIC: {audioLevel} dB {audioSensorActive ? '(LIVE)' : ''}
+              </span>
             </div>
           </div>
         )}
@@ -735,23 +917,38 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         )}
       </div>
 
-      {/* Real-time Telemetry Sensors */}
-      <div className="grid grid-cols-2 gap-2 text-xs">
+      {/* Real-time Telemetry Sensors (3 Columns: Visual, Workstation, Acoustic) */}
+      <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
           <span className="text-[10px] text-gray-500 block flex items-center gap-1 font-mono">
-            <Eye className="w-3 h-3 text-[#16803C]" /> Gaze / Visual Lock
+            <Eye className="w-3 h-3 text-[#16803C]" /> Gaze / Visual
           </span>
-          <span className={`font-bold font-mono mt-0.5 block ${activeDetection === 'GAZE_AWAY' ? 'text-amber-500' : 'text-gray-900 dark:text-white'}`}>
-            {activeDetection === 'GAZE_AWAY' ? 'Angle: -44° (Away)' : '100% Screen Centered'}
+          <span className={`font-bold font-mono mt-0.5 block truncate text-[11px] ${activeDetection === 'GAZE_AWAY' ? 'text-amber-500' : 'text-gray-900 dark:text-white'}`}>
+            {activeDetection === 'GAZE_AWAY' ? 'Angle: -44°' : 'Centered'}
           </span>
         </div>
 
         <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
           <span className="text-[10px] text-gray-500 block flex items-center gap-1 font-mono">
-            <ShieldCheck className="w-3 h-3 text-[#16803C]" /> Workstation Integrity
+            <ShieldCheck className="w-3 h-3 text-[#16803C]" /> Integrity
           </span>
-          <span className={`font-bold font-mono mt-0.5 block ${personCount >= 2 ? 'text-red-500 animate-pulse font-black' : 'text-gray-900 dark:text-white'}`}>
-            {personCount >= 2 ? 'ALERT: 2 PEOPLE DETECTED' : 'Single Candidate Verified'}
+          <span className={`font-bold font-mono mt-0.5 block truncate text-[11px] ${personCount >= 2 ? 'text-red-500 animate-pulse font-black' : 'text-gray-900 dark:text-white'}`}>
+            {personCount >= 2 ? '2 Faces' : '1 Candidate'}
+          </span>
+        </div>
+
+        <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+          <span className="text-[10px] text-gray-500 block flex items-center gap-1 font-mono">
+            <Volume2 className="w-3 h-3 text-[#16803C]" /> Acoustic / Sound
+          </span>
+          <span className={`font-bold font-mono mt-0.5 block truncate text-[11px] ${
+            isAudioAlert 
+              ? 'text-red-500 animate-pulse font-black' 
+              : audioLevel >= 56 
+                ? 'text-amber-500' 
+                : 'text-gray-900 dark:text-white'
+          }`}>
+            {isAudioAlert ? `Speech (${audioLevel}dB)` : `${audioLevel} dB Normal`}
           </span>
         </div>
       </div>
@@ -786,8 +983,8 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           </button>
         </div>
 
-        {/* Warning / Strike Actions */}
-        <div className="grid grid-cols-3 gap-1">
+        {/* Warning / Strike Actions (4 Columns: Look Away, Face Absent, Notes/Paper, Speech/Sound) */}
+        <div className="grid grid-cols-4 gap-1">
           <button
             onClick={triggerGazeViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
@@ -813,6 +1010,15 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           >
             <FileText className="w-2.5 h-2.5" />
             <span>Notes/Paper</span>
+          </button>
+
+          <button
+            onClick={triggerAudioViolation}
+            className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
+            title="Speak into microphone OR click to simulate acoustic disturbance (Strike 1/3)"
+          >
+            <Volume2 className="w-2.5 h-2.5" />
+            <span>Speech/Sound</span>
           </button>
         </div>
       </div>
