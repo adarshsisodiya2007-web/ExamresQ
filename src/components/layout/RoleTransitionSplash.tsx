@@ -102,28 +102,28 @@ export const RoleTransitionSplash: React.FC = () => {
   return (
     <div className={`
       fixed inset-0 z-[99999] flex items-center justify-center p-4 backdrop-blur-xl transition-all duration-300 animate-in fade-in select-none
-      ${isDark ? 'bg-[#070B14]/95 text-white' : 'bg-[#F8FAFC]/95 text-[#0F172A]'}
+      ${isDark ? 'bg-[#070B14]/95 text-white' : 'bg-white/95 text-[#111827]'}
     `}>
       {/* Background ambient glow pulse */}
       <div className={`
         absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-1000
         ${isStudent 
-          ? (isDark ? 'bg-emerald-500' : 'bg-emerald-600') 
-          : (isDark ? 'bg-[#0284C7]' : 'bg-[#1E3A8A]')}
+          ? (isDark ? 'bg-emerald-500' : 'bg-[#C62828]') 
+          : (isDark ? 'bg-[#0284C7]' : 'bg-[#C62828]')}
       `} />
 
       <div className={`
         relative w-full max-w-md p-6 sm:p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-5 overflow-hidden transition-colors duration-300
         ${isDark 
           ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
-          : 'bg-white border-[#E2E8F0] shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}
+          : 'bg-white border-red-200 shadow-[0_20px_60px_rgba(198,40,40,0.12)]'}
       `}>
         
         {/* Top Progress Track */}
-        <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-slate-100'}`}>
+        <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-red-50'}`}>
           <div 
             className={`h-full transition-all duration-75 ${
-              isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#1E3A8A]')
+              isStudent ? (isDark ? 'bg-emerald-500' : 'bg-[#C62828]') : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')
             }`}
             style={{ width: `${progress}%` }}
           />
@@ -134,18 +134,20 @@ export const RoleTransitionSplash: React.FC = () => {
           {/* Animated concentric rings */}
           <div className={`
             absolute -inset-4 rounded-full border-2 border-dashed opacity-40 animate-spin
-            ${isStudent ? 'border-emerald-500' : (isDark ? 'border-[#38BDF8]' : 'border-[#1E3A8A]')}
+            ${isStudent ? (isDark ? 'border-emerald-500' : 'border-[#C62828]') : (isDark ? 'border-[#38BDF8]' : 'border-[#C62828]')}
           `} style={{ animationDuration: '6s' }} />
 
           <div className={`
             absolute -inset-8 rounded-full border opacity-20 animate-ping
-            ${isStudent ? 'bg-emerald-500/20 border-emerald-500' : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-blue-500/20 border-blue-500')}
+            ${isStudent 
+              ? (isDark ? 'bg-emerald-500/20 border-emerald-500' : 'bg-red-500/20 border-red-500') 
+              : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-red-500/20 border-red-500')}
           `} style={{ animationDuration: '2s' }} />
 
           {/* Official ExamresQ Logo Image */}
           <div className={`
             w-24 h-24 sm:w-28 sm:h-28 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
-            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-slate-200'}
+            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-red-100 shadow-md'}
           `}>
             <img 
               src={examresqLogo} 
@@ -158,8 +160,8 @@ export const RoleTransitionSplash: React.FC = () => {
           <div className={`
             absolute -bottom-1.5 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
             ${isStudent 
-              ? 'bg-emerald-500 text-black border-emerald-400' 
-              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#1E3A8A] text-white border-blue-900')}
+              ? (isDark ? 'bg-emerald-500 text-black border-emerald-400' : 'bg-[#C62828] text-white border-red-300')
+              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#C62828] text-white border-red-300')}
           `}>
             <span>0{remainingSeconds}s</span>
           </div>
@@ -171,17 +173,17 @@ export const RoleTransitionSplash: React.FC = () => {
             <span className={`
               text-[10px] font-mono uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border
               ${isStudent 
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' 
-                : 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-sky-500/10 dark:text-[#38BDF8] dark:border-sky-500/30'}
+                ? (isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-50 text-[#C62828] border-red-200') 
+                : (isDark ? 'bg-sky-500/10 text-[#38BDF8] border-sky-500/30' : 'bg-red-50 text-[#C62828] border-red-200')}
             `}>
               {isStudent ? 'Candidate Workspace' : 'Officer Surveillance Hub'}
             </span>
-            <span className="text-[10px] font-mono text-slate-400 uppercase">
-              {isDark ? 'Dark Mode' : 'Light Mode'}
+            <span className="text-[10px] font-mono text-gray-500 dark:text-slate-400 uppercase font-bold">
+              {isDark ? 'Dark Mode' : 'Red & White Light'}
             </span>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-black tracking-tight text-[#0F172A] dark:text-white">
+          <h2 className="text-lg sm:text-xl font-black tracking-tight text-[#111827] dark:text-white">
             {isStudent ? 'Arming Student Examination Terminal' : 'Authorizing Officer Surveillance Console'}
           </h2>
         </div>
@@ -190,14 +192,14 @@ export const RoleTransitionSplash: React.FC = () => {
         {isStudent && (
           <div className={`
             w-full p-3 rounded-2xl border text-left space-y-1.5 transition-all
-            ${isDark ? 'bg-[#060911] border-[#162033]' : 'bg-slate-50 border-slate-200'}
+            ${isDark ? 'bg-[#060911] border-[#162033]' : 'bg-red-50/30 border-red-100'}
           `}>
-            <div className="flex items-center justify-between text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300">
+            <div className="flex items-center justify-between text-[11px] font-mono font-bold text-gray-800 dark:text-slate-300">
               <span className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <User className="w-3.5 h-3.5 text-[#C62828] dark:text-emerald-400" />
                 <span>Candidate Full Name:</span>
               </span>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">
+              <span className="text-[10px] text-[#C62828] dark:text-emerald-400 font-mono font-bold">
                 ● Roll: ET-2026-4418
               </span>
             </div>
@@ -207,14 +209,14 @@ export const RoleTransitionSplash: React.FC = () => {
               onChange={(e) => setStudentName(e.target.value)}
               placeholder="e.g. Adarsh Singh"
               className={`
-                w-full px-3 py-1.5 rounded-xl border text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500
+                w-full px-3 py-1.5 rounded-xl border text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#C62828]
                 ${isDark 
                   ? 'bg-[#0C1222] border-slate-700 text-white placeholder-gray-500' 
-                  : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'}
+                  : 'bg-white border-red-200 text-gray-900 placeholder-gray-400'}
               `}
               title="Edit candidate name to customize exam session"
             />
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono leading-tight">
+            <p className="text-[10px] text-gray-500 dark:text-slate-400 font-mono leading-tight">
               Biometric certificate will be issued to this name across all terminal screens.
             </p>
           </div>
@@ -225,20 +227,20 @@ export const RoleTransitionSplash: React.FC = () => {
           w-full p-3.5 rounded-2xl border text-left transition-all duration-300
           ${isDark 
             ? 'bg-[#060911] border-[#162033]' 
-            : 'bg-slate-50 border-slate-200'}
+            : 'bg-red-50/30 border-red-100'}
         `}>
           <div className="flex items-center gap-2.5 mb-1">
             <div className={`
               p-1.5 rounded-lg border shrink-0
-              ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-slate-200'}
+              ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-red-100 shadow-2xs'}
             `}>
               {currentStep.icon}
             </div>
-            <span className="font-bold text-xs font-mono text-[#0F172A] dark:text-white truncate">
+            <span className="font-bold text-xs font-mono text-[#111827] dark:text-white truncate">
               {currentStep.title}
             </span>
           </div>
-          <p className="text-[11px] text-slate-600 dark:text-gray-400 pl-8 leading-relaxed font-sans">
+          <p className="text-[11px] text-gray-600 dark:text-gray-400 pl-8 leading-relaxed font-sans">
             {currentStep.subtitle}
           </p>
 
@@ -249,10 +251,10 @@ export const RoleTransitionSplash: React.FC = () => {
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   idx === currentStepIndex 
-                    ? `w-8 ${isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#1E3A8A]')}` 
+                    ? `w-8 ${isStudent ? (isDark ? 'bg-emerald-500' : 'bg-[#C62828]') : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')}` 
                     : idx < currentStepIndex
-                    ? `w-3 ${isStudent ? 'bg-emerald-700' : 'bg-blue-700'}`
-                    : `w-3 ${isDark ? 'bg-gray-800' : 'bg-slate-300'}`
+                    ? `w-3 ${isStudent ? (isDark ? 'bg-emerald-700' : 'bg-red-700') : (isDark ? 'bg-blue-700' : 'bg-red-700')}`
+                    : `w-3 ${isDark ? 'bg-gray-800' : 'bg-gray-300'}`
                 }`}
               />
             ))}
@@ -261,17 +263,17 @@ export const RoleTransitionSplash: React.FC = () => {
 
         {/* Bottom Footer Controls */}
         <div className="pt-1 flex items-center justify-between w-full text-[11px] font-mono text-slate-400">
-          <span className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-slate-400 font-bold">
             <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
             <span>3s Security Handshake</span>
           </span>
           <button
             onClick={() => setTransitioningRole(null)}
             className={`
-              px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1
+              px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-sm
               ${isStudent 
-                ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-sm' 
-                : 'bg-[#0284C7] text-white hover:bg-sky-500 shadow-sm'}
+                ? (isDark ? 'bg-emerald-500 text-black hover:bg-emerald-400' : 'bg-[#C62828] text-white hover:bg-[#8E1B1B]') 
+                : (isDark ? 'bg-[#0284C7] text-white hover:bg-sky-500' : 'bg-[#C62828] text-white hover:bg-[#8E1B1B]')}
             `}
           >
             <span>Proceed to Dashboard →</span>

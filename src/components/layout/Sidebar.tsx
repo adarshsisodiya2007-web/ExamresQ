@@ -60,7 +60,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     restoreNetwork, 
     activeCandidates,
     isOfficerAuthenticated,
-    logoutOfficer
+    logoutOfficer,
+    studentName
   } = useResilience();
 
   const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
@@ -209,12 +210,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className={`
-      fixed inset-y-0 left-0 z-50 w-64 lg:w-72 bg-[#070B14] text-gray-300 border-r border-[#151D2E] flex flex-col transition-transform duration-300 ease-in-out
+      fixed inset-y-0 left-0 z-50 w-64 lg:w-72 bg-white dark:bg-[#070B14] text-gray-800 dark:text-gray-300 border-r border-red-100 dark:border-[#151D2E] flex flex-col transition-all duration-300 ease-in-out
       lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 shrink-0
       ${mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
     `}>
       {/* Top Branding with Dynamic Logo Simulation (Student vs Officer) */}
-      <div className="p-4 border-b border-[#151D2E] flex items-center justify-between">
+      <div className="p-4 border-b border-red-100 dark:border-[#151D2E] bg-white dark:bg-[#070B14] flex items-center justify-between">
         <BrandLogoSimulation 
           onNavigateHome={() => handleItemClick(userRole === 'student' ? 'live_exam' : 'candidate_monitor')} 
         />
@@ -231,13 +232,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* DEDICATED ROLE SELECTOR TABS: Student vs Officer */}
-      <div className="px-3 pt-3 pb-2 border-b border-[#151D2E] bg-[#0A0F1D]">
-        <div className="text-[10px] font-mono uppercase tracking-widest text-gray-400 font-bold mb-1.5 px-1 flex items-center justify-between">
+      <div className="px-3 pt-3 pb-2 border-b border-red-100 dark:border-[#151D2E] bg-red-50/40 dark:bg-[#0A0F1D]">
+        <div className="text-[10px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-400 font-bold mb-1.5 px-1 flex items-center justify-between">
           <span>Active Role</span>
-          <span className="text-[9px] text-[#38BDF8] font-bold">Role Isolated</span>
+          <span className="text-[9px] text-[#C62828] dark:text-[#38BDF8] font-bold">Role Isolated</span>
         </div>
 
-        <div className="grid grid-cols-2 p-1 rounded-xl bg-[#050811] border border-[#1E2A42] gap-1">
+        <div className="grid grid-cols-2 p-1 rounded-xl bg-white dark:bg-[#050811] border border-red-200 dark:border-[#1E2A42] gap-1 shadow-2xs">
           <button
             onClick={() => handleRoleChange('student')}
             className={`
@@ -245,7 +246,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ${
                 userRole === 'student'
                   ? 'bg-[#C62828] text-white shadow-md shadow-red-900/30'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-red-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-white/5'
               }
             `}
             title="Candidate Portal & Live Examination Room"
@@ -260,8 +261,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer
               ${
                 userRole === 'officer'
-                  ? 'bg-[#0284C7] text-white shadow-md shadow-cyan-900/30 font-extrabold'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                  ? 'bg-[#C62828] dark:bg-[#0284C7] text-white shadow-md shadow-red-900/20 dark:shadow-cyan-900/30 font-extrabold'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-red-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-white/5'
               }
             `}
             title="Multi-Student Surveillance, Incidents & Operations"
@@ -277,8 +278,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         
         {/* Officer-Only: Quick Lab Outage & Demo Simulator Box */}
         {userRole === 'officer' && (
-          <div className="p-2.5 rounded-xl bg-[#0D1527] border border-[#1E2A42] space-y-2">
-            <div className="flex items-center justify-between text-[10px] font-mono text-gray-400">
+          <div className="p-2.5 rounded-xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-[#1E2A42] space-y-2 shadow-2xs">
+            <div className="flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400">
               <span className="uppercase font-bold tracking-wider">Outage Simulation</span>
               <span className={`w-2 h-2 rounded-full ${networkStatus === 'connected' ? 'bg-[#16803C]' : 'bg-[#C62828] animate-ping'}`} />
             </div>
@@ -303,7 +304,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             <button
               onClick={onOpenHackathonModal}
-              className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-center cursor-pointer transition-colors"
+              className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold bg-red-50/80 hover:bg-red-100 text-gray-700 border border-red-200 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-300 dark:border-white/10 text-center cursor-pointer transition-colors"
             >
               🏛️ Challenge Architecture & Guidelines
             </button>
@@ -312,23 +313,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Student-Only: Personal Terminal Status Card */}
         {userRole === 'student' && (
-          <div className="p-3 rounded-xl bg-[#0D1527] border border-[#1E2A42] space-y-2">
-            <div className="flex items-center justify-between text-[10px] font-mono text-gray-400">
+          <div className="p-3 rounded-xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-[#1E2A42] space-y-2 shadow-2xs">
+            <div className="flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400">
               <span className="uppercase font-bold tracking-wider">Candidate Terminal</span>
-              <span className="text-emerald-400 font-bold">STATION-14</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">STATION-14</span>
             </div>
 
-            <div className="text-xs font-bold text-white flex items-center gap-2">
+            <div className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Adarsh Singh (ET-4418)</span>
+              <span>{studentName} (ET-4418)</span>
             </div>
 
-            <p className="text-[11px] text-gray-400 leading-snug">
-              Client Encrypted Buffer: <strong className="text-emerald-400 font-mono">ACTIVE</strong>. Any network interruption automatically freezes timer with zero data loss.
+            <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-snug">
+              Client Encrypted Buffer: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">ACTIVE</strong>. Any network interruption automatically freezes timer with zero data loss.
             </p>
 
             {networkStatus === 'interrupted' && (
-              <div className="p-2 rounded-lg bg-red-950/80 border border-red-800 text-[10px] text-red-200 font-mono animate-pulse">
+              <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-[10px] text-[#C62828] dark:bg-red-950/80 dark:border-red-800 dark:text-red-200 font-mono animate-pulse">
                 ⚠ Network Interrupted. Responses encrypted locally in IndexedDB.
               </div>
             )}
@@ -338,7 +339,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Categorized Navigation Items */}
         {currentSections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
-            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#5A6E8C] px-3 pb-1">
+            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#C62828] dark:text-[#5A6E8C] px-3 pb-1">
               {section.title}
             </h2>
 
@@ -354,20 +355,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer group text-left
                       ${
                         isActive
-                          ? 'bg-linear-to-r from-[#0C2438] to-[#081826] text-[#38BDF8] border border-[#0284C7]/50 shadow-md shadow-[#0284C7]/15 font-bold'
-                          : 'text-[#9AAEC8] hover:text-white hover:bg-[#121B2B] border border-transparent'
+                          ? 'bg-red-50 text-[#C62828] border border-red-200 shadow-2xs font-bold dark:bg-linear-to-r dark:from-[#0C2438] dark:to-[#081826] dark:text-[#38BDF8] dark:border-[#0284C7]/50 dark:shadow-md dark:shadow-[#0284C7]/15'
+                          : 'text-gray-700 hover:text-[#C62828] hover:bg-red-50/50 dark:text-[#9AAEC8] dark:hover:text-white dark:hover:bg-[#121B2B] border border-transparent'
                       }
                     `}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <span className={`shrink-0 transition-colors ${isActive ? 'text-[#38BDF8]' : 'text-[#64748B] group-hover:text-white'}`}>
+                      <span className={`shrink-0 transition-colors ${isActive ? 'text-[#C62828] dark:text-[#38BDF8]' : 'text-gray-400 dark:text-[#64748B] group-hover:text-[#C62828] dark:group-hover:text-white'}`}>
                         {item.icon}
                       </span>
                       <span className="truncate">{item.label}</span>
                     </div>
 
                     {item.badge && (
-                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border shrink-0 uppercase tracking-wider ${item.badgeColor || 'bg-gray-800 text-gray-300 border-gray-700'}`}>
+                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border shrink-0 uppercase tracking-wider ${item.badgeColor || 'bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}>
                         {item.badge}
                       </span>
                     )}
@@ -381,12 +382,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* 10-PHASE RESILIENCE LIFECYCLE (Compact in Sidebar) */}
         <div className="space-y-1 pt-1">
           <div className="flex items-center justify-between px-3 pb-1">
-            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#5A6E8C]">
+            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#C62828] dark:text-[#5A6E8C]">
               RESILIENCE LIFECYCLE
             </h2>
             <button
               onClick={() => setLifecycleExpanded(!lifecycleExpanded)}
-              className="text-[10px] text-[#38BDF8] hover:underline flex items-center gap-0.5 cursor-pointer font-mono"
+              className="text-[10px] text-[#C62828] dark:text-[#38BDF8] hover:underline flex items-center gap-0.5 cursor-pointer font-mono font-bold"
             >
               <span>{lifecycleExpanded ? 'Hide' : '10 Steps'}</span>
               {lifecycleExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -394,7 +395,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {lifecycleExpanded && (
-            <div className="p-2 rounded-xl bg-[#050811] border border-[#162033] space-y-1 font-mono text-[11px] animate-in fade-in">
+            <div className="p-2 rounded-xl bg-white dark:bg-[#050811] border border-red-100 dark:border-[#162033] space-y-1 font-mono text-[11px] animate-in fade-in shadow-2xs">
               {[
                 { step: '01', name: 'Exam Starts', view: 'live_exam' as AppView },
                 { step: '02', name: 'System Monitoring', view: 'operations' as AppView },
@@ -412,8 +413,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => handleItemClick(phase.view)}
                   className={`w-full flex items-center justify-between px-2 py-1 rounded-lg text-left transition-colors cursor-pointer text-[10px] ${
                     currentView === phase.view 
-                      ? 'bg-[#0C2438] text-[#38BDF8] font-bold border border-[#0284C7]/40'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-red-50 text-[#C62828] font-bold border border-red-200 dark:bg-[#0C2438] dark:text-[#38BDF8] dark:border-[#0284C7]/40'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-red-50/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -429,17 +430,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Bottom Footer Status */}
-      <div className="p-3 border-t border-[#151D2E] bg-[#05080F] flex items-center justify-between text-[11px] font-mono text-gray-400">
+      <div className="p-3 border-t border-red-100 dark:border-[#151D2E] bg-red-50/30 dark:bg-[#05080F] flex items-center justify-between text-[11px] font-mono text-gray-600 dark:text-gray-400">
         {userRole === 'officer' && isOfficerAuthenticated ? (
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1.5 truncate">
-              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-              <span className="text-white font-bold truncate">OFF-9042</span>
-              <span className="text-[9px] text-[#38BDF8] opacity-75">CMD</span>
+              <span className="w-2 h-2 rounded-full bg-[#C62828] dark:bg-sky-400 animate-pulse" />
+              <span className="text-gray-900 dark:text-white font-bold truncate">OFF-9042</span>
+              <span className="text-[9px] text-[#C62828] dark:text-[#38BDF8] font-bold">CMD</span>
             </div>
             <button
               onClick={logoutOfficer}
-              className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-300 font-bold transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 dark:bg-red-950/60 dark:hover:bg-red-900 dark:border-red-800 dark:text-red-300 font-bold transition-colors cursor-pointer"
               title="Lock Officer Console and return to Student Portal"
             >
               <LogOut className="w-3 h-3" />
@@ -452,7 +453,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Activity className="w-3.5 h-3.5 text-[#16803C]" />
               <span>{userRole === 'student' ? 'Terminal Armed' : 'Surveillance Active'}</span>
             </div>
-            <span className="text-[#38BDF8] font-bold">SHA-256</span>
+            <span className="text-[#C62828] dark:text-[#38BDF8] font-bold">SHA-256</span>
           </>
         )}
       </div>

@@ -66,7 +66,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6] dark:bg-[#070B14] flex selection:bg-[#C62828] selection:text-white antialiased transition-colors">
+    <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#070B14] flex selection:bg-[#C62828] selection:text-white antialiased transition-colors">
       {/* Permanent Left Sidebar Navigation (Matching User Screenshot) */}
       <Sidebar 
         onOpenHackathonModal={() => setHackathonModalOpen(true)}
@@ -75,7 +75,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main Content Area beside Sidebar */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F8F6] dark:bg-[#0A0B0E] transition-colors duration-300">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#FFFBFB] dark:bg-[#0A0B0E] transition-colors duration-300">
         {/* Minimal Top Header - No desktop menu button */}
         <Navbar onOpenMobileMenu={() => setMobileSidebarOpen(true)} />
 

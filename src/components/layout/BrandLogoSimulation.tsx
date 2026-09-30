@@ -44,12 +44,12 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
         {/* Animated Icon Container with mode-specific radar effect & Official ExamresQ Logo */}
         <div className={`relative w-10 h-10 rounded-xl p-0.5 border transition-all duration-300 ${
           isStudent 
-            ? 'bg-linear-to-br from-[#1E293B] via-[#0F172A] to-[#16803C]/70 border-[#1E293B] group-hover:border-emerald-500/80 shadow-md group-hover:shadow-emerald-950/40' 
-            : 'bg-linear-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7]/80 border-[#1E293B] group-hover:border-sky-500/80 shadow-md group-hover:shadow-sky-950/40'
+            ? 'bg-red-50 dark:bg-linear-to-br dark:from-[#1E293B] dark:via-[#0F172A] dark:to-[#16803C]/70 border-red-200 dark:border-[#1E293B] group-hover:border-red-400 dark:group-hover:border-emerald-500/80 shadow-2xs' 
+            : 'bg-red-50 dark:bg-linear-to-br dark:from-[#0F172A] dark:via-[#1E293B] dark:to-[#0284C7]/80 border-red-200 dark:border-[#1E293B] group-hover:border-red-400 dark:group-hover:border-sky-500/80 shadow-2xs'
         }`}>
           {/* Radar sweep ring simulation */}
           <div className={`absolute inset-0 rounded-xl opacity-30 animate-ping ${
-            isStudent ? 'bg-emerald-500' : 'bg-sky-400'
+            isStudent ? 'bg-emerald-500' : 'bg-red-400 dark:bg-sky-400'
           }`} style={{ animationDuration: '3s' }} />
 
           <div className="w-full h-full rounded-[10px] bg-white dark:bg-[#0A0F1D] flex items-center justify-center relative z-10 overflow-hidden p-0.5">
@@ -72,7 +72,7 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
             </h1>
             <span className={`w-2 h-2 rounded-full transition-colors ${
               networkStatus === 'connected' 
-                ? (isStudent ? 'bg-emerald-500 animate-pulse' : 'bg-sky-400 animate-pulse') 
+                ? (isStudent ? 'bg-emerald-500 animate-pulse' : 'bg-[#C62828] dark:bg-sky-400 animate-pulse') 
                 : 'bg-red-500 animate-ping'
             }`} />
           </div>
@@ -87,7 +87,7 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
                 </span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[9px] font-mono tracking-widest text-sky-600 dark:text-[#38BDF8] font-bold uppercase">
+              <span className="inline-flex items-center gap-1 text-[9px] font-mono tracking-widest text-[#C62828] dark:text-[#38BDF8] font-bold uppercase">
                 <span>⚡ SURVEILLANCE GRID</span>
                 <span className="text-[8px] opacity-60 font-mono">
                   {simPulse % 2 === 0 ? '• 3 LABS' : '• 0 LOSS'}
@@ -100,10 +100,10 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
 
       {/* Interactive Simulation Popover HUD */}
       {showSimDetails && (
-        <div className="absolute left-0 top-full mt-2 w-72 p-3 rounded-xl bg-[#090D1A] border border-[#1E2A42] text-white shadow-2xl z-50 animate-in fade-in zoom-in-95 text-xs font-mono">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1E2A42]">
-            <span className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
+        <div className="absolute left-0 top-full mt-2 w-72 p-3 rounded-xl bg-white dark:bg-[#090D1A] border border-red-200 dark:border-[#1E2A42] text-gray-900 dark:text-white shadow-2xl z-50 animate-in fade-in zoom-in-95 text-xs font-mono">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200 dark:border-[#1E2A42]">
+            <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
               <span>Simulated Engine Telemetry</span>
             </span>
             <button 
