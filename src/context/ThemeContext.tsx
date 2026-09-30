@@ -4,17 +4,17 @@ import { LuxuryTheme, LuxuryThemeId } from '../types';
 export const LUXURY_THEMES: Record<LuxuryThemeId, LuxuryTheme> = {
   imperial_crimson: {
     id: 'imperial_crimson',
-    name: 'Imperial Crimson',
-    tagline: 'Presidential Alabaster & Royal Red',
-    primary: '#C62828',
-    secondary: '#E53935',
-    bg: '#F8F8F6',
+    name: 'Clean Enterprise Light',
+    tagline: 'Refined Slate Canvas & Deep Navy Accents',
+    primary: '#0284C7',
+    secondary: '#0EA5E9',
+    bg: '#F8FAFC',
     cardBg: '#FFFFFF',
-    text: '#171717',
+    text: '#0F172A',
     isDark: false,
-    accentBadge: 'bg-[#C62828]/10 text-[#C62828] border-[#C62828]/20',
-    description: 'Crisp diplomatic white canvas with imperial crimson accents, frosted glass panels, and presidential precision.',
-    swatchGradient: 'bg-gradient-to-br from-[#FFFFFF] via-[#F8F8F6] to-[#C62828]'
+    accentBadge: 'bg-slate-100 text-slate-800 border-slate-200',
+    description: 'Crisp minimal white and slate canvas with refined subtle accents and high contrast text.',
+    swatchGradient: 'bg-gradient-to-br from-[#FFFFFF] via-[#F8FAFC] to-[#0284C7]'
   },
   obsidian_noir: {
     id: 'obsidian_noir',

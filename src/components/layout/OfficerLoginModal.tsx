@@ -10,6 +10,7 @@ import {
   Building,
   X
 } from 'lucide-react';
+import examresqLogo from '../../assets/examresq-logo.png';
 
 export const OfficerLoginModal: React.FC = () => {
   const { 
@@ -66,11 +67,13 @@ export const OfficerLoginModal: React.FC = () => {
         </button>
 
         <div className="p-6 space-y-5">
-          {/* Header */}
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-[#0284C7]/15 border border-[#0284C7]/30 flex items-center justify-center text-[#38BDF8] shrink-0">
-              <Lock className="w-5 h-5" />
-            </div>
+          {/* Header with Official Logo */}
+          <div className="flex items-center gap-3.5">
+            <img 
+              src={examresqLogo} 
+              alt="ExamresQ Logo" 
+              className="w-12 h-12 rounded-full object-contain shrink-0 drop-shadow-md" 
+            />
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-[#38BDF8] font-bold">

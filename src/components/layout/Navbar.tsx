@@ -2,6 +2,7 @@ import React from 'react';
 import { useResilience } from '../../context/ResilienceContext';
 import { useTheme } from '../../context/ThemeContext';
 import { NotificationCenter } from './NotificationCenter';
+import examresqLogo from '../../assets/examresq-logo.png';
 import { 
   ShieldCheck, 
   Menu,
@@ -84,8 +85,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             </button>
           )}
 
-          <div className="flex items-center gap-2 text-xs truncate">
-            <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#0284C7] dark:text-[#38BDF8] shrink-0">
+          <div className="flex items-center gap-2.5 text-xs truncate">
+            <img 
+              src={examresqLogo} 
+              alt="ExamresQ Logo" 
+              className="w-7 h-7 rounded-full object-contain shrink-0 drop-shadow-xs" 
+            />
+            <span className="font-mono text-[11px] uppercase font-black tracking-widest text-[#0284C7] dark:text-[#38BDF8] shrink-0">
               ExamresQ
             </span>
             <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-600 shrink-0" />

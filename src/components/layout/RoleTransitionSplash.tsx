@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useResilience } from '../../context/ResilienceContext';
 import { useTheme } from '../../context/ThemeContext';
+import examresqLogo from '../../assets/examresq-logo.png';
 import { 
   ShieldCheck, 
   Radio, 
@@ -62,17 +63,17 @@ export const RoleTransitionSplash: React.FC = () => {
     {
       title: "Step 1/3: Arming Cryptographic Sandbox",
       subtitle: "WebCrypto AES-256 & SHA-256 local ledger initialized",
-      icon: <Lock className="w-4 h-4 text-emerald-500" />
+      icon: <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     },
     {
       title: "Step 2/3: Securing Offline Buffer",
       subtitle: "IndexedDB zero-loss failover storage armed on local workstation",
-      icon: <Cpu className="w-4 h-4 text-emerald-500" />
+      icon: <Cpu className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     },
     {
       title: "Step 3/3: Terminal Armed & Verified",
       subtitle: "Station linked • Entering Student Examination Terminal...",
-      icon: <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+      icon: <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     }
   ];
 
@@ -80,17 +81,17 @@ export const RoleTransitionSplash: React.FC = () => {
     {
       title: "Step 1/3: Establishing Command Mesh",
       subtitle: "Authenticating Level-4 Surveillance Protocol & Token",
-      icon: <Radio className="w-4 h-4 text-[#38BDF8]" />
+      icon: <Radio className="w-4 h-4 text-[#0284C7] dark:text-[#38BDF8]" />
     },
     {
       title: "Step 2/3: Polling Telemetry Watchdogs",
       subtitle: "1.2s sub-second failure monitoring synced across 3 centres",
-      icon: <Activity className="w-4 h-4 text-[#38BDF8]" />
+      icon: <Activity className="w-4 h-4 text-[#0284C7] dark:text-[#38BDF8]" />
     },
     {
       title: "Step 3/3: Clearance Verified",
       subtitle: "Surveillance console unlocked • Decrypting live stream...",
-      icon: <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
+      icon: <ShieldCheck className="w-4 h-4 text-[#0284C7] dark:text-[#38BDF8]" />
     }
   ];
 
@@ -99,29 +100,29 @@ export const RoleTransitionSplash: React.FC = () => {
 
   return (
     <div className={`
-      fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xl transition-all duration-300 animate-in fade-in select-none
-      ${isDark ? 'bg-[#070B14]/95 text-white' : 'bg-[#F8F8F6]/95 text-gray-900'}
+      fixed inset-0 z-[99999] flex items-center justify-center p-4 backdrop-blur-xl transition-all duration-300 animate-in fade-in select-none
+      ${isDark ? 'bg-[#070B14]/95 text-white' : 'bg-[#F8FAFC]/95 text-[#0F172A]'}
     `}>
       {/* Background ambient glow pulse */}
       <div className={`
         absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-1000
         ${isStudent 
           ? (isDark ? 'bg-emerald-500' : 'bg-emerald-600') 
-          : (isDark ? 'bg-[#0284C7]' : 'bg-[#C62828]')}
+          : (isDark ? 'bg-[#0284C7]' : 'bg-[#1E3A8A]')}
       `} />
 
       <div className={`
         relative w-full max-w-md p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-6 overflow-hidden transition-colors duration-300
         ${isDark 
           ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
-          : 'bg-white/95 border-gray-200 shadow-[0_20px_60px_rgba(0,0,0,0.08)]'}
+          : 'bg-white border-[#E2E8F0] shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}
       `}>
         
         {/* Top Progress Track */}
-        <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
+        <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-slate-100'}`}>
           <div 
             className={`h-full transition-all duration-75 ${
-              isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')
+              isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#1E3A8A]')
             }`}
             style={{ width: `${progress}%` }}
           />
@@ -132,22 +133,22 @@ export const RoleTransitionSplash: React.FC = () => {
           {/* Animated concentric rings */}
           <div className={`
             absolute -inset-4 rounded-full border-2 border-dashed opacity-40 animate-spin
-            ${isStudent ? 'border-emerald-500' : (isDark ? 'border-[#38BDF8]' : 'border-[#C62828]')}
+            ${isStudent ? 'border-emerald-500' : (isDark ? 'border-[#38BDF8]' : 'border-[#1E3A8A]')}
           `} style={{ animationDuration: '6s' }} />
 
           <div className={`
             absolute -inset-8 rounded-full border opacity-20 animate-ping
-            ${isStudent ? 'bg-emerald-500/20 border-emerald-500' : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-red-500/20 border-red-500')}
+            ${isStudent ? 'bg-emerald-500/20 border-emerald-500' : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-blue-500/20 border-blue-500')}
           `} style={{ animationDuration: '2s' }} />
 
           {/* Official ExamresQ Logo Image */}
           <div className={`
             w-28 h-28 sm:w-32 sm:h-32 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
-            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-gray-200'}
+            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-slate-200'}
           `}>
             <img 
-              src="/examresq-logo.png" 
-              alt="ExamresQ Logo" 
+              src={examresqLogo} 
+              alt="ExamresQ Official Logo" 
               className="w-full h-full object-contain rounded-full drop-shadow-md"
             />
           </div>
@@ -157,7 +158,7 @@ export const RoleTransitionSplash: React.FC = () => {
             absolute -bottom-2 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
             ${isStudent 
               ? 'bg-emerald-500 text-black border-emerald-400' 
-              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#C62828] text-white border-red-700')}
+              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#1E3A8A] text-white border-blue-900')}
           `}>
             <span>0{remainingSeconds}s</span>
           </div>
@@ -167,19 +168,19 @@ export const RoleTransitionSplash: React.FC = () => {
         <div className="space-y-1">
           <div className="flex items-center justify-center gap-2">
             <span className={`
-              text-[10px] font-mono uppercase font-bold tracking-widest px-2 py-0.5 rounded-full border
+              text-[10px] font-mono uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border
               ${isStudent 
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' 
-                : 'bg-sky-500/10 text-sky-600 dark:text-[#38BDF8] border-sky-500/30'}
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' 
+                : 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-sky-500/10 dark:text-[#38BDF8] dark:border-sky-500/30'}
             `}>
               {isStudent ? 'Candidate Workspace' : 'Officer Surveillance Hub'}
             </span>
-            <span className="text-[10px] font-mono opacity-50 uppercase">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">
               {isDark ? 'Dark Mode' : 'Light Mode'}
             </span>
           </div>
 
-          <h2 className="text-xl font-black tracking-tight">
+          <h2 className="text-xl font-black tracking-tight text-[#0F172A] dark:text-white">
             {isStudent ? 'Arming Student Examination Terminal' : 'Authorizing Officer Surveillance Console'}
           </h2>
         </div>
@@ -189,20 +190,20 @@ export const RoleTransitionSplash: React.FC = () => {
           w-full p-4 rounded-2xl border text-left transition-all duration-300
           ${isDark 
             ? 'bg-[#060911] border-[#162033]' 
-            : 'bg-gray-50 border-gray-200'}
+            : 'bg-slate-50 border-slate-200'}
         `}>
           <div className="flex items-center gap-2.5 mb-1.5">
             <div className={`
               p-1.5 rounded-lg border shrink-0
-              ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-gray-200'}
+              ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-slate-200'}
             `}>
               {currentStep.icon}
             </div>
-            <span className="font-bold text-xs font-mono">
+            <span className="font-bold text-xs font-mono text-[#0F172A] dark:text-white">
               {currentStep.title}
             </span>
           </div>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 pl-8 leading-relaxed font-sans">
+          <p className="text-[11px] text-slate-600 dark:text-gray-400 pl-8 leading-relaxed font-sans">
             {currentStep.subtitle}
           </p>
 
@@ -213,10 +214,10 @@ export const RoleTransitionSplash: React.FC = () => {
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   idx === currentStepIndex 
-                    ? `w-8 ${isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')}` 
+                    ? `w-8 ${isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#1E3A8A]')}` 
                     : idx < currentStepIndex
-                    ? `w-3 ${isStudent ? 'bg-emerald-700' : 'bg-sky-700'}`
-                    : `w-3 ${isDark ? 'bg-gray-800' : 'bg-gray-300'}`
+                    ? `w-3 ${isStudent ? 'bg-emerald-700' : 'bg-blue-700'}`
+                    : `w-3 ${isDark ? 'bg-gray-800' : 'bg-slate-300'}`
                 }`}
               />
             ))}
@@ -224,14 +225,14 @@ export const RoleTransitionSplash: React.FC = () => {
         </div>
 
         {/* Bottom Skip Button for quick testing */}
-        <div className="pt-1 flex items-center justify-between w-full text-[11px] font-mono text-gray-400">
+        <div className="pt-1 flex items-center justify-between w-full text-[11px] font-mono text-slate-400">
           <span className="flex items-center gap-1">
             <Zap className="w-3.5 h-3.5 text-amber-500" />
             <span>3s Security Simulation</span>
           </span>
           <button
             onClick={() => setTransitioningRole(null)}
-            className="text-gray-500 hover:text-gray-900 dark:hover:text-white underline cursor-pointer text-[10px]"
+            className="text-slate-500 hover:text-slate-900 dark:hover:text-white underline cursor-pointer text-[10px]"
           >
             Skip →
           </button>

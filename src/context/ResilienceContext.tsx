@@ -168,8 +168,8 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } : null;
   });
 
-  // 3-Second Role Animation Transition State
-  const [transitioningRole, setTransitioningRole] = useState<'student' | 'officer' | null>(null);
+  // 3-Second Role Animation Transition State (Plays on launch and role transitions)
+  const [transitioningRole, setTransitioningRole] = useState<'student' | 'officer' | null>('student');
 
   const triggerRoleTransition = useCallback((targetRole: 'student' | 'officer', onComplete?: () => void) => {
     setTransitioningRole(targetRole);
@@ -177,6 +177,14 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setTransitioningRole(null);
       if (onComplete) onComplete();
     }, 3000);
+  }, []);
+
+  // Launch initial 3s animation timer on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTransitioningRole(null);
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   const loginOfficer = (officerId: string, _securityPin: string): boolean => {
@@ -273,15 +281,6 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     });
   }, [isOfficerAuthenticated, triggerRoleTransition]);
-
-  // Initial 3-second student terminal arming animation on first load
-  useEffect(() => {
-    const hasLaunched = sessionStorage.getItem('examresq_splash_shown');
-    if (!hasLaunched) {
-      sessionStorage.setItem('examresq_splash_shown', 'true');
-      triggerRoleTransition('student');
-    }
-  }, [triggerRoleTransition]);
 
   // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {

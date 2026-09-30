@@ -22,6 +22,7 @@ import {
   UserCheck,
   Activity
 } from 'lucide-react';
+import examresqLogo from '../../assets/examresq-logo.png';
 
 export const LiveCandidateMonitor: React.FC = () => {
   const { 
@@ -34,7 +35,8 @@ export const LiveCandidateMonitor: React.FC = () => {
     networkStatus,
     triggerNetworkInterruption,
     restoreNetwork,
-    setCurrentView
+    setCurrentView,
+    triggerRoleTransition
   } = useResilience();
 
   const [filter, setFilter] = useState<'all' | 'active' | 'offline_buffering' | 'flagged'>('all');
@@ -82,22 +84,31 @@ export const LiveCandidateMonitor: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#070B14] text-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
       
-      {/* Top Officer Title Banner */}
+      {/* Top Officer Title Banner with Official ExamresQ Logo */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#0D1527] border border-[#1E2A42] p-5 rounded-2xl shadow-xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#38BDF8] font-bold">
-              Institutional Live Surveillance & Telemetry Hub
-            </span>
+        <div className="flex items-start gap-3.5">
+          <img 
+            src={examresqLogo} 
+            alt="ExamresQ Logo" 
+            className="w-12 h-12 rounded-full object-contain shrink-0 drop-shadow-md cursor-pointer hover:scale-105 transition-transform" 
+            onClick={() => triggerRoleTransition('officer')}
+            title="Click to trigger 3-second surveillance animation"
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#38BDF8] font-bold">
+                Institutional Live Surveillance & Telemetry Hub
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white mt-1 flex items-center gap-2.5">
+              <Users className="w-6 h-6 text-[#38BDF8]" />
+              Multi-Student Real-Time Monitoring Room
+            </h1>
+            <p className="text-xs text-gray-400 mt-1 max-w-2xl">
+              Continuous sub-second telemetry across all concurrent candidate terminals. Observe answers saved, offline local encryption queues, proctor gaze alerts, and instant invigilator directives.
+            </p>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-white mt-1 flex items-center gap-2.5">
-            <Users className="w-6 h-6 text-[#38BDF8]" />
-            Multi-Student Real-Time Monitoring Room
-          </h1>
-          <p className="text-xs text-gray-400 mt-1 max-w-2xl">
-            Continuous sub-second telemetry across all concurrent candidate terminals. Observe answers saved, offline local encryption queues, proctor gaze alerts, and instant invigilator directives.
-          </p>
         </div>
 
         {/* Action Controls for Officer */}

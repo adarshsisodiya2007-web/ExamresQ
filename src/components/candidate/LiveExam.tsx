@@ -30,6 +30,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { sampleCandidateBroadcastHistory } from '../../data/governanceSecurityData';
+import examresqLogo from '../../assets/examresq-logo.png';
 
 export const LiveExam: React.FC = () => {
   const { 
@@ -45,7 +46,8 @@ export const LiveExam: React.FC = () => {
     triggerNetworkInterruption,
     restoreNetwork,
     setCurrentView,
-    addNotification
+    addNotification,
+    triggerRoleTransition
   } = useResilience();
 
   const [paletteMobileOpen, setPaletteMobileOpen] = useState(false);
@@ -361,24 +363,33 @@ export const LiveExam: React.FC = () => {
       <header className="bg-white/90 dark:bg-[#13151D]/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-16 z-30 shadow-xs relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Exam Subject & Roll */}
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/60 text-[#C62828] border border-red-200 dark:border-red-900/60 font-mono">
-                  PAPER: ENG-304
-                </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">Roll: ET-2026-4418</span>
-                <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                  strikeCount === 0 
-                    ? 'bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C] border-emerald-200 dark:border-emerald-800' 
-                    : 'bg-red-50 dark:bg-red-950/60 text-[#C62828] border-red-200 dark:border-red-800 animate-pulse'
-                }`}>
-                  Strikes: {strikeCount} / 3
-                </span>
+            {/* Exam Subject & Roll with Official Logo */}
+            <div className="flex items-center gap-3">
+              <img 
+                src={examresqLogo} 
+                alt="ExamresQ Logo" 
+                className="w-10 h-10 rounded-full object-contain shadow-xs shrink-0 cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => triggerRoleTransition('student')}
+                title="Click to trigger 3-second terminal arming animation"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/60 text-[#C62828] border border-red-200 dark:border-red-900/60 font-mono">
+                    PAPER: ENG-304
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">Roll: ET-2026-4418</span>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
+                    strikeCount === 0 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C] border-emerald-200 dark:border-emerald-800' 
+                      : 'bg-red-50 dark:bg-red-950/60 text-[#C62828] border-red-200 dark:border-red-800 animate-pulse'
+                  }`}>
+                    Strikes: {strikeCount} / 3
+                  </span>
+                </div>
+                <h1 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">
+                  Engineering Mathematics III
+                </h1>
               </div>
-              <h1 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">
-                Engineering Mathematics III
-              </h1>
             </div>
 
             {/* Dynamic Connection Status Notification Bar */}

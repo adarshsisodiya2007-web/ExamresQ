@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useResilience } from '../../context/ResilienceContext';
+import examresqLogo from '../../assets/examresq-logo.png';
 import { 
   ShieldCheck, 
   Activity, 
@@ -53,7 +54,7 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
 
           <div className="w-full h-full rounded-[10px] bg-white dark:bg-[#0A0F1D] flex items-center justify-center relative z-10 overflow-hidden p-0.5">
             <img 
-              src="/examresq-logo.png" 
+              src={examresqLogo} 
               alt="ExamresQ Logo" 
               className="w-full h-full object-contain rounded-full transition-transform group-hover:scale-110 duration-200" 
             />
