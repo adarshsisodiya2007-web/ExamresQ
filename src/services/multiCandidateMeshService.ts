@@ -1,19 +1,22 @@
-import { ActiveCandidateSession } from '../types';
+import { ActiveCandidateSession, StudentHelpRequest } from '../types';
 import Peer from 'peerjs';
 
 export interface CandidateMeshMessage {
-  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT';
+  type: 'REGISTER' | 'HEARTBEAT' | 'VIDEO_FRAME' | 'OFFICER_WARNING' | 'COMPENSATORY_TIME' | 'DISCONNECT' | 'HELP_REQUEST' | 'MOTION_ALERT';
   candidateId: string;
   candidate?: ActiveCandidateSession;
   frameDataUrl?: string;
   targetCandidateId?: string;
   message?: string;
   minutes?: number;
+  motionScore?: number;
+  helpRequest?: StudentHelpRequest;
   timestamp: number;
 }
 
 type MeshListener = (candidates: ActiveCandidateSession[]) => void;
 type WarningListener = (message: string) => void;
+type HelpRequestListener = (request: StudentHelpRequest) => void;
 
 class MultiCandidateMeshService {
   private channel: BroadcastChannel | null = null;
@@ -21,6 +24,7 @@ class MultiCandidateMeshService {
   private remoteCandidates: Map<string, ActiveCandidateSession> = new Map();
   private meshListeners: Set<MeshListener> = new Set();
   private warningListeners: Set<WarningListener> = new Set();
+  private helpRequestListeners: Set<HelpRequestListener> = new Set();
   private frameCaptureCanvas: HTMLCanvasElement | null = null;
   private frameBroadcastInterval: number | null = null;
   private heartbeatInterval: number | null = null;
@@ -344,6 +348,30 @@ class MultiCandidateMeshService {
         break;
       }
 
+      case 'MOTION_ALERT': {
+        if (this.remoteCandidates.has(msg.candidateId)) {
+          const cand = this.remoteCandidates.get(msg.candidateId)!;
+          cand.motionScore = msg.motionScore || 85;
+          cand.isMotionAlert = true;
+          // Auto reset visual alert badge after 4.5s
+          setTimeout(() => {
+            if (this.remoteCandidates.has(msg.candidateId)) {
+              this.remoteCandidates.get(msg.candidateId)!.isMotionAlert = false;
+              this.notifyListeners();
+            }
+          }, 4500);
+          this.notifyListeners();
+        }
+        break;
+      }
+
+      case 'HELP_REQUEST': {
+        if (msg.helpRequest) {
+          this.helpRequestListeners.forEach(fn => fn(msg.helpRequest!));
+        }
+        break;
+      }
+
       case 'OFFICER_WARNING': {
         if (this.currentCandidate && msg.targetCandidateId === this.currentCandidate.id && msg.message) {
           this.warningListeners.forEach(fn => fn(msg.message!));
@@ -364,6 +392,32 @@ class MultiCandidateMeshService {
         break;
       }
     }
+  }
+
+  public sendMotionAlert(motionScore: number): void {
+    if (!this.currentCandidate) return;
+    this.postMessage({
+      type: 'MOTION_ALERT',
+      candidateId: this.currentCandidate.id,
+      motionScore,
+      timestamp: Date.now()
+    });
+  }
+
+  public sendHelpRequest(req: StudentHelpRequest): void {
+    this.postMessage({
+      type: 'HELP_REQUEST',
+      candidateId: req.candidateId,
+      helpRequest: req,
+      timestamp: Date.now()
+    });
+  }
+
+  public subscribeToHelpRequests(listener: HelpRequestListener): () => void {
+    this.helpRequestListeners.add(listener);
+    return () => {
+      this.helpRequestListeners.delete(listener);
+    };
   }
 
   public sendOfficerWarningToCandidate(targetCandidateId: string, message: string): void {

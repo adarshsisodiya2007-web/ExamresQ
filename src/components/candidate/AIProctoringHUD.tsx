@@ -15,7 +15,8 @@ import {
   Zap,
   ShieldAlert,
   CheckCircle2,
-  ShieldCheck
+  ShieldCheck,
+  Activity
 } from 'lucide-react';
 
 import { cameraStreamService } from '../../services/cameraStreamService';
@@ -62,6 +63,13 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const [detectionBox, setDetectionBox] = useState<BoundingBox | null>(null);
   const [isExamLocked, setIsExamLocked] = useState<boolean>(false);
   const [personCount, setPersonCount] = useState<number>(1);
+
+  // Optical Flow Motion Sensor State
+  const [liveMotionScore, setLiveMotionScore] = useState<number>(0);
+  const [isMotionAlert, setIsMotionAlert] = useState<boolean>(false);
+  const motionCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const prevFramePixelsRef = useRef<Float32Array | null>(null);
+  const lastMotionAlertTimeRef = useRef<number>(0);
 
   // Consecutive counters to filter out transient false-positive flickers
   const absentFramesRef = useRef<number>(0);
@@ -154,6 +162,85 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
       stopCamera();
     };
   }, []);
+
+  // 2B. Real-Time Optical Frame-Differencing Motion Sensor Loop (Checks every 250ms)
+  useEffect(() => {
+    if (!cameraActive || isExamLocked) return;
+
+    if (!motionCanvasRef.current) {
+      const c = document.createElement('canvas');
+      c.width = 48;
+      c.height = 36;
+      motionCanvasRef.current = c;
+    }
+
+    const canvas = motionCanvasRef.current;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    const totalPixels = 48 * 36; // 1728 pixels
+
+    const motionInterval = setInterval(() => {
+      if (!videoRef.current || videoRef.current.readyState < 2) return;
+      const video = videoRef.current;
+
+      try {
+        ctx.drawImage(video, 0, 0, 48, 36);
+        const imgData = ctx.getImageData(0, 0, 48, 36);
+        const data = imgData.data;
+
+        if (!prevFramePixelsRef.current) {
+          prevFramePixelsRef.current = new Float32Array(totalPixels);
+          for (let i = 0; i < totalPixels; i++) {
+            const idx = i * 4;
+            prevFramePixelsRef.current[i] = data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114;
+          }
+          return;
+        }
+
+        let diffPixels = 0;
+        const prev = prevFramePixelsRef.current;
+
+        for (let i = 0; i < totalPixels; i++) {
+          const idx = i * 4;
+          const currLum = data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114;
+          const diff = Math.abs(currLum - prev[i]);
+          if (diff > 18) { // Sensitivity threshold for physical movement
+            diffPixels++;
+          }
+          prev[i] = currLum;
+        }
+
+        const motionPercent = Math.min(100, Math.round((diffPixels / totalPixels) * 100));
+        setLiveMotionScore(motionPercent);
+
+        const now = Date.now();
+        // Trigger alert if motion exceeds 14% (head turned, stood up, reached over)
+        if (motionPercent > 14) {
+          setIsMotionAlert(true);
+
+          if (now - lastMotionAlertTimeRef.current > 4000) {
+            lastMotionAlertTimeRef.current = now;
+            addNotification({
+              target: 'candidate',
+              type: 'warning',
+              title: 'MOTION SENSOR ALERT',
+              message: `Excessive movement detected (${motionPercent}% motion index)! Please sit straight and face the monitor.`
+            });
+
+            // Dispatches live alert to Officer dashboard
+            multiCandidateMeshService.sendMotionAlert(motionPercent);
+          }
+        } else {
+          setIsMotionAlert(false);
+        }
+      } catch (e) {
+        // Ignored
+      }
+    }, 250);
+
+    return () => clearInterval(motionInterval);
+  }, [cameraActive, isExamLocked, addNotification]);
 
   // Subtle fluctuation to make AI proctoring telemetry feel authentic
   useEffect(() => {
@@ -541,6 +628,17 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           </div>
         )}
 
+        {/* Live Motion Sensor Alert Banner */}
+        {isMotionAlert && (
+          <div className="absolute top-2 inset-x-2 bg-amber-500/95 text-black px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold flex items-center justify-between shadow-xl animate-pulse z-30">
+            <span className="flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-black animate-spin" />
+              <span>MOTION SENSOR: MOVEMENT DETECTED ({liveMotionScore}%)</span>
+            </span>
+            <span className="text-[9px] bg-black text-amber-300 px-2 py-0.5 rounded font-black">REMAIN STILL</span>
+          </div>
+        )}
+
         {/* Standard Live HUD Tracking Crosshair */}
         {cameraActive && activeDetection === 'NONE' && (
           <div className="absolute inset-3 border border-dashed border-emerald-400/40 rounded-lg pointer-events-none flex flex-col justify-between p-2">
@@ -549,8 +647,11 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 FACE CONF: {faceConfidence}%
               </span>
-              <span className={`text-[9px] flex items-center gap-1 font-bold ${personCount >= 2 ? 'text-red-400' : 'text-emerald-400'}`}>
-                <Scan className="w-2.5 h-2.5 animate-spin" /> {personCount} CANDIDATE VERIFIED
+              <span className={`text-[9px] flex items-center gap-1 font-bold ${
+                isMotionAlert ? 'text-amber-300 font-black' : 'text-emerald-300'
+              }`}>
+                <Activity className="w-2.5 h-2.5 text-cyan-400" />
+                MOTION: {liveMotionScore}%
               </span>
             </div>
 

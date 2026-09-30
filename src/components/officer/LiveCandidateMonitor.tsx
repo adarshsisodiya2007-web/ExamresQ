@@ -26,6 +26,7 @@ import examresqLogo from '../../assets/examresq-logo.png';
 import { ActiveCandidateSession } from '../../types';
 import { CandidateLiveVideoTile } from './CandidateLiveVideoTile';
 import { CCTVSurveillanceModal } from './CCTVSurveillanceModal';
+import { AttendanceSheetModal } from './AttendanceSheetModal';
 import { multiCandidateMeshService } from '../../services/multiCandidateMeshService';
 
 export const LiveCandidateMonitor: React.FC = () => {
@@ -40,11 +41,15 @@ export const LiveCandidateMonitor: React.FC = () => {
     triggerNetworkInterruption,
     restoreNetwork,
     setCurrentView,
-    triggerRoleTransition
+    triggerRoleTransition,
+    language,
+    helpRequests,
+    resolveHelpRequest
   } = useResilience();
 
   const [filter, setFilter] = useState<'all' | 'active' | 'offline_buffering' | 'flagged'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAttendanceSheet, setShowAttendanceSheet] = useState(false);
   
   // Real-Time Mesh Candidates (From concurrent student tabs and other laptops)
   const [meshCandidates, setMeshCandidates] = useState<ActiveCandidateSession[]>([]);
@@ -157,6 +162,15 @@ export const LiveCandidateMonitor: React.FC = () => {
         {/* Action Controls for Officer */}
         <div className="flex flex-wrap items-center gap-2.5">
           <button
+            onClick={() => setShowAttendanceSheet(true)}
+            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+            title="Open Physical Attendance Sheet & Signature Roll"
+          >
+            <span>📋</span>
+            <span>{language === 'hi' ? 'उपस्थिति पत्रक' : 'Attendance Sheet'}</span>
+          </button>
+
+          <button
             onClick={() => setShowAnnouncementModal(true)}
             className="px-4 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] dark:bg-linear-to-r dark:from-blue-600 dark:to-indigo-600 dark:hover:from-blue-700 dark:hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
           >
@@ -249,6 +263,55 @@ export const LiveCandidateMonitor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* PENDING STUDENT ASSISTANCE REQUESTS (सहायता अनुरोध) */}
+      {helpRequests.length > 0 && (
+        <div className="bg-amber-500/15 dark:bg-amber-500/20 border-2 border-amber-500 rounded-2xl p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">✋</span>
+              <h2 className="text-sm font-black text-amber-900 dark:text-amber-300">
+                PENDING STUDENT HELP REQUESTS ({helpRequests.length}) / छात्र सहायता अनुरोध
+              </h2>
+            </div>
+            <span className="text-[11px] font-mono text-amber-800 dark:text-amber-400 font-bold">
+              Immediate Room Invigilator Action
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {helpRequests.map((req) => (
+              <div 
+                key={req.id} 
+                className="bg-white dark:bg-[#0D1527] border border-amber-400/80 p-3.5 rounded-xl shadow-xs flex items-center justify-between gap-2.5"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black text-gray-900 dark:text-white">{req.candidateName}</span>
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                      {req.stationId}
+                    </span>
+                  </div>
+                  <div className="text-xs text-amber-800 dark:text-amber-300 font-bold mt-1">
+                    {req.requestType === 'rough_paper' && '📝 Extra Rough Paper (रफ़ शीट)'}
+                    {req.requestType === 'water' && '💧 Drinking Water (पीने का पानी)'}
+                    {req.requestType === 'tech_issue' && '🖥️ Computer/Mouse Issue (तकनीकी समस्या)'}
+                    {req.requestType === 'invigilator' && '🙋 Call Invigilator (कक्ष निरीक्षक)'}
+                  </div>
+                  <div className="text-[10px] text-gray-500 font-mono mt-0.5">{req.timestamp}</div>
+                </div>
+
+                <button
+                  onClick={() => resolveHelpRequest(req.id)}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shrink-0 cursor-pointer shadow-xs transition-colors"
+                >
+                  ✓ Done
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Main Content Layout: Candidate Grid on Left (8 cols) + Real-time Telemetry Stream on Right (4 cols) */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
@@ -373,6 +436,17 @@ export const LiveCandidateMonitor: React.FC = () => {
                     size="large"
                   />
 
+                  {/* Motion Sensor Alert Badge in CCTV */}
+                  {candidate.isMotionAlert && (
+                    <div className="flex items-center justify-between px-2.5 py-1 rounded-lg bg-red-600 text-white font-mono text-[10px] font-black animate-pulse">
+                      <span className="flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3 text-white" />
+                        <span>MOTION ALERT (शारीरिक हलचल)</span>
+                      </span>
+                      <span className="bg-white/20 px-1.5 py-0.5 rounded text-[9px]">HIGH</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between pt-1 text-[11px] font-mono text-gray-400">
                     <span>Q{candidate.currentQuestion} ({candidate.answeredCount}/{candidate.totalQuestions} Solved)</span>
                     <span className={candidate.strikes > 0 ? 'text-red-400 font-bold' : 'text-emerald-400'}>
@@ -484,6 +558,17 @@ export const LiveCandidateMonitor: React.FC = () => {
                         candidate={candidate} 
                         onOpenCCTV={() => setCctvCandidate(candidate)} 
                       />
+
+                      {/* Motion Sensor Physical Alert Banner in Card */}
+                      {candidate.isMotionAlert && (
+                        <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-red-600 text-white font-mono text-[11px] font-black animate-pulse shadow-md">
+                          <span className="flex items-center gap-1.5">
+                            <AlertTriangle className="w-3.5 h-3.5 text-white" />
+                            <span>MOTION DETECTED (शारीरिक हलचल पकड़ी गई)</span>
+                          </span>
+                          <span className="text-[9px] bg-white/25 px-1.5 py-0.5 rounded font-bold">ALERT</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Question Answering Progress Bar */}
@@ -760,6 +845,12 @@ export const LiveCandidateMonitor: React.FC = () => {
       <CCTVSurveillanceModal 
         candidate={cctvCandidate} 
         onClose={() => setCctvCandidate(null)} 
+      />
+
+      {/* Official Physical Attendance Sheet & Signature Roll Modal */}
+      <AttendanceSheetModal 
+        isOpen={showAttendanceSheet} 
+        onClose={() => setShowAttendanceSheet(false)} 
       />
 
     </div>

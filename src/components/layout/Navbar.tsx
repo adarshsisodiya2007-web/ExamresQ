@@ -26,7 +26,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
     currentView, 
     networkStatus,
     isOfficerAuthenticated,
-    logoutOfficer
+    logoutOfficer,
+    language,
+    setLanguage
   } = useResilience();
 
   const { isDark, toggleDarkMode } = useTheme();
@@ -104,12 +106,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         {/* Center: Real-Time Protocol Chip (Hidden on mobile) */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-red-50/50 dark:bg-white/5 border border-red-200 dark:border-white/10 text-[11px] font-mono text-gray-700 dark:text-gray-300">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Zero-Loss SHA-256 Ledger</span>
+          <span>{language === 'hi' ? '100% सुरक्षित स्थानीय कंप्यूटर बफर' : 'Zero-Loss SHA-256 Safe Ledger'}</span>
         </div>
 
-        {/* Right: Network Status + Light/Dark Switch + Role Switcher + Notification Bell */}
+        {/* Right: Language Switcher + Theme Switch + Traffic Light + Role Switcher + Notification Bell */}
         <div className="flex items-center gap-2 shrink-0">
           
+          {/* Bilingual Language Switcher (EN / हिन्दी) */}
+          <button
+            onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-red-200 dark:border-[#1E2A42] bg-red-50/60 dark:bg-[#0D1527] text-[#C62828] dark:text-[#38BDF8] hover:border-red-400 transition-colors cursor-pointer text-xs font-bold font-mono shadow-2xs"
+            title="Switch Language / भाषा बदलें"
+          >
+            <span>🌐</span>
+            <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+          </button>
+
           {/* Light / Dark Mode Toggle Button with explicit theme label */}
           <button
             onClick={toggleDarkMode}
@@ -130,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
             )}
           </button>
 
-          {/* Live Network Health Status Pill */}
+          {/* Live Plain-Language Traffic Light Health Status */}
           <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border ${
             networkStatus === 'connected'
               ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800'
@@ -138,10 +150,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
               ? 'bg-red-50 text-red-800 border-red-200 dark:bg-red-950/80 dark:text-red-300 dark:border-red-800 animate-pulse'
               : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800'
           }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${
+            <span className={`w-2 h-2 rounded-full ${
               networkStatus === 'connected' ? 'bg-[#16803C]' : networkStatus === 'interrupted' ? 'bg-[#C62828]' : 'bg-[#C77A00]'
             }`} />
-            <span className="hidden sm:inline">{networkStatus === 'connected' ? '● Online (14ms)' : '⚠ Offline Buffer'}</span>
+            <span className="hidden sm:inline">
+              {networkStatus === 'connected' 
+                ? (language === 'hi' ? '🟢 सब ठीक है' : '🟢 Normal (14ms)') 
+                : (language === 'hi' ? '🟡 धीमा नेटवर्क (सुरक्षित)' : '🟡 Offline Safe')}
+            </span>
           </div>
 
           {/* Role Switcher (Student vs Officer with Guard) */}

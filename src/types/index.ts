@@ -31,6 +31,55 @@ export interface ActiveCandidateSession {
   aadharCard?: string;
   phoneNumber?: string;
   remoteMediaStream?: any;
+  motionScore?: number;
+  isMotionAlert?: boolean;
+  attendance?: {
+    present: boolean;
+    aadharVerified: boolean;
+    photoVerified: boolean;
+    roughSheetIssued: boolean;
+  };
+}
+
+export type HelpRequestType = 'rough_paper' | 'water' | 'tech_issue' | 'invigilator';
+
+export interface StudentHelpRequest {
+  id: string;
+  candidateId: string;
+  candidateName: string;
+  stationId: string;
+  type: HelpRequestType;
+  requestType?: HelpRequestType;
+  title: string;
+  titleHi: string;
+  timestamp: string;
+  status: 'pending' | 'resolved';
+}
+
+export interface CandidateAttendanceRecord {
+  candidateId: string;
+  present: boolean;
+  aadharVerified: boolean;
+  photoVerified: boolean;
+  roughSheetIssued: boolean;
+  verificationNotes?: string;
+  timestamp?: string;
+}
+
+export interface SubmissionReceipt {
+  receiptId: string;
+  candidateName: string;
+  rollNo: string;
+  aadharCard: string;
+  stationId: string;
+  centreName: string;
+  examName: string;
+  totalQuestions: number;
+  answeredCount: number;
+  markedReviewCount: number;
+  submittedAt: string;
+  securityHash: string;
+  integrityScore: number;
 }
 
 export interface CandidateTelemetryEvent {
@@ -39,7 +88,7 @@ export interface CandidateTelemetryEvent {
   candidateName: string;
   rollNo: string;
   timestamp: string;
-  type: 'answer_saved' | 'offline_buffer' | 'strike_issued' | 'tab_switched' | 'reconnected' | 'compensation_granted' | 'warning_sent';
+  type: 'answer_saved' | 'offline_buffer' | 'strike_issued' | 'tab_switched' | 'reconnected' | 'compensation_granted' | 'warning_sent' | 'motion_detected' | 'help_requested';
   message: string;
   severity: 'info' | 'warning' | 'critical' | 'success';
 }

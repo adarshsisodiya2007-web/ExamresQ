@@ -32,6 +32,8 @@ import {
 import { sampleCandidateBroadcastHistory } from '../../data/governanceSecurityData';
 import examresqLogo from '../../assets/examresq-logo.png';
 import { multiCandidateMeshService } from '../../services/multiCandidateMeshService';
+import { StudentAssistanceModal } from './StudentAssistanceModal';
+import { SubmissionReceiptModal } from './SubmissionReceiptModal';
 
 export const LiveExam: React.FC = () => {
   const { 
@@ -49,10 +51,18 @@ export const LiveExam: React.FC = () => {
     setCurrentView,
     addNotification,
     triggerRoleTransition,
-    studentName
+    studentName,
+    language,
+    t,
+    fontSize,
+    setFontSize,
+    submissionReceipt,
+    generateSubmissionReceipt
   } = useResilience();
 
   const [paletteMobileOpen, setPaletteMobileOpen] = useState(false);
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   
   // Anti-Cheating & Lockdown Security States
   const [strikeCount, setStrikeCount] = useState<number>(0);
@@ -437,6 +447,42 @@ export const LiveExam: React.FC = () => {
                 </div>
               )}
 
+              {/* Student Silent Assistance / Raise Hand Button */}
+              <button
+                onClick={() => setHelpModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs shadow-md transition-all cursor-pointer animate-pulse shrink-0"
+                title="Need Rough Sheet, Water, or Computer Help?"
+              >
+                <span>✋</span>
+                <span>{language === 'hi' ? 'सहायता चाहिए (Help)' : 'Need Assistance'}</span>
+              </button>
+
+              {/* Font Size Adjuster for Non-Tech Students */}
+              <div className="hidden md:flex items-center gap-0.5 px-2 py-1 rounded-xl bg-red-50/60 dark:bg-white/5 border border-red-200 dark:border-white/10 text-xs font-mono font-bold shrink-0">
+                <span className="text-[10px] text-gray-500 mr-1">Aa</span>
+                <button 
+                  onClick={() => setFontSize('sm')} 
+                  className={`px-1.5 py-0.5 rounded cursor-pointer ${fontSize === 'sm' ? 'bg-[#C62828] text-white' : 'text-gray-600 hover:bg-gray-200'}`}
+                  title="Smaller text"
+                >
+                  -
+                </button>
+                <button 
+                  onClick={() => setFontSize('base')} 
+                  className={`px-1.5 py-0.5 rounded cursor-pointer ${fontSize === 'base' ? 'bg-[#C62828] text-white' : 'text-gray-600 hover:bg-gray-200'}`}
+                  title="Default text"
+                >
+                  A
+                </button>
+                <button 
+                  onClick={() => setFontSize('lg')} 
+                  className={`px-1.5 py-0.5 rounded cursor-pointer ${fontSize === 'lg' ? 'bg-[#C62828] text-white' : 'text-gray-600 hover:bg-gray-200'}`}
+                  title="Larger text"
+                >
+                  +
+                </button>
+              </div>
+
               {/* Fullscreen Secure Mode Toggle */}
               <button
                 onClick={toggleFullscreen}
@@ -572,7 +618,9 @@ export const LiveExam: React.FC = () => {
               </div>
 
               {/* Question Text */}
-              <div className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white leading-relaxed">
+              <div className={`font-semibold text-gray-900 dark:text-white leading-relaxed ${
+                fontSize === 'lg' ? 'text-lg sm:text-xl' : fontSize === 'sm' ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'
+              }`}>
                 {currentQ.text}
               </div>
 
@@ -606,7 +654,9 @@ export const LiveExam: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex-1 text-xs sm:text-sm font-medium">
+                      <div className={`flex-1 font-medium ${
+                        fontSize === 'lg' ? 'text-sm sm:text-base' : fontSize === 'sm' ? 'text-[11px]' : 'text-xs sm:text-sm'
+                      }`}>
                         <span className="font-bold mr-2 text-gray-900 dark:text-white">{option.id}.</span>
                         <span>{option.text}</span>
                       </div>
@@ -728,11 +778,14 @@ export const LiveExam: React.FC = () => {
               {/* Submit Final Assessment */}
               <div className="mt-6 pt-4 border-t border-red-100 dark:border-gray-800 space-y-2">
                 <button
-                  onClick={() => setCurrentView('audit')}
+                  onClick={() => {
+                    generateSubmissionReceipt();
+                    setReceiptModalOpen(true);
+                  }}
                   className="w-full py-2.5 px-4 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[#C62828]/25"
                 >
                   <FileCheck className="w-4 h-4 text-white" />
-                  <span>Submit Exam & View Audit Proof</span>
+                  <span>{language === 'hi' ? 'परीक्षा सबमिट करें एवं रसीद प्राप्त करें' : 'Submit Exam & Get Official Receipt'}</span>
                 </button>
                 <p className="text-[10px] text-gray-500 text-center">
                   Protected by ExamresQ Immutable SHA-256 State Ledger.
@@ -818,6 +871,22 @@ export const LiveExam: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Student Assistance Modal (Raise Hand) */}
+      <StudentAssistanceModal 
+        isOpen={helpModalOpen} 
+        onClose={() => setHelpModalOpen(false)} 
+      />
+
+      {/* Official Submission Receipt Modal */}
+      <SubmissionReceiptModal 
+        receipt={submissionReceipt}
+        isOpen={receiptModalOpen}
+        onClose={() => {
+          setReceiptModalOpen(false);
+          setCurrentView('audit');
+        }}
+      />
     </div>
   );
 };

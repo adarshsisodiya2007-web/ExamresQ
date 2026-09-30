@@ -8,8 +8,14 @@ import {
   ExamQuestion,
   UserRole,
   ActiveCandidateSession,
-  CandidateTelemetryEvent
+  CandidateTelemetryEvent,
+  StudentHelpRequest,
+  HelpRequestType,
+  SubmissionReceipt,
+  CandidateAttendanceRecord
 } from '../types';
+import { Language, translations } from '../utils/translations';
+import { multiCandidateMeshService } from '../services/multiCandidateMeshService';
 import { 
   sampleQuestions, 
   assessmentCentresData, 
@@ -137,6 +143,29 @@ interface ResilienceContextType {
   notifications: NotificationItem[];
   dismissNotification: (id: string) => void;
   addNotification: (item: Omit<NotificationItem, 'id' | 'timestamp'>) => void;
+
+  // Bilingual Non-Technical Language Toggle
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: typeof translations['en'];
+
+  // Font Size Accessibility
+  fontSize: 'sm' | 'base' | 'lg';
+  setFontSize: (size: 'sm' | 'base' | 'lg') => void;
+
+  // Student Hall Assistance (Raise Hand)
+  helpRequests: StudentHelpRequest[];
+  sendHelpRequest: (type: HelpRequestType, note?: string) => void;
+  resolveHelpRequest: (id: string) => void;
+
+  // Invigilator Attendance Checklist
+  candidateAttendance: Record<string, { present: boolean; aadharVerified: boolean; photoVerified: boolean; roughSheetIssued: boolean }>;
+  updateCandidateAttendance: (candId: string, field: 'present' | 'aadharVerified' | 'photoVerified' | 'roughSheetIssued') => void;
+
+  // Final Submission Receipt
+  submissionReceipt: SubmissionReceipt | null;
+  setSubmissionReceipt: (receipt: SubmissionReceipt | null) => void;
+  generateSubmissionReceipt: () => SubmissionReceipt;
 
   // Reset
   resetSystemState: () => void;
@@ -302,6 +331,94 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     });
   }, [isOfficerAuthenticated, triggerRoleTransition]);
+
+  // Bilingual Language State
+  const [language, setLanguageState] = useState<Language>(() => {
+    return (localStorage.getItem('examresq_lang') as Language) || 'en';
+  });
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('examresq_lang', lang);
+  }, []);
+
+  const t = translations[language];
+
+  // Font Size Accessibility State
+  const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg'>('base');
+
+  // Help Requests State
+  const [helpRequests, setHelpRequests] = useState<StudentHelpRequest[]>([]);
+
+  // Candidate Attendance State
+  const [candidateAttendance, setCandidateAttendance] = useState<Record<string, { present: boolean; aadharVerified: boolean; photoVerified: boolean; roughSheetIssued: boolean }>>({});
+
+  const updateCandidateAttendance = useCallback((candId: string, field: 'present' | 'aadharVerified' | 'photoVerified' | 'roughSheetIssued') => {
+    setCandidateAttendance(prev => {
+      const current = prev[candId] || { present: true, aadharVerified: true, photoVerified: true, roughSheetIssued: true };
+      return {
+        ...prev,
+        [candId]: {
+          ...current,
+          [field]: !current[field]
+        }
+      };
+    });
+  }, []);
+
+  // Submission Receipt State
+  const [submissionReceipt, setSubmissionReceipt] = useState<SubmissionReceipt | null>(null);
+
+  const generateSubmissionReceipt = useCallback((): SubmissionReceipt => {
+    const stationId = sessionStorage.getItem('examresq_station_id') || 'STATION-14';
+    const aadhar = sessionStorage.getItem('examresq_student_aadhar') || '5842 1904 8821';
+    const rollNo = 'ET-2026-ENG-4418';
+    const answeredCount = Object.keys(answers).length;
+    const receipt: SubmissionReceipt = {
+      receiptId: `REC-${Date.now().toString(36).toUpperCase()}-941`,
+      candidateName: studentName || 'Adarsh Singh',
+      rollNo,
+      aadharCard: aadhar,
+      stationId,
+      centreName: 'Centre 08 (North Academic Complex, New Delhi)',
+      examName: 'Engineering Mathematics III — National Assessment 2026',
+      totalQuestions: 25,
+      answeredCount,
+      markedReviewCount: markedForReview.length,
+      submittedAt: new Date().toLocaleString(),
+      securityHash: '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+      integrityScore: 100
+    };
+    setSubmissionReceipt(receipt);
+    return receipt;
+  }, [answers, markedForReview, studentName]);
+
+  const sendHelpRequest = useCallback((type: HelpRequestType, note?: string) => {
+    const stationId = sessionStorage.getItem('examresq_station_id') || 'STATION-14';
+    const optMap: Record<HelpRequestType, { en: string; hi: string }> = {
+      rough_paper: { en: 'Need Extra Rough Sheet', hi: 'अतिरिक्त रफ शीट चाहिए' },
+      water: { en: 'Drinking Water Assistance', hi: 'पीने का पानी चाहिए' },
+      tech_issue: { en: 'Mouse / Computer Issue', hi: 'कंप्यूटर या माउस समस्या' },
+      invigilator: { en: 'Call Room Teacher / Invigilator', hi: 'कक्ष निरीक्षक को बुलाएं' }
+    };
+    const req: StudentHelpRequest = {
+      id: `help-${Date.now()}`,
+      candidateId: 'cand-self',
+      candidateName: studentName || 'Candidate',
+      stationId,
+      type,
+      title: optMap[type].en,
+      titleHi: optMap[type].hi,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      status: 'pending'
+    };
+    multiCandidateMeshService.sendHelpRequest(req);
+    setHelpRequests(prev => [req, ...prev]);
+  }, [studentName]);
+
+  const resolveHelpRequest = useCallback((id: string) => {
+    setHelpRequests(prev => prev.filter(r => r.id !== id));
+  }, []);
 
   // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {
@@ -846,6 +963,19 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         notifications,
         dismissNotification,
         addNotification,
+        language,
+        setLanguage,
+        t,
+        fontSize,
+        setFontSize,
+        helpRequests,
+        sendHelpRequest,
+        resolveHelpRequest,
+        candidateAttendance,
+        updateCandidateAttendance,
+        submissionReceipt,
+        setSubmissionReceipt,
+        generateSubmissionReceipt,
         resetSystemState
       }}
     >
