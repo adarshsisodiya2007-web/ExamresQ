@@ -47,7 +47,8 @@ export const LiveExam: React.FC = () => {
     restoreNetwork,
     setCurrentView,
     addNotification,
-    triggerRoleTransition
+    triggerRoleTransition,
+    studentName
   } = useResilience();
 
   const [paletteMobileOpen, setPaletteMobileOpen] = useState(false);
@@ -377,7 +378,8 @@ export const LiveExam: React.FC = () => {
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/60 text-[#C62828] border border-red-200 dark:border-red-900/60 font-mono">
                     PAPER: ENG-304
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">Roll: ET-2026-4418</span>
+                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200 hidden sm:inline">{studentName}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">• Roll: ET-2026-4418</span>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                     strikeCount === 0 
                       ? 'bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C] border-emerald-200 dark:border-emerald-800' 

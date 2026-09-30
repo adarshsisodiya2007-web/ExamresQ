@@ -15,22 +15,26 @@ import {
 } from 'lucide-react';
 
 export const CandidatePortal: React.FC = () => {
-  const { setCurrentView } = useResilience();
+  const { setCurrentView, studentName } = useResilience();
   const [subTab, setSubTab] = useState<'dashboard' | 'my_exams' | 'results' | 'profile'>('dashboard');
 
+  const initials = studentName
+    ? studentName.trim().split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'AS';
+
   return (
-    <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8F8F6] dark:bg-[#070B14] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Candidate Portal Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0B0F19] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xs">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#C62828] text-white flex items-center justify-center font-bold text-lg shadow-sm shadow-[#C62828]/25">
-              AS
+            <div className="w-12 h-12 rounded-xl bg-[#0284C7] dark:bg-[#38BDF8] text-white dark:text-black flex items-center justify-center font-bold text-lg shadow-sm">
+              {initials}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black text-gray-900">Adarsh Singh</h1>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200 font-semibold flex items-center gap-1">
+                <h1 className="text-xl font-black text-gray-900 dark:text-white">{studentName}</h1>
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-semibold flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" /> Biometrics Verified
                 </span>
               </div>

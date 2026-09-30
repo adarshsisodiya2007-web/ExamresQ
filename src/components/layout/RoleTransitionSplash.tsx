@@ -9,11 +9,12 @@ import {
   CheckCircle2, 
   Zap, 
   Activity, 
-  Cpu 
+  Cpu,
+  User
 } from 'lucide-react';
 
 export const RoleTransitionSplash: React.FC = () => {
-  const { transitioningRole, setTransitioningRole } = useResilience();
+  const { transitioningRole, setTransitioningRole, studentName, setStudentName } = useResilience();
   const { isDark } = useTheme();
 
   const [progress, setProgress] = useState(0);
@@ -61,7 +62,7 @@ export const RoleTransitionSplash: React.FC = () => {
 
   const studentSteps = [
     {
-      title: "Step 1/3: Arming Cryptographic Sandbox",
+      title: `Step 1/3: Arming Cryptographic Sandbox for ${studentName || 'Candidate'}`,
       subtitle: "WebCrypto AES-256 & SHA-256 local ledger initialized",
       icon: <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     },
@@ -71,8 +72,8 @@ export const RoleTransitionSplash: React.FC = () => {
       icon: <Cpu className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     },
     {
-      title: "Step 3/3: Terminal Armed & Verified",
-      subtitle: "Station linked • Entering Student Examination Terminal...",
+      title: `Step 3/3: Terminal Armed for ${studentName || 'Candidate'}`,
+      subtitle: `Station linked • Entering Student Examination Terminal as ${studentName || 'Candidate'}...`,
       icon: <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
     }
   ];
@@ -112,7 +113,7 @@ export const RoleTransitionSplash: React.FC = () => {
       `} />
 
       <div className={`
-        relative w-full max-w-md p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-6 overflow-hidden transition-colors duration-300
+        relative w-full max-w-md p-6 sm:p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-5 overflow-hidden transition-colors duration-300
         ${isDark 
           ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
           : 'bg-white border-[#E2E8F0] shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}
@@ -129,7 +130,7 @@ export const RoleTransitionSplash: React.FC = () => {
         </div>
 
         {/* Circular Logo Area with 3-second animated pulse rings */}
-        <div className="relative flex items-center justify-center my-2">
+        <div className="relative flex items-center justify-center my-1">
           {/* Animated concentric rings */}
           <div className={`
             absolute -inset-4 rounded-full border-2 border-dashed opacity-40 animate-spin
@@ -143,7 +144,7 @@ export const RoleTransitionSplash: React.FC = () => {
 
           {/* Official ExamresQ Logo Image */}
           <div className={`
-            w-28 h-28 sm:w-32 sm:h-32 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
+            w-24 h-24 sm:w-28 sm:h-28 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
             ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-slate-200'}
           `}>
             <img 
@@ -155,7 +156,7 @@ export const RoleTransitionSplash: React.FC = () => {
 
           {/* 3s Countdown badge */}
           <div className={`
-            absolute -bottom-2 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
+            absolute -bottom-1.5 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
             ${isStudent 
               ? 'bg-emerald-500 text-black border-emerald-400' 
               : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#1E3A8A] text-white border-blue-900')}
@@ -180,26 +181,60 @@ export const RoleTransitionSplash: React.FC = () => {
             </span>
           </div>
 
-          <h2 className="text-xl font-black tracking-tight text-[#0F172A] dark:text-white">
+          <h2 className="text-lg sm:text-xl font-black tracking-tight text-[#0F172A] dark:text-white">
             {isStudent ? 'Arming Student Examination Terminal' : 'Authorizing Officer Surveillance Console'}
           </h2>
         </div>
 
+        {/* Interactive Student Name Input (User Requested: "jab student dashboard aata hai to mujhe add karna student name at least le") */}
+        {isStudent && (
+          <div className={`
+            w-full p-3 rounded-2xl border text-left space-y-1.5 transition-all
+            ${isDark ? 'bg-[#060911] border-[#162033]' : 'bg-slate-50 border-slate-200'}
+          `}>
+            <div className="flex items-center justify-between text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300">
+              <span className="flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Candidate Full Name:</span>
+              </span>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">
+                ● Roll: ET-2026-4418
+              </span>
+            </div>
+            <input
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="e.g. Adarsh Singh"
+              className={`
+                w-full px-3 py-1.5 rounded-xl border text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500
+                ${isDark 
+                  ? 'bg-[#0C1222] border-slate-700 text-white placeholder-gray-500' 
+                  : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'}
+              `}
+              title="Edit candidate name to customize exam session"
+            />
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono leading-tight">
+              Biometric certificate will be issued to this name across all terminal screens.
+            </p>
+          </div>
+        )}
+
         {/* Dynamic 3-Step Simulation Status Box */}
         <div className={`
-          w-full p-4 rounded-2xl border text-left transition-all duration-300
+          w-full p-3.5 rounded-2xl border text-left transition-all duration-300
           ${isDark 
             ? 'bg-[#060911] border-[#162033]' 
             : 'bg-slate-50 border-slate-200'}
         `}>
-          <div className="flex items-center gap-2.5 mb-1.5">
+          <div className="flex items-center gap-2.5 mb-1">
             <div className={`
               p-1.5 rounded-lg border shrink-0
               ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-slate-200'}
             `}>
               {currentStep.icon}
             </div>
-            <span className="font-bold text-xs font-mono text-[#0F172A] dark:text-white">
+            <span className="font-bold text-xs font-mono text-[#0F172A] dark:text-white truncate">
               {currentStep.title}
             </span>
           </div>
@@ -208,7 +243,7 @@ export const RoleTransitionSplash: React.FC = () => {
           </p>
 
           {/* Stepper dots */}
-          <div className="flex items-center gap-1.5 mt-3 pl-8">
+          <div className="flex items-center gap-1.5 mt-2.5 pl-8">
             {[0, 1, 2].map((idx) => (
               <div 
                 key={idx}
@@ -224,17 +259,22 @@ export const RoleTransitionSplash: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Skip Button for quick testing */}
+        {/* Bottom Footer Controls */}
         <div className="pt-1 flex items-center justify-between w-full text-[11px] font-mono text-slate-400">
-          <span className="flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-amber-500" />
-            <span>3s Security Simulation</span>
+          <span className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
+            <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span>3s Security Handshake</span>
           </span>
           <button
             onClick={() => setTransitioningRole(null)}
-            className="text-slate-500 hover:text-slate-900 dark:hover:text-white underline cursor-pointer text-[10px]"
+            className={`
+              px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1
+              ${isStudent 
+                ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-sm' 
+                : 'bg-[#0284C7] text-white hover:bg-sky-500 shadow-sm'}
+            `}
           >
-            Skip →
+            <span>Proceed to Dashboard →</span>
           </button>
         </div>
 

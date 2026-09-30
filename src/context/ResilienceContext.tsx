@@ -80,6 +80,10 @@ interface ResilienceContextType {
   setTransitioningRole: (role: 'student' | 'officer' | null) => void;
   triggerRoleTransition: (targetRole: 'student' | 'officer', onComplete?: () => void) => void;
 
+  // Candidate Profile State
+  studentName: string;
+  setStudentName: (name: string) => void;
+
   // Candidate Exam State (Single Candidate Room)
   questions: ExamQuestion[];
   currentQuestionIndex: number;
@@ -171,6 +175,19 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // 3-Second Role Animation Transition State (Plays on launch and role transitions)
   const [transitioningRole, setTransitioningRole] = useState<'student' | 'officer' | null>('student');
 
+  // Candidate Name State (Can be entered during animation or in portal)
+  const [studentName, setStudentNameState] = useState<string>(() => {
+    return localStorage.getItem('examresq_student_name') || 'Adarsh Singh';
+  });
+
+  const setStudentName = useCallback((name: string) => {
+    setStudentNameState(name);
+    localStorage.setItem('examresq_student_name', name);
+    const trimmed = name.trim() || 'Adarsh Singh';
+    setActiveCandidates(prev => prev.map(c => c.isSelf ? { ...c, name: trimmed } : c));
+    setAuditTrail(prev => ({ ...prev, candidateName: trimmed }));
+  }, []);
+
   const triggerRoleTransition = useCallback((targetRole: 'student' | 'officer', onComplete?: () => void) => {
     setTransitioningRole(targetRole);
     setTimeout(() => {
@@ -221,6 +238,7 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     });
   };
 
+
   const [questions] = useState<ExamQuestion[]>(sampleQuestions);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(1); // question 14 is default highlight
   const [answers, setAnswers] = useState<Record<number, string>>({ 1: 'A', 14: 'A' });
@@ -228,7 +246,10 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState<number>(3260); // ~54 mins
   
   // Multi-Student Live Surveillance & Officer Telemetry
-  const [activeCandidates, setActiveCandidates] = useState<ActiveCandidateSession[]>(initialActiveCandidates);
+  const [activeCandidates, setActiveCandidates] = useState<ActiveCandidateSession[]>(() => {
+    const savedName = localStorage.getItem('examresq_student_name') || 'Adarsh Singh';
+    return initialActiveCandidates.map(c => c.id === 'cand-1' ? { ...c, name: savedName } : c);
+  });
   const [telemetryEvents, setTelemetryEvents] = useState<CandidateTelemetryEvent[]>(initialTelemetryEvents);
 
   // Resilience states
@@ -781,6 +802,8 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         transitioningRole,
         setTransitioningRole,
         triggerRoleTransition,
+        studentName,
+        setStudentName,
         questions,
         currentQuestionIndex,
         setCurrentQuestionIndex,
