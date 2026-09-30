@@ -23,6 +23,9 @@ import {
   Activity
 } from 'lucide-react';
 import examresqLogo from '../../assets/examresq-logo.png';
+import { ActiveCandidateSession } from '../../types';
+import { CandidateLiveVideoTile } from './CandidateLiveVideoTile';
+import { CCTVSurveillanceModal } from './CCTVSurveillanceModal';
 
 export const LiveCandidateMonitor: React.FC = () => {
   const { 
@@ -42,6 +45,10 @@ export const LiveCandidateMonitor: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'active' | 'offline_buffering' | 'flagged'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Video Surveillance & CCTV Console States
+  const [cctvCandidate, setCctvCandidate] = useState<ActiveCandidateSession | null>(null);
+  const [displayMode, setDisplayMode] = useState<'cards' | 'cctv_wall'>('cards');
+
   // Modal states
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
   const [warningMessage, setWarningMessage] = useState('Please keep your eyes focused on the screen.');
@@ -213,8 +220,8 @@ export const LiveCandidateMonitor: React.FC = () => {
         {/* LEFT COLUMN: Candidate Surveillance Grid (8 Cols) */}
         <div className="xl:col-span-8 space-y-4">
           
-          {/* Filter Bar & Search */}
-          <div className="bg-white dark:bg-[#0A101F] border border-red-100 dark:border-[#1A253C] p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          {/* Filter Bar & Search & View Mode Switcher */}
+          <div className="bg-white dark:bg-[#0A101F] border border-red-100 dark:border-[#1A253C] p-3 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-1.5 overflow-x-auto">
               <button
                 onClick={() => setFilter('all')}
@@ -246,7 +253,7 @@ export const LiveCandidateMonitor: React.FC = () => {
                     : 'bg-red-50/60 text-gray-700 hover:bg-red-100 dark:bg-[#121B2B] dark:text-gray-400 dark:hover:text-white'
                 }`}
               >
-                Offline Encrypted ({offlineCount})
+                Offline ({offlineCount})
               </button>
 
               <button
@@ -257,65 +264,108 @@ export const LiveCandidateMonitor: React.FC = () => {
                     : 'bg-red-50/60 text-gray-700 hover:bg-red-100 dark:bg-[#121B2B] dark:text-gray-400 dark:hover:text-white'
                 }`}
               >
-                Flagged / Strikes ({flaggedCount})
+                Flagged ({flaggedCount})
               </button>
             </div>
 
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search candidate, roll, station..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-56 pl-9 pr-3 py-1.5 rounded-lg text-xs bg-red-50/40 dark:bg-[#121B2B] border border-red-200 dark:border-[#1E2A42] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-[#C62828] dark:focus:border-[#38BDF8]"
-              />
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search roll, station..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full sm:w-44 pl-9 pr-3 py-1.5 rounded-lg text-xs bg-red-50/40 dark:bg-[#121B2B] border border-red-200 dark:border-[#1E2A42] text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-[#C62828]"
+                />
+              </div>
+
+              {/* View Switcher: Detail Cards vs CCTV Matrix Wall */}
+              <div className="flex items-center gap-1 border-l border-red-100 dark:border-[#1E2A42] pl-2">
+                <button
+                  onClick={() => setDisplayMode('cards')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    displayMode === 'cards' 
+                      ? 'bg-[#C62828] text-white shadow-xs' 
+                      : 'bg-red-50 text-gray-700 hover:bg-red-100 dark:bg-[#121B2B] dark:text-gray-400'
+                  }`}
+                  title="Show telemetry cards with embedded video player"
+                >
+                  <Terminal className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Cards</span>
+                </button>
+                <button
+                  onClick={() => setDisplayMode('cctv_wall')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    displayMode === 'cctv_wall' 
+                      ? 'bg-[#C62828] text-white shadow-xs' 
+                      : 'bg-red-50 text-gray-700 hover:bg-red-100 dark:bg-[#121B2B] dark:text-gray-400'
+                  }`}
+                  title="Show multi-screen live CCTV surveillance wall"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">CCTV Wall</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Cards Grid of Concurrent Candidates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredCandidates.map((candidate) => {
-              const progressPercent = Math.round((candidate.answeredCount / candidate.totalQuestions) * 100);
-
-              return (
-                <div
+          {/* VIEW 1: CCTV Surveillance Wall Mode */}
+          {displayMode === 'cctv_wall' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in">
+              {filteredCandidates.map((candidate) => (
+                <div 
                   key={candidate.id}
-                  className={`
-                    relative rounded-2xl bg-white dark:bg-[#0D1527] border transition-all duration-300 p-4 space-y-3.5 shadow-2xs
-                    ${candidate.isSelf ? 'border-[#C62828] shadow-md shadow-red-500/10 dark:border-[#38BDF8]/60 dark:shadow-[#38BDF8]/10' : 'border-red-100 dark:border-[#1E2A42]'}
-                    ${candidate.status === 'offline_buffering' ? 'border-amber-400 bg-amber-50/20 dark:border-amber-500/70 dark:bg-[#141822]' : ''}
-                    ${candidate.status === 'flagged' || candidate.strikes > 0 ? 'border-red-300 bg-red-50/20 dark:border-red-500/70 dark:bg-[#171318]' : ''}
-                  `}
+                  className="bg-black rounded-2xl border-2 border-gray-800 hover:border-[#C62828] p-3 space-y-2 shadow-xl relative overflow-hidden"
                 >
-                  {/* Top Candidate Bar: Station ID + Live Video Proctoring Snapshot */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      
-                      {/* Live Camera Feed Simulation with AI Bounding Box */}
-                      <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-black border border-gray-300 dark:border-gray-700 shrink-0">
-                        <img 
-                          src={candidate.avatar} 
-                          alt={candidate.name} 
-                          className="w-full h-full object-cover"
-                        />
+                  <div className="flex items-center justify-between text-xs font-mono text-white pb-1 border-b border-gray-800">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                      <span>{candidate.stationId} • {candidate.name}</span>
+                    </span>
+                    <button
+                      onClick={() => setCctvCandidate(candidate)}
+                      className="text-[10px] font-bold text-red-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Focus / Intercom ↗</span>
+                    </button>
+                  </div>
 
-                        {/* AI Proctoring Overlay */}
-                        <div className={`absolute inset-0 border-2 rounded-xl pointer-events-none ${
-                          candidate.faceStatus === 'verified' 
-                            ? 'border-emerald-500/80' 
-                            : candidate.faceStatus === 'looking_away'
-                            ? 'border-amber-500/80 animate-pulse'
-                            : 'border-red-500 animate-ping'
-                        }`} />
+                  <CandidateLiveVideoTile 
+                    candidate={candidate} 
+                    onOpenCCTV={() => setCctvCandidate(candidate)}
+                    size="large"
+                  />
 
-                        <div className="absolute bottom-0 inset-x-0 bg-black/80 px-1 py-0.5 text-[8px] font-mono text-center text-gray-300 flex items-center justify-center gap-0.5">
-                          <Camera className="w-2.5 h-2.5 text-[#C62828] dark:text-[#38BDF8]" />
-                          <span>LIVE</span>
-                        </div>
-                      </div>
+                  <div className="flex items-center justify-between pt-1 text-[11px] font-mono text-gray-400">
+                    <span>Q{candidate.currentQuestion} ({candidate.answeredCount}/{candidate.totalQuestions} Solved)</span>
+                    <span className={candidate.strikes > 0 ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                      {candidate.strikes > 0 ? `${candidate.strikes} Violations` : 'Verified Focus'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-                      {/* Candidate Identity */}
+          {/* VIEW 2: Detail Cards Grid of Concurrent Candidates */}
+          {displayMode === 'cards' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in">
+              {filteredCandidates.map((candidate) => {
+                const progressPercent = Math.round((candidate.answeredCount / candidate.totalQuestions) * 100);
+
+                return (
+                  <div
+                    key={candidate.id}
+                    className={`
+                      relative rounded-2xl bg-white dark:bg-[#0D1527] border transition-all duration-300 p-4 space-y-3.5 shadow-2xs
+                      ${candidate.isSelf ? 'border-[#C62828] shadow-md shadow-red-500/10 dark:border-[#38BDF8]/60 dark:shadow-[#38BDF8]/10' : 'border-red-100 dark:border-[#1E2A42]'}
+                      ${candidate.status === 'offline_buffering' ? 'border-amber-400 bg-amber-50/20 dark:border-amber-500/70 dark:bg-[#141822]' : ''}
+                      ${candidate.status === 'flagged' || candidate.strikes > 0 ? 'border-red-300 bg-red-50/20 dark:border-red-500/70 dark:bg-[#171318]' : ''}
+                    `}
+                  >
+                    {/* Top Candidate Bar: Identity & Connection Status */}
+                    <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-gray-900 dark:text-white text-sm">
@@ -334,125 +384,156 @@ export const LiveCandidateMonitor: React.FC = () => {
                           <span className="text-[#C62828] dark:text-[#38BDF8] font-bold">{candidate.stationId}</span>
                         </div>
 
-                        <div className="text-[10px] text-gray-500 dark:text-gray-500 truncate max-w-[200px]">
+                        <div className="text-[10px] text-gray-500 truncate max-w-[200px]">
                           {candidate.centreName}
                         </div>
                       </div>
+
+                      {/* Connection & Strike Status */}
+                      <div className="flex flex-col items-end gap-1.5 shrink-0">
+                        {candidate.status === 'offline_buffering' ? (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800 text-[10px] font-mono font-bold flex items-center gap-1 animate-pulse">
+                            <WifiOff className="w-3 h-3" />
+                            <span>Offline Buffered ({candidate.pendingOfflineAnswers})</span>
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800 text-[10px] font-mono font-bold flex items-center gap-1">
+                            <Wifi className="w-3 h-3" />
+                            <span>{candidate.connectionLatency}ms Live</span>
+                          </span>
+                        )}
+
+                        {candidate.strikes > 0 ? (
+                          <span className="px-2 py-0.5 rounded-full bg-red-50 text-[#C62828] border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800 text-[10px] font-mono font-bold flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3 text-red-500" />
+                            <span>Strikes: {candidate.strikes}/3</span>
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                            <UserCheck className="w-3 h-3" /> Verified Gaze
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Connection & Strike Status */}
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      {candidate.status === 'offline_buffering' ? (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800 text-[10px] font-mono font-bold flex items-center gap-1 animate-pulse">
-                          <WifiOff className="w-3 h-3" />
-                          <span>Offline Buffered ({candidate.pendingOfflineAnswers})</span>
+                    {/* LIVE VIDEO SURVEILLANCE TILE */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-[11px] font-mono">
+                        <span className="font-bold flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                          <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                          <Camera className="w-3.5 h-3.5 text-[#C62828]" />
+                          <span>Station Live Recording:</span>
                         </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800 text-[10px] font-mono font-bold flex items-center gap-1">
-                          <Wifi className="w-3 h-3" />
-                          <span>{candidate.connectionLatency}ms Live</span>
-                        </span>
-                      )}
+                        <button
+                          onClick={() => setCctvCandidate(candidate)}
+                          className="text-[10px] font-bold text-[#C62828] dark:text-[#38BDF8] hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>Enlarge & Intercom ↗</span>
+                        </button>
+                      </div>
 
-                      {candidate.strikes > 0 ? (
-                        <span className="px-2 py-0.5 rounded-full bg-red-50 text-[#C62828] border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800 text-[10px] font-mono font-bold flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3 text-red-500" />
-                          <span>Strikes: {candidate.strikes}/3</span>
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <UserCheck className="w-3 h-3" /> Verified Gaze
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Question Answering Progress Bar */}
-                  <div className="space-y-1.5 bg-red-50/30 dark:bg-[#070B14] p-2.5 rounded-xl border border-red-100 dark:border-[#162033]">
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-gray-600 dark:text-gray-400 font-mono">
-                        Progress: <strong className="text-gray-900 dark:text-white">{candidate.answeredCount}</strong> / {candidate.totalQuestions} Questions
-                      </span>
-                      <span className="font-mono font-bold text-[#C62828] dark:text-[#38BDF8]">
-                        {progressPercent}%
-                      </span>
-                    </div>
-
-                    <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-500 rounded-full ${
-                          candidate.status === 'offline_buffering'
-                            ? 'bg-amber-500'
-                            : 'bg-[#C62828] dark:bg-linear-to-r dark:from-blue-500 dark:to-[#38BDF8]'
-                        }`}
-                        style={{ width: `${progressPercent}%` }}
+                      <CandidateLiveVideoTile 
+                        candidate={candidate} 
+                        onOpenCCTV={() => setCctvCandidate(candidate)} 
                       />
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 pt-0.5 font-mono">
-                      <span>Active on: <strong>Q{candidate.currentQuestion}</strong></span>
-                      <span>Review: <strong>{candidate.markedReviewCount}</strong></span>
-                      {candidate.compensationMinutes > 0 && (
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                          +{candidate.compensationMinutes}m Parity Added
+                    {/* Question Answering Progress Bar */}
+                    <div className="space-y-1.5 bg-red-50/30 dark:bg-[#070B14] p-2.5 rounded-xl border border-red-100 dark:border-[#162033]">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-gray-600 dark:text-gray-400 font-mono">
+                          Progress: <strong className="text-gray-900 dark:text-white">{candidate.answeredCount}</strong> / {candidate.totalQuestions} Questions
                         </span>
-                      )}
+                        <span className="font-mono font-bold text-[#C62828] dark:text-[#38BDF8]">
+                          {progressPercent}%
+                        </span>
+                      </div>
+
+                      <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full transition-all duration-500 rounded-full ${
+                            candidate.status === 'offline_buffering'
+                              ? 'bg-amber-500'
+                              : 'bg-[#C62828] dark:bg-linear-to-r dark:from-blue-500 dark:to-[#38BDF8]'
+                          }`}
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 pt-0.5 font-mono">
+                        <span>Active on: <strong>Q{candidate.currentQuestion}</strong></span>
+                        <span>Review: <strong>{candidate.markedReviewCount}</strong></span>
+                        {candidate.compensationMinutes > 0 && (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                            +{candidate.compensationMinutes}m Parity Added
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Telemetry Snapshot: Last Action & Merkle Hash */}
+                    <div className="text-[11px] font-mono space-y-1 text-gray-500 dark:text-gray-400 border-t border-red-100 dark:border-[#1A253C] pt-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500">Last Telemetry:</span>
+                        <span className="text-gray-700 dark:text-gray-300 font-medium truncate max-w-[200px]">
+                          {candidate.lastAction}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500">Merkle Ledger:</span>
+                        <span className="text-[#C62828] dark:text-[#38BDF8] flex items-center gap-1 text-[10px] font-bold">
+                          <Lock className="w-2.5 h-2.5" />
+                          {candidate.merkleHash.substring(0, 16)}...
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Invigilator Action Buttons for this specific candidate */}
+                    <div className="grid grid-cols-4 gap-1.5 pt-1">
+                      <button
+                        onClick={() => setCctvCandidate(candidate)}
+                        className="py-1.5 px-1.5 rounded-lg bg-[#C62828] hover:bg-[#8E1B1B] text-white text-[10px] font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                        title="Open full CCTV surveillance and intercom"
+                      >
+                        <Camera className="w-3 h-3 text-white" />
+                        <span>CCTV</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedCandidateId(candidate.id);
+                          setWarningMessage(`Notice to ${candidate.name}: Keep your gaze focused on Station ${candidate.stationId}.`);
+                        }}
+                        className="py-1.5 px-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:bg-red-950/70 dark:hover:bg-red-900 dark:border-red-800/80 dark:text-red-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <AlertTriangle className="w-3 h-3 text-red-500 dark:text-red-400" />
+                        <span>Warning</span>
+                      </button>
+
+                      <button
+                        onClick={() => grantCandidateCompensatoryTime(candidate.id, 5)}
+                        className="py-1.5 px-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/70 dark:hover:bg-blue-900 dark:border-blue-800/80 dark:text-blue-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                        title="Grant +5 minutes compensation for network delay (Req 9, 10)"
+                      >
+                        <Clock className="w-3 h-3 text-blue-600 dark:text-[#38BDF8]" />
+                        <span>+5m</span>
+                      </button>
+
+                      <button
+                        onClick={() => syncCandidateDirect(candidate.id)}
+                        className="py-1.5 px-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 dark:bg-[#121B2B] dark:hover:bg-[#1A2840] dark:border-[#1E2A42] dark:text-gray-300 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                        title="Force sync local buffer with central Merkle ledger"
+                      >
+                        <RotateCcw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                        <span>Sync</span>
+                      </button>
                     </div>
                   </div>
-
-                  {/* Telemetry Snapshot: Last Action & Merkle Hash */}
-                  <div className="text-[11px] font-mono space-y-1 text-gray-500 dark:text-gray-400 border-t border-red-100 dark:border-[#1A253C] pt-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Last Telemetry:</span>
-                      <span className="text-gray-700 dark:text-gray-300 font-medium truncate max-w-[200px]">
-                        {candidate.lastAction}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Merkle Ledger:</span>
-                      <span className="text-[#C62828] dark:text-[#38BDF8] flex items-center gap-1 text-[10px] font-bold">
-                        <Lock className="w-2.5 h-2.5" />
-                        {candidate.merkleHash.substring(0, 16)}...
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Invigilator Action Buttons for this specific candidate */}
-                  <div className="grid grid-cols-3 gap-1.5 pt-1">
-                    <button
-                      onClick={() => {
-                        setSelectedCandidateId(candidate.id);
-                        setWarningMessage(`Notice to ${candidate.name}: Keep your gaze focused on Station ${candidate.stationId}.`);
-                      }}
-                      className="py-1.5 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:bg-red-950/70 dark:hover:bg-red-900 dark:border-red-800/80 dark:text-red-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                    >
-                      <AlertTriangle className="w-3 h-3 text-red-500 dark:text-red-400" />
-                      <span>Issue Warning</span>
-                    </button>
-
-                    <button
-                      onClick={() => grantCandidateCompensatoryTime(candidate.id, 5)}
-                      className="py-1.5 px-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/70 dark:hover:bg-blue-900 dark:border-blue-800/80 dark:text-blue-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                      title="Grant +5 minutes compensation for network delay (Req 9, 10)"
-                    >
-                      <Clock className="w-3 h-3 text-blue-600 dark:text-[#38BDF8]" />
-                      <span>+5m Parity</span>
-                    </button>
-
-                    <button
-                      onClick={() => syncCandidateDirect(candidate.id)}
-                      className="py-1.5 px-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 dark:bg-[#121B2B] dark:hover:bg-[#1A2840] dark:border-[#1E2A42] dark:text-gray-300 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                      title="Force sync local buffer with central Merkle ledger"
-                    >
-                      <RotateCcw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                      <span>Re-Sync</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN: Real-Time Live Telemetry Stream (4 Cols) */}
@@ -626,6 +707,12 @@ export const LiveCandidateMonitor: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* High-Resolution Remote CCTV Surveillance & Intercom Console Modal */}
+      <CCTVSurveillanceModal 
+        candidate={cctvCandidate} 
+        onClose={() => setCctvCandidate(null)} 
+      />
 
     </div>
   );

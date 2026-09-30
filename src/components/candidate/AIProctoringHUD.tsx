@@ -20,6 +20,8 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
+import { cameraStreamService } from '../../services/cameraStreamService';
+
 interface AIProctoringHUDProps {
   onCheatingViolation?: (reason: string, isSevere?: boolean) => void;
 }
@@ -83,19 +85,12 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     };
   }, []);
 
-  // 2. Start Real Hardware Webcam
+  // 2. Start Real Hardware Webcam via persistent CameraStreamService
   const startCamera = async () => {
     setCameraError(null);
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            facingMode: 'user'
-          },
-          audio: false
-        });
+      const stream = await cameraStreamService.startStream();
+      if (stream) {
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -108,31 +103,40 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           message: 'Hardware camera feed authenticated by AI Proctoring Guardian.'
         });
       } else {
-        setCameraError('MediaDevices API not supported in this browser.');
+        const lastErr = cameraStreamService.getLastError();
+        if (lastErr) {
+          setCameraError(lastErr);
+        }
+        setCameraActive(false);
       }
     } catch (err: any) {
       console.warn('Webcam access error:', err);
-      setCameraError(err.name === 'NotAllowedError' 
-        ? 'Camera permission denied. Please allow camera access in browser bar.' 
-        : 'Webcam device not detected or in use by another application.');
+      setCameraError('Webcam device not detected or in use by another application.');
       setCameraActive(false);
     }
   };
 
   const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
-    setCameraActive(false);
   };
 
   useEffect(() => {
+    const unsubscribe = cameraStreamService.subscribe((stream) => {
+      if (stream && stream.active) {
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setCameraActive(true);
+      }
+    });
+
     startCamera();
+
     return () => {
+      unsubscribe();
       stopCamera();
     };
   }, []);
