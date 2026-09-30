@@ -116,22 +116,22 @@ export const RoleTransitionSplash: React.FC = () => {
     `}>
       {/* Background ambient glow pulse */}
       <div className={`
-        absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-1000
+        absolute w-[500px] h-[500px] rounded-full blur-3xl opacity-25 pointer-events-none transition-colors duration-1000
         ${isStudent 
           ? (isDark ? 'bg-emerald-500' : 'bg-[#C62828]') 
           : (isDark ? 'bg-[#0284C7]' : 'bg-[#C62828]')}
       `} />
 
       <div className={`
-        relative w-full max-w-md p-6 sm:p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-5 overflow-hidden transition-colors duration-300
+        relative w-full max-w-lg sm:max-w-xl p-6 sm:p-9 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-6 overflow-hidden transition-colors duration-300
         ${isDark 
-          ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
-          : 'bg-white border-red-200 shadow-[0_20px_60px_rgba(198,40,40,0.12)]'}
+          ? 'bg-[#0B0F19]/95 border-[#1E293B] shadow-[0_0_60px_rgba(2,132,199,0.2)]' 
+          : 'bg-white border-red-200 shadow-[0_25px_70px_rgba(198,40,40,0.18)]'}
       `}>
         {/* Top-right quick dismiss button */}
         <button
           onClick={() => setTransitioningRole(null)}
-          className="absolute top-3.5 right-3.5 p-1 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors z-30"
+          className="absolute top-3.5 right-3.5 p-1.5 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors z-30"
           title="Dismiss splash"
           aria-label="Close"
         >
@@ -148,40 +148,48 @@ export const RoleTransitionSplash: React.FC = () => {
           />
         </div>
 
-        {/* Circular Logo Area with 3-second animated pulse rings */}
-        <div className="relative flex items-center justify-center my-1">
-          {/* Animated concentric rings */}
+        {/* Large Zoomed-In Logo Area with 3-second animated pulse rings & progressive zoom */}
+        <div className="relative flex items-center justify-center my-3 sm:my-4">
+          {/* Animated concentric outer rings - Enlarged */}
           <div className={`
-            absolute -inset-4 rounded-full border-2 border-dashed opacity-40 animate-spin
+            absolute -inset-6 sm:-inset-10 rounded-full border-2 border-dashed opacity-40 animate-spin
             ${isStudent ? (isDark ? 'border-emerald-500' : 'border-[#C62828]') : (isDark ? 'border-[#38BDF8]' : 'border-[#C62828]')}
           `} style={{ animationDuration: '6s' }} />
 
           <div className={`
-            absolute -inset-8 rounded-full border opacity-20 animate-ping
+            absolute -inset-10 sm:-inset-16 rounded-full border opacity-20 animate-ping
             ${isStudent 
               ? (isDark ? 'bg-emerald-500/20 border-emerald-500' : 'bg-red-500/20 border-red-500') 
               : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-red-500/20 border-red-500')}
-          `} style={{ animationDuration: '2s' }} />
+          `} style={{ animationDuration: '2.4s' }} />
 
-          {/* Official ExamresQ Logo Image */}
-          <div className={`
-            w-24 h-24 sm:w-28 sm:h-28 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
-            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-red-100 shadow-md'}
-          `}>
+          {/* Official ExamresQ Logo Image with Progressive Cinematic Zoom */}
+          <div 
+            className={`
+              w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-5 border-2 shadow-2xl flex items-center justify-center relative z-10 transition-transform duration-300 ease-out
+              ${isDark 
+                ? 'bg-[#0A0E1A] border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.3)]' 
+                : 'bg-white border-red-200 shadow-[0_20px_50px_rgba(198,40,40,0.22)]'}
+            `}
+            style={{
+              transform: `scale(${1.02 + (progress / 100) * 0.16})`
+            }}
+          >
             <img 
               src={examresqLogo} 
               alt="ExamresQ Official Logo" 
-              className="w-full h-full object-contain rounded-full drop-shadow-md"
+              className="w-full h-full object-contain filter drop-shadow-xl transition-all duration-300 hover:scale-105"
             />
           </div>
 
           {/* 3s Countdown badge */}
           <div className={`
-            absolute -bottom-1.5 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
+            absolute -bottom-3 sm:-bottom-4 px-3 sm:px-4 py-1 rounded-full font-mono font-bold text-xs sm:text-sm shadow-xl border-2 z-20 flex items-center gap-1.5
             ${isStudent 
-              ? (isDark ? 'bg-emerald-500 text-black border-emerald-400' : 'bg-[#C62828] text-white border-red-300')
-              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#C62828] text-white border-red-300')}
+              ? (isDark ? 'bg-emerald-500 text-black border-emerald-300' : 'bg-[#C62828] text-white border-red-200')
+              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#C62828] text-white border-red-200')}
           `}>
+            <span className="w-2 h-2 rounded-full bg-current animate-ping" />
             <span>0{remainingSeconds}s</span>
           </div>
         </div>
