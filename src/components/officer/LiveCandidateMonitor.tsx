@@ -642,45 +642,60 @@ export const LiveCandidateMonitor: React.FC = () => {
                     </div>
 
                     {/* Invigilator Action Buttons for this specific candidate */}
-                    <div className="grid grid-cols-4 gap-1.5 pt-1">
-                      <button
-                        onClick={() => setCctvCandidate(candidate)}
-                        className="py-1.5 px-1.5 rounded-lg bg-[#C62828] hover:bg-[#8E1B1B] text-white text-[10px] font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
-                        title="Open full CCTV surveillance and intercom"
-                      >
-                        <Camera className="w-3 h-3 text-white" />
-                        <span>CCTV</span>
-                      </button>
+                    {candidate.isTerminated ? (
+                      <div className="pt-1 p-2 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-mono text-[#C62828] dark:text-red-400 font-black flex items-center gap-1">
+                          <span>🚫</span>
+                          <span>SEVERED (DISQUALIFIED)</span>
+                        </span>
+                        <button
+                          onClick={() => setCurrentView('audit')}
+                          className="px-2.5 py-1 rounded-lg bg-[#C62828] hover:bg-[#8E1B1B] text-white text-[10px] font-bold shadow-xs cursor-pointer transition-colors"
+                        >
+                          Audit Proof →
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-4 gap-1.5 pt-1">
+                        <button
+                          onClick={() => setCctvCandidate(candidate)}
+                          className="py-1.5 px-1.5 rounded-lg bg-[#C62828] hover:bg-[#8E1B1B] text-white text-[10px] font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                          title="Open full CCTV surveillance and intercom"
+                        >
+                          <Camera className="w-3 h-3 text-white" />
+                          <span>CCTV</span>
+                        </button>
 
-                      <button
-                        onClick={() => {
-                          setSelectedCandidateId(candidate.id);
-                          setWarningMessage(`Notice to ${candidate.name}: Keep your gaze focused on Station ${candidate.stationId}.`);
-                        }}
-                        className="py-1.5 px-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:bg-red-950/70 dark:hover:bg-red-900 dark:border-red-800/80 dark:text-red-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                      >
-                        <AlertTriangle className="w-3 h-3 text-red-500 dark:text-red-400" />
-                        <span>Warning</span>
-                      </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCandidateId(candidate.id);
+                            setWarningMessage(`Notice to ${candidate.name}: Keep your gaze focused on Station ${candidate.stationId}.`);
+                          }}
+                          className="py-1.5 px-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:bg-red-950/70 dark:hover:bg-red-900 dark:border-red-800/80 dark:text-red-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <AlertTriangle className="w-3 h-3 text-red-500 dark:text-red-400" />
+                          <span>Warning</span>
+                        </button>
 
-                      <button
-                        onClick={() => grantCandidateCompensatoryTime(candidate.id, 5)}
-                        className="py-1.5 px-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/70 dark:hover:bg-blue-900 dark:border-blue-800/80 dark:text-blue-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                        title="Grant +5 minutes compensation for network delay (Req 9, 10)"
-                      >
-                        <Clock className="w-3 h-3 text-blue-600 dark:text-[#38BDF8]" />
-                        <span>+5m</span>
-                      </button>
+                        <button
+                          onClick={() => grantCandidateCompensatoryTime(candidate.id, 5)}
+                          className="py-1.5 px-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/70 dark:hover:bg-blue-900 dark:border-blue-800/80 dark:text-blue-200 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                          title="Grant +5 minutes compensation for network delay (Req 9, 10)"
+                        >
+                          <Clock className="w-3 h-3 text-blue-600 dark:text-[#38BDF8]" />
+                          <span>+5m</span>
+                        </button>
 
-                      <button
-                        onClick={() => syncCandidateDirect(candidate.id)}
-                        className="py-1.5 px-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 dark:bg-[#121B2B] dark:hover:bg-[#1A2840] dark:border-[#1E2A42] dark:text-gray-300 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
-                        title="Force sync local buffer with central Merkle ledger"
-                      >
-                        <RotateCcw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                        <span>Sync</span>
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => syncCandidateDirect(candidate.id)}
+                          className="py-1.5 px-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 dark:bg-[#121B2B] dark:hover:bg-[#1A2840] dark:border-[#1E2A42] dark:text-gray-300 text-[10px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1"
+                          title="Force sync local buffer with central Merkle ledger"
+                        >
+                          <RotateCcw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                          <span>Sync</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}

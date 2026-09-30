@@ -61,7 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     activeCandidates,
     isOfficerAuthenticated,
     logoutOfficer,
-    studentName
+    studentName,
+    language
   } = useResilience();
 
   const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
@@ -83,23 +84,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Student Navigation: Clean, Short & Focused
   const studentSections: SidebarSection[] = [
     {
-      title: 'EXAMINATION TERMINAL',
+      title: language === 'hi' ? 'परीक्षा कक्ष (EXAM)' : 'EXAMINATION TERMINAL',
       items: [
         {
           id: 'live_exam',
-          label: 'Live Exam Room',
+          label: language === 'hi' ? 'लाइव परीक्षा कक्ष' : 'Live Exam Room',
           icon: <FileSpreadsheet className="w-4 h-4 text-[#E53935]" />,
-          badge: 'ACTIVE',
+          badge: language === 'hi' ? 'सक्रिय' : 'ACTIVE',
           badgeColor: 'bg-red-950/90 text-red-300 border-red-700 animate-pulse'
         },
         {
           id: 'candidate_portal',
-          label: 'Candidate Portal',
+          label: language === 'hi' ? 'उम्मीदवार पोर्टल' : 'Candidate Portal',
           icon: <User className="w-4 h-4 text-indigo-400" />
         },
         {
           id: 'audit',
-          label: 'Submission Proof',
+          label: language === 'hi' ? 'सबमिशन पावती व ऑडिट' : 'Submission Proof',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'SHA-256',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
@@ -111,71 +112,71 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Officer Navigation: Short, Crisp, Enterprise Grade
   const officerSections: SidebarSection[] = [
     {
-      title: 'SURVEILLANCE & MONITOR',
+      title: language === 'hi' ? 'निगरानी एवं मॉनिटरिंग' : 'SURVEILLANCE & MONITOR',
       items: [
         {
           id: 'candidate_monitor',
-          label: 'Live Student Monitor',
+          label: language === 'hi' ? 'लाइव छात्र निगरानी कक्ष' : 'Live Student Monitor',
           icon: <Users className="w-4 h-4 text-[#38BDF8]" />,
-          badge: `${activeCandidates.length} ONLINE`,
+          badge: `${activeCandidates.length} ${language === 'hi' ? 'लाइव' : 'ONLINE'}`,
           badgeColor: 'bg-cyan-950/90 text-[#38BDF8] border-cyan-800 animate-pulse'
         },
         {
           id: 'operations',
-          label: 'Operations Center',
+          label: language === 'hi' ? 'ऑपरेशन्स केंद्र' : 'Operations Center',
           icon: <Compass className="w-4 h-4 text-cyan-400" />,
-          badge: 'ACTIVE',
+          badge: language === 'hi' ? 'सक्रिय' : 'ACTIVE',
           badgeColor: 'bg-cyan-950/80 text-cyan-300 border-cyan-800'
         },
         {
           id: 'centres',
-          label: 'Centre Monitoring',
+          label: language === 'hi' ? 'परीक्षा केंद्र स्थिति' : 'Centre Monitoring',
           icon: <Building2 className="w-4 h-4 text-blue-400" />
         }
       ]
     },
     {
-      title: 'INCIDENT & RECOVERY',
+      title: language === 'hi' ? 'घटना प्रबंधन एवं बैकअप' : 'INCIDENT & RECOVERY',
       items: [
         {
           id: 'early_detection',
-          label: 'Early Detection',
+          label: language === 'hi' ? 'पूर्व चेतावनी प्रणाली' : 'Early Detection',
           icon: <Radar className="w-4 h-4 text-amber-400" />,
-          badge: 'AI PREDICT',
+          badge: language === 'hi' ? 'एआई भविष्यवाणी' : 'AI PREDICT',
           badgeColor: 'bg-amber-950/80 text-amber-300 border-amber-800'
         },
         {
           id: 'incidents',
-          label: 'Incident Center',
+          label: language === 'hi' ? 'घटना नियंत्रण केंद्र' : 'Incident Center',
           icon: <AlertOctagon className="w-4 h-4 text-red-400" />,
-          badge: '1 OPEN',
+          badge: language === 'hi' ? '१ सक्रिय' : '1 OPEN',
           badgeColor: 'bg-red-950/80 text-red-300 border-red-800'
         },
         {
           id: 'recovery',
-          label: 'Disaster Recovery',
+          label: language === 'hi' ? 'डिजास्टर रिकवरी' : 'Disaster Recovery',
           icon: <RotateCcw className="w-4 h-4 text-blue-400" />
         }
       ]
     },
     {
-      title: 'FORENSICS & AUDIT',
+      title: language === 'hi' ? 'फॉरेंसिक एवं ऑडिट लेजर' : 'FORENSICS & AUDIT',
       items: [
         {
           id: 'audit',
-          label: 'Audit Ledger',
+          label: language === 'hi' ? 'ब्लॉकचेन ऑडिट लेजर' : 'Audit Ledger',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'WORM',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
         },
         {
           id: 'suspicious_patterns',
-          label: 'Suspicious Patterns',
+          label: language === 'hi' ? 'संदेहास्पद हलचल जांच' : 'Suspicious Patterns',
           icon: <Eye className="w-4 h-4 text-orange-400" />
         },
         {
           id: 'reconciliation',
-          label: 'Reconciliation',
+          label: language === 'hi' ? 'डेटा मिलान (रिकंसीलेशन)' : 'Reconciliation',
           icon: <GitCompare className="w-4 h-4 text-purple-400" />,
           badge: '100% MATCH',
           badgeColor: 'bg-purple-950/80 text-purple-300 border-purple-800'
@@ -183,23 +184,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ]
     },
     {
-      title: 'GOVERNANCE',
+      title: language === 'hi' ? 'प्रशासन एवं नीतियां' : 'GOVERNANCE',
       items: [
         {
           id: 'decision_support',
-          label: 'Decision Support',
+          label: language === 'hi' ? 'निर्णय सहायता प्रणाली' : 'Decision Support',
           icon: <Scale className="w-4 h-4 text-cyan-400" />
         },
         {
           id: 'reports',
-          label: 'Evidence Reports',
+          label: language === 'hi' ? 'आधिकारिक साक्ष्य रिपोर्ट' : 'Evidence Reports',
           icon: <BarChart3 className="w-4 h-4 text-gray-300" />,
-          badge: 'SEALED',
+          badge: language === 'hi' ? 'सत्यापित' : 'SEALED',
           badgeColor: 'bg-gray-800 text-gray-300 border-gray-700'
         },
         {
           id: 'settings',
-          label: 'Governance Settings',
+          label: language === 'hi' ? 'सिस्टम नीतियां व सेटिंग्स' : 'Governance Settings',
           icon: <SettingsIcon className="w-4 h-4 text-gray-400" />
         }
       ]

@@ -44,21 +44,21 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#070B14] text-gray-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 rounded-2xl border border-red-100 dark:border-gray-800 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gray-900" />
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-gray-500">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#C62828] animate-pulse" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C62828] dark:text-[#38BDF8]">
                 System Governance & Policy Configuration
               </span>
             </div>
-            <h1 className="text-2xl font-black text-gray-900 mt-1">
+            <h1 className="text-2xl font-black text-gray-900 dark:text-white mt-1">
               Resilience Ecosystem Settings
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               Tune sub-second watchdog thresholds, failover preferences, and local ledger storage budgets
             </p>
           </div>
@@ -66,10 +66,10 @@ export const Settings: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Prototype</span>
+              <span>Reset Defaults</span>
             </button>
 
             <button
@@ -83,18 +83,18 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Resilience Parameters Form */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-red-100 dark:border-gray-800 p-6 sm:p-8 shadow-xs space-y-6">
           <div className="space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 flex items-center gap-2">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white flex items-center gap-2">
               <Sliders className="w-4 h-4 text-[#C62828]" />
               Watchdog & Detection Telemetry
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-              <div className="p-4 rounded-xl bg-[#F8F8F6] border border-gray-200 space-y-2">
+              <div className="p-4 rounded-xl bg-red-50/30 dark:bg-[#080D1A] border border-red-100 dark:border-gray-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="font-bold text-gray-900">Watchdog Heartbeat Ping</label>
-                  <span className="font-mono font-bold text-[#C62828]">{heartbeatMs} ms</span>
+                  <label className="font-bold text-gray-900 dark:text-white">Watchdog Heartbeat Ping</label>
+                  <span className="font-mono font-bold text-[#C62828] dark:text-[#38BDF8]">{heartbeatMs} ms</span>
                 </div>
                 <input
                   type="range"
@@ -105,15 +105,15 @@ export const Settings: React.FC = () => {
                   onChange={(e) => setHeartbeatMs(Number(e.target.value))}
                   className="w-full accent-[#C62828] cursor-pointer"
                 />
-                <p className="text-[11px] text-gray-500">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
                   Frequency of client-to-edge UDP beaconing. Lower values provide faster detection but use more packet overhead.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#F8F8F6] border border-gray-200 space-y-2">
+              <div className="p-4 rounded-xl bg-red-50/30 dark:bg-[#080D1A] border border-red-100 dark:border-gray-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="font-bold text-gray-900">Timer Compensation Trigger</label>
-                  <span className="font-mono font-bold text-[#C62828]">{offlineToleranceSecs} s</span>
+                  <label className="font-bold text-gray-900 dark:text-white">Timer Compensation Trigger</label>
+                  <span className="font-mono font-bold text-[#C62828] dark:text-[#38BDF8]">{offlineToleranceSecs} s</span>
                 </div>
                 <input
                   type="range"
@@ -124,15 +124,15 @@ export const Settings: React.FC = () => {
                   onChange={(e) => setOfflineToleranceSecs(Number(e.target.value))}
                   className="w-full accent-[#C62828] cursor-pointer"
                 />
-                <p className="text-[11px] text-gray-500">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
                   If network downtime exceeds this threshold, candidate exam clock automatically credits lost seconds.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-100 space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 flex items-center gap-2">
+          <div className="pt-4 border-t border-red-100 dark:border-gray-800 space-y-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white flex items-center gap-2">
               <Lock className="w-4 h-4 text-[#16803C]" />
               Cryptographic Storage & Ledger Rules
             </h3>

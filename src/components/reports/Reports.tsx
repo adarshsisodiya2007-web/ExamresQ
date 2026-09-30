@@ -27,41 +27,65 @@ export const Reports: React.FC = () => {
   const [closureModalOpen, setClosureModalOpen] = useState<boolean>(false);
 
   const handleExport = () => {
+    // Generate authentic CSV export file of centres & incident telemetry
+    const headers = 'CentreID,CentreName,TotalCandidates,Active,Status,LatencyMs,HealthScore\n';
+    const rows = centres.map(c => `"${c.id}","${c.name}",${c.totalCandidates},${c.activeCandidates},"${c.status}",${c.networkLatency},${c.healthScore}%`).join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(headers + rows);
+    const link = document.createElement('a');
+    link.setAttribute('href', csvContent);
+    link.setAttribute('download', `ExamresQ_Audit_Report_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     setDownloadSuccess(true);
     setTimeout(() => setDownloadSuccess(false), 3000);
   };
 
+  const handlePrintDossier = () => {
+    window.print();
+  };
+
   return (
-    <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#070B14] text-gray-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-gray-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 sm:p-7 rounded-2xl border border-red-100 dark:border-gray-800 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 Requirement 11: Post-Exam Audit Trail & Reporting
               </span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 Evidence-Based Certification
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1.5 tracking-tight">
               Post-Examination Audit Trail & Executive Closure
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-3xl">
               Maintains an immutable chronological record of what occurred before, during, and after examination sessions with complete empirical evidence.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 print:hidden">
             <button
               onClick={() => setClosureModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white dark:bg-white dark:text-black transition-colors cursor-pointer shadow-xs"
             >
               <Award className="w-4 h-4 text-amber-400" />
-              <span>View Executive Closure Seal</span>
+              <span>View Closure Seal</span>
+            </button>
+
+            <button
+              onClick={handlePrintDossier}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 transition-colors cursor-pointer shadow-xs"
+              title="Print official PDF report"
+            >
+              <Printer className="w-4 h-4 text-blue-500" />
+              <span>Print PDF Dossier</span>
             </button>
 
             <button
@@ -69,7 +93,7 @@ export const Reports: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-4 h-4" />
-              <span>{downloadSuccess ? 'Report Exported (PDF/CSV)' : 'Export Official Incident Report'}</span>
+              <span>{downloadSuccess ? 'Downloaded CSV' : 'Export Incident CSV'}</span>
             </button>
           </div>
         </div>

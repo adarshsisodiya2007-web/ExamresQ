@@ -22,7 +22,8 @@ import {
   Key,
   Database,
   History,
-  X
+  X,
+  Printer
 } from 'lucide-react';
 
 export const AuditTrust: React.FC = () => {
@@ -63,11 +64,11 @@ export const AuditTrust: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#070B14] text-gray-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-gray-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 sm:p-7 rounded-2xl border border-red-100 dark:border-gray-800 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
@@ -329,16 +330,26 @@ export const AuditTrust: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
               <span className="text-[11px] text-[#16803C] font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4" /> Digitally Signed & Sealed
               </span>
-              <button
-                onClick={() => setShowCertificateModal(false)}
-                className="px-5 py-2 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition-colors cursor-pointer"
-              >
-                Close Certificate
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                  title="Print official verification certificate"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Certificate</span>
+                </button>
+                <button
+                  onClick={() => setShowCertificateModal(false)}
+                  className="px-4 py-2 rounded-xl bg-gray-900 hover:bg-black text-white dark:bg-white dark:text-black text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
