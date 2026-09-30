@@ -40,7 +40,7 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
         className="flex items-center gap-3 cursor-pointer group select-none"
         title="Click to toggle live simulation telemetry"
       >
-        {/* Animated Icon Container with mode-specific radar effect */}
+        {/* Animated Icon Container with mode-specific radar effect & Official ExamresQ Logo */}
         <div className={`relative w-10 h-10 rounded-xl p-0.5 border transition-all duration-300 ${
           isStudent 
             ? 'bg-linear-to-br from-[#1E293B] via-[#0F172A] to-[#16803C]/70 border-[#1E293B] group-hover:border-emerald-500/80 shadow-md group-hover:shadow-emerald-950/40' 
@@ -51,15 +51,15 @@ export const BrandLogoSimulation: React.FC<BrandLogoSimulationProps> = ({ onNavi
             isStudent ? 'bg-emerald-500' : 'bg-sky-400'
           }`} style={{ animationDuration: '3s' }} />
 
-          <div className="w-full h-full rounded-[10px] bg-[#0A0F1D] flex items-center justify-center relative z-10 overflow-hidden">
-            {isStudent ? (
-              <ShieldCheck className="w-5 h-5 text-emerald-400 transition-transform group-hover:scale-110 duration-200" />
-            ) : (
-              <Radio className="w-5 h-5 text-[#38BDF8] animate-spin transition-transform group-hover:scale-110 duration-200" style={{ animationDuration: '8s' }} />
-            )}
+          <div className="w-full h-full rounded-[10px] bg-white dark:bg-[#0A0F1D] flex items-center justify-center relative z-10 overflow-hidden p-0.5">
+            <img 
+              src="/examresq-logo.png" 
+              alt="ExamresQ Logo" 
+              className="w-full h-full object-contain rounded-full transition-transform group-hover:scale-110 duration-200" 
+            />
             
             {/* Simulation scanline shine */}
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
           </div>
         </div>
 

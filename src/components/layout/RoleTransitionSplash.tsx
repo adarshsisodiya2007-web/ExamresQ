@@ -1,0 +1,243 @@
+import React, { useState, useEffect } from 'react';
+import { useResilience } from '../../context/ResilienceContext';
+import { useTheme } from '../../context/ThemeContext';
+import { 
+  ShieldCheck, 
+  Radio, 
+  Lock, 
+  CheckCircle2, 
+  Zap, 
+  Activity, 
+  Cpu 
+} from 'lucide-react';
+
+export const RoleTransitionSplash: React.FC = () => {
+  const { transitioningRole, setTransitioningRole } = useResilience();
+  const { isDark } = useTheme();
+
+  const [progress, setProgress] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(3);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
+  useEffect(() => {
+    if (!transitioningRole) {
+      setProgress(0);
+      setRemainingSeconds(3);
+      setCurrentStepIndex(0);
+      return;
+    }
+
+    const startTime = Date.now();
+    const duration = 3000; // 3 seconds
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const pct = Math.min(100, Math.floor((elapsed / duration) * 100));
+      setProgress(pct);
+
+      const secs = Math.max(1, 3 - Math.floor(elapsed / 1000));
+      setRemainingSeconds(secs);
+
+      if (elapsed < 1000) {
+        setCurrentStepIndex(0);
+      } else if (elapsed < 2000) {
+        setCurrentStepIndex(1);
+      } else {
+        setCurrentStepIndex(2);
+      }
+
+      if (elapsed >= duration) {
+        clearInterval(interval);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [transitioningRole]);
+
+  if (!transitioningRole) return null;
+
+  const isStudent = transitioningRole === 'student';
+
+  const studentSteps = [
+    {
+      title: "Step 1/3: Arming Cryptographic Sandbox",
+      subtitle: "WebCrypto AES-256 & SHA-256 local ledger initialized",
+      icon: <Lock className="w-4 h-4 text-emerald-500" />
+    },
+    {
+      title: "Step 2/3: Securing Offline Buffer",
+      subtitle: "IndexedDB zero-loss failover storage armed on local workstation",
+      icon: <Cpu className="w-4 h-4 text-emerald-500" />
+    },
+    {
+      title: "Step 3/3: Terminal Armed & Verified",
+      subtitle: "Station linked • Entering Student Examination Terminal...",
+      icon: <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+    }
+  ];
+
+  const officerSteps = [
+    {
+      title: "Step 1/3: Establishing Command Mesh",
+      subtitle: "Authenticating Level-4 Surveillance Protocol & Token",
+      icon: <Radio className="w-4 h-4 text-[#38BDF8]" />
+    },
+    {
+      title: "Step 2/3: Polling Telemetry Watchdogs",
+      subtitle: "1.2s sub-second failure monitoring synced across 3 centres",
+      icon: <Activity className="w-4 h-4 text-[#38BDF8]" />
+    },
+    {
+      title: "Step 3/3: Clearance Verified",
+      subtitle: "Surveillance console unlocked • Decrypting live stream...",
+      icon: <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
+    }
+  ];
+
+  const steps = isStudent ? studentSteps : officerSteps;
+  const currentStep = steps[currentStepIndex];
+
+  return (
+    <div className={`
+      fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xl transition-all duration-300 animate-in fade-in select-none
+      ${isDark ? 'bg-[#070B14]/95 text-white' : 'bg-[#F8F8F6]/95 text-gray-900'}
+    `}>
+      {/* Background ambient glow pulse */}
+      <div className={`
+        absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-1000
+        ${isStudent 
+          ? (isDark ? 'bg-emerald-500' : 'bg-emerald-600') 
+          : (isDark ? 'bg-[#0284C7]' : 'bg-[#C62828]')}
+      `} />
+
+      <div className={`
+        relative w-full max-w-md p-8 rounded-3xl border shadow-2xl flex flex-col items-center text-center space-y-6 overflow-hidden transition-colors duration-300
+        ${isDark 
+          ? 'bg-[#0B0F19]/90 border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.15)]' 
+          : 'bg-white/95 border-gray-200 shadow-[0_20px_60px_rgba(0,0,0,0.08)]'}
+      `}>
+        
+        {/* Top Progress Track */}
+        <div className={`absolute top-0 left-0 right-0 h-1.5 ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
+          <div 
+            className={`h-full transition-all duration-75 ${
+              isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')
+            }`}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        {/* Circular Logo Area with 3-second animated pulse rings */}
+        <div className="relative flex items-center justify-center my-2">
+          {/* Animated concentric rings */}
+          <div className={`
+            absolute -inset-4 rounded-full border-2 border-dashed opacity-40 animate-spin
+            ${isStudent ? 'border-emerald-500' : (isDark ? 'border-[#38BDF8]' : 'border-[#C62828]')}
+          `} style={{ animationDuration: '6s' }} />
+
+          <div className={`
+            absolute -inset-8 rounded-full border opacity-20 animate-ping
+            ${isStudent ? 'bg-emerald-500/20 border-emerald-500' : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-red-500/20 border-red-500')}
+          `} style={{ animationDuration: '2s' }} />
+
+          {/* Official ExamresQ Logo Image */}
+          <div className={`
+            w-28 h-28 sm:w-32 sm:h-32 rounded-full p-2 border-2 shadow-xl flex items-center justify-center relative z-10 transition-transform duration-300 hover:scale-105
+            ${isDark ? 'bg-[#0A0E1A] border-[#1E293B]' : 'bg-white border-gray-200'}
+          `}>
+            <img 
+              src="/examresq-logo.png" 
+              alt="ExamresQ Logo" 
+              className="w-full h-full object-contain rounded-full drop-shadow-md"
+            />
+          </div>
+
+          {/* 3s Countdown badge */}
+          <div className={`
+            absolute -bottom-2 right-1 px-2.5 py-0.5 rounded-full font-mono font-bold text-xs shadow-md border z-20 flex items-center gap-1
+            ${isStudent 
+              ? 'bg-emerald-500 text-black border-emerald-400' 
+              : (isDark ? 'bg-[#38BDF8] text-black border-sky-300' : 'bg-[#C62828] text-white border-red-700')}
+          `}>
+            <span>0{remainingSeconds}s</span>
+          </div>
+        </div>
+
+        {/* Role Title & Mode Indicator */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-center gap-2">
+            <span className={`
+              text-[10px] font-mono uppercase font-bold tracking-widest px-2 py-0.5 rounded-full border
+              ${isStudent 
+                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' 
+                : 'bg-sky-500/10 text-sky-600 dark:text-[#38BDF8] border-sky-500/30'}
+            `}>
+              {isStudent ? 'Candidate Workspace' : 'Officer Surveillance Hub'}
+            </span>
+            <span className="text-[10px] font-mono opacity-50 uppercase">
+              {isDark ? 'Dark Mode' : 'Light Mode'}
+            </span>
+          </div>
+
+          <h2 className="text-xl font-black tracking-tight">
+            {isStudent ? 'Arming Student Examination Terminal' : 'Authorizing Officer Surveillance Console'}
+          </h2>
+        </div>
+
+        {/* Dynamic 3-Step Simulation Status Box */}
+        <div className={`
+          w-full p-4 rounded-2xl border text-left transition-all duration-300
+          ${isDark 
+            ? 'bg-[#060911] border-[#162033]' 
+            : 'bg-gray-50 border-gray-200'}
+        `}>
+          <div className="flex items-center gap-2.5 mb-1.5">
+            <div className={`
+              p-1.5 rounded-lg border shrink-0
+              ${isDark ? 'bg-black/40 border-white/10' : 'bg-white border-gray-200'}
+            `}>
+              {currentStep.icon}
+            </div>
+            <span className="font-bold text-xs font-mono">
+              {currentStep.title}
+            </span>
+          </div>
+          <p className="text-[11px] text-gray-500 dark:text-gray-400 pl-8 leading-relaxed font-sans">
+            {currentStep.subtitle}
+          </p>
+
+          {/* Stepper dots */}
+          <div className="flex items-center gap-1.5 mt-3 pl-8">
+            {[0, 1, 2].map((idx) => (
+              <div 
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === currentStepIndex 
+                    ? `w-8 ${isStudent ? 'bg-emerald-500' : (isDark ? 'bg-[#38BDF8]' : 'bg-[#C62828]')}` 
+                    : idx < currentStepIndex
+                    ? `w-3 ${isStudent ? 'bg-emerald-700' : 'bg-sky-700'}`
+                    : `w-3 ${isDark ? 'bg-gray-800' : 'bg-gray-300'}`
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Skip Button for quick testing */}
+        <div className="pt-1 flex items-center justify-between w-full text-[11px] font-mono text-gray-400">
+          <span className="flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-amber-500" />
+            <span>3s Security Simulation</span>
+          </span>
+          <button
+            onClick={() => setTransitioningRole(null)}
+            className="text-gray-500 hover:text-gray-900 dark:hover:text-white underline cursor-pointer text-[10px]"
+          >
+            Skip →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};

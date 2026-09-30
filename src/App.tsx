@@ -18,6 +18,7 @@ import { AuditTrust } from './components/audit/AuditTrust';
 import { SuspiciousPatternCenter } from './components/security/SuspiciousPatternCenter';
 import { ReconciliationCenter } from './components/audit/ReconciliationCenter';
 import { OfficerLoginModal } from './components/layout/OfficerLoginModal';
+import { RoleTransitionSplash } from './components/layout/RoleTransitionSplash';
 import { DecisionSupportCenter } from './components/operations/DecisionSupportCenter';
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
@@ -86,6 +87,9 @@ const AppContent: React.FC = () => {
 
       {/* Real-Time Toast Notifications (Candidate & Admin channels) */}
       <NotificationToast />
+
+      {/* 3-Second Role Transition Simulation Splash (Student & Officer, Light & Dark) */}
+      <RoleTransitionSplash />
 
       {/* Officer-Only Authentication Modal */}
       <OfficerLoginModal />

@@ -75,6 +75,11 @@ interface ResilienceContextType {
   loginOfficer: (officerId: string, securityPin: string) => boolean;
   logoutOfficer: () => void;
 
+  // 3-Second Role Animation Transition
+  transitioningRole: 'student' | 'officer' | null;
+  setTransitioningRole: (role: 'student' | 'officer' | null) => void;
+  triggerRoleTransition: (targetRole: 'student' | 'officer', onComplete?: () => void) => void;
+
   // Candidate Exam State (Single Candidate Room)
   questions: ExamQuestion[];
   currentQuestionIndex: number;
@@ -163,6 +168,17 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } : null;
   });
 
+  // 3-Second Role Animation Transition State
+  const [transitioningRole, setTransitioningRole] = useState<'student' | 'officer' | null>(null);
+
+  const triggerRoleTransition = useCallback((targetRole: 'student' | 'officer', onComplete?: () => void) => {
+    setTransitioningRole(targetRole);
+    setTimeout(() => {
+      setTransitioningRole(null);
+      if (onComplete) onComplete();
+    }, 3000);
+  }, []);
+
   const loginOfficer = (officerId: string, _securityPin: string): boolean => {
     const profile = {
       id: officerId.trim() || 'OFF-9042',
@@ -174,9 +190,13 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setAuthenticatedOfficer(profile);
     localStorage.setItem('examresq_officer_auth', 'true');
     localStorage.setItem('examresq_officer_data', JSON.stringify(profile));
-    setUserRoleState('officer');
-    setCurrentView('candidate_monitor');
     setIsOfficerLoginOpen(false);
+
+    // 3-second animation before opening surveillance dashboard
+    triggerRoleTransition('officer', () => {
+      setUserRoleState('officer');
+      setCurrentView('candidate_monitor');
+    });
     return true;
   };
 
@@ -185,8 +205,12 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setAuthenticatedOfficer(null);
     localStorage.removeItem('examresq_officer_auth');
     localStorage.removeItem('examresq_officer_data');
-    setUserRoleState('student');
-    setCurrentView('live_exam');
+
+    // 3-second animation before returning to student portal
+    triggerRoleTransition('student', () => {
+      setUserRoleState('student');
+      setCurrentView('live_exam');
+    });
   };
 
   const [questions] = useState<ExamQuestion[]>(sampleQuestions);
@@ -229,19 +253,35 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   ]);
 
-  // Set role with intelligent default views and Officer authentication guard
+  // Set role with intelligent default views, Officer authentication guard, and 3-second animation
   const setUserRole = useCallback((newRole: UserRole) => {
     if (newRole === 'officer' && !isOfficerAuthenticated) {
-      setIsOfficerLoginOpen(true);
+      // 3-second animation before opening officer login modal
+      triggerRoleTransition('officer', () => {
+        setIsOfficerLoginOpen(true);
+      });
       return;
     }
-    setUserRoleState(newRole);
-    if (newRole === 'student') {
-      setCurrentView('live_exam');
-    } else {
-      setCurrentView('candidate_monitor');
+
+    // 3-second animation before entering dashboard
+    triggerRoleTransition(newRole, () => {
+      setUserRoleState(newRole);
+      if (newRole === 'student') {
+        setCurrentView('live_exam');
+      } else {
+        setCurrentView('candidate_monitor');
+      }
+    });
+  }, [isOfficerAuthenticated, triggerRoleTransition]);
+
+  // Initial 3-second student terminal arming animation on first load
+  useEffect(() => {
+    const hasLaunched = sessionStorage.getItem('examresq_splash_shown');
+    if (!hasLaunched) {
+      sessionStorage.setItem('examresq_splash_shown', 'true');
+      triggerRoleTransition('student');
     }
-  }, [isOfficerAuthenticated]);
+  }, [triggerRoleTransition]);
 
   // Exam timer countdown - Freezes during network interruption (Requirement 4)
   useEffect(() => {
@@ -739,6 +779,9 @@ export const ResilienceProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         authenticatedOfficer,
         loginOfficer,
         logoutOfficer,
+        transitioningRole,
+        setTransitioningRole,
+        triggerRoleTransition,
         questions,
         currentQuestionIndex,
         setCurrentQuestionIndex,
