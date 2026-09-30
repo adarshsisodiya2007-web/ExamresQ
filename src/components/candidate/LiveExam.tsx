@@ -197,16 +197,11 @@ export const LiveExam: React.FC = () => {
       handleSecurityStrike('Content cut attempt blocked');
     };
 
-    // Tab Switch / Visibility Change Listener
+    // Tab Switch / Visibility Change Listener (Tab change only, not window blur)
     const handleVisibilityChange = () => {
       if (document.hidden) {
         handleSecurityStrike('Candidate navigated away from examination tab (Visibility loss)', false);
       }
-    };
-
-    // Window Blur (Clicking outside browser or on secondary display)
-    const handleWindowBlur = () => {
-      handleSecurityStrike('Workstation window lost focus (Secondary application click detected)');
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -214,7 +209,6 @@ export const LiveExam: React.FC = () => {
     window.addEventListener('copy', handleCopy);
     window.addEventListener('cut', handleCut);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleWindowBlur);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -222,7 +216,6 @@ export const LiveExam: React.FC = () => {
       window.removeEventListener('copy', handleCopy);
       window.removeEventListener('cut', handleCut);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleWindowBlur);
     };
   }, [handleSecurityStrike]);
 
@@ -261,11 +254,11 @@ export const LiveExam: React.FC = () => {
   // =========================================================================
   if (isTerminated) {
     return (
-      <div className="min-h-screen bg-[#110507] text-white flex items-center justify-center p-4 sm:p-6 animate-in fade-in select-none">
-        <div className="max-w-2xl w-full bg-[#1F0A0E] border-2 border-[#C62828] rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#110507] text-gray-900 dark:text-white flex items-center justify-center p-4 sm:p-6 animate-in fade-in select-none transition-colors">
+        <div className="max-w-2xl w-full bg-white dark:bg-[#1F0A0E] border-2 border-[#C62828] rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
           {/* Ambient Red Alert Glow */}
-          <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#C62828]/30 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#C62828]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#C62828]/15 dark:bg-[#C62828]/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#C62828]/10 dark:bg-[#C62828]/20 rounded-full blur-3xl pointer-events-none" />
 
           {/* Alert Crest */}
           <div className="w-20 h-20 rounded-2xl bg-[#C62828] text-white flex items-center justify-center mx-auto shadow-xl shadow-[#C62828]/40 animate-bounce">
@@ -273,59 +266,59 @@ export const LiveExam: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#E53935] px-3 py-1 rounded-full bg-red-950/80 border border-red-800">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C62828] dark:text-[#E53935] px-3.5 py-1 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800 inline-block">
               CRITICAL INTEGRITY BREACH • CODE #MAL-4418
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-2">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white mt-2">
               EXAMINATION TERMINATED DUE TO CHEATING VIOLATION
             </h1>
-            <p className="text-sm text-red-200/90 font-medium max-w-lg mx-auto leading-relaxed">
+            <p className="text-sm text-red-800 dark:text-red-200/90 font-medium max-w-lg mx-auto leading-relaxed">
               Aapki pariksha ko aniyamitta (cheating / malpractice policy violation) ki wajah se turant band (terminate) kar diya gaya hai.
             </p>
           </div>
 
           {/* Forensic Incident Snapshot */}
-          <div className="p-4 rounded-2xl bg-black/60 border border-red-900/60 text-left space-y-2 font-mono text-xs">
-            <div className="flex justify-between border-b border-red-900/40 pb-1.5 text-gray-400">
+          <div className="p-4 rounded-2xl bg-red-50/70 dark:bg-black/60 border border-red-200 dark:border-red-900/60 text-left space-y-2 font-mono text-xs text-gray-900 dark:text-gray-200">
+            <div className="flex justify-between border-b border-red-200 dark:border-red-900/40 pb-1.5 text-gray-600 dark:text-gray-400">
               <span>Candidate Roll:</span>
-              <span className="text-white font-bold">ET-2026-ENG-4418</span>
+              <span className="text-gray-900 dark:text-white font-bold">{studentName ? studentName.toUpperCase() : 'ADARSH SINGH'} • ET-2026-ENG-4418</span>
             </div>
-            <div className="flex justify-between border-b border-red-900/40 pb-1.5 text-gray-400">
+            <div className="flex justify-between border-b border-red-200 dark:border-red-900/40 pb-1.5 text-gray-600 dark:text-gray-400">
               <span>Terminal Workstation:</span>
-              <span className="text-white">WS-08-41 (Centre 08)</span>
+              <span className="text-gray-900 dark:text-white">WS-08-41 (Centre 08)</span>
             </div>
-            <div className="flex justify-between border-b border-red-900/40 pb-1.5 text-gray-400">
+            <div className="flex justify-between border-b border-red-200 dark:border-red-900/40 pb-1.5 text-gray-600 dark:text-gray-400">
               <span>Lockdown Timestamp:</span>
-              <span className="text-white">{terminationTime}</span>
+              <span className="text-gray-900 dark:text-white">{terminationTime}</span>
             </div>
-            <div className="flex justify-between border-b border-red-900/40 pb-1.5 text-gray-400">
+            <div className="flex justify-between border-b border-red-200 dark:border-red-900/40 pb-1.5 text-gray-600 dark:text-gray-400">
               <span>Security Striking:</span>
-              <span className="text-[#E53935] font-bold">3 Strikes / Severe Breach</span>
+              <span className="text-[#C62828] dark:text-[#E53935] font-bold">3 Strikes / Severe Breach</span>
             </div>
-            <div className="pt-1 text-red-300 font-sans">
+            <div className="pt-1 text-[#C62828] dark:text-red-300 font-sans">
               <strong>Violation Trigger:</strong> {terminationReason}
             </div>
           </div>
 
-          <p className="text-xs text-gray-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed max-w-md mx-auto">
             All candidate actions, camera frames, and network packets have been cryptographically committed into the central judicial audit record.
           </p>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
-              onClick={() => setCurrentView('audit')}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white shadow-lg transition-colors cursor-pointer"
+              onClick={resetExamSecurity}
+              className="px-6 py-3 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white shadow-lg shadow-[#C62828]/25 transition-all cursor-pointer flex items-center gap-2"
             >
-              View Cryptographic Incident Proof
+              <RotateCcw className="w-4 h-4" />
+              <span>Resume Examination / Reset Container</span>
             </button>
 
             <button
-              onClick={resetExamSecurity}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20 transition-colors cursor-pointer flex items-center gap-1.5"
+              onClick={() => setCurrentView('audit')}
+              className="px-5 py-3 rounded-xl text-xs font-bold bg-white dark:bg-white/10 hover:bg-red-50 dark:hover:bg-white/20 text-[#C62828] dark:text-gray-200 border border-red-200 dark:border-white/20 transition-colors cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Container (Judge Simulator Mode)</span>
+              View Cryptographic Incident Proof
             </button>
           </div>
         </div>
@@ -337,7 +330,7 @@ export const LiveExam: React.FC = () => {
   // NORMAL ACTIVE EXAMINATION ROOM (WITH ANTI-SCREENSHOT & ANTI-CHEATING LOCK)
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#F8F8F6] dark:bg-[#0A0B0E] flex flex-col transition-colors duration-300 relative select-none">
+    <div className="min-h-screen bg-[#FFFBFB] dark:bg-[#0A0B0E] flex flex-col transition-colors duration-300 relative select-none">
       {/* Background Anti-Leak Dynamic Watermark */}
       <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.035] dark:opacity-[0.05] overflow-hidden flex flex-wrap gap-24 p-8 transform -rotate-12 select-none">
         {Array.from({ length: 24 }).map((_, i) => (
@@ -361,7 +354,7 @@ export const LiveExam: React.FC = () => {
       )}
 
       {/* EXAM HEADER */}
-      <header className="bg-white/90 dark:bg-[#13151D]/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-16 z-30 shadow-xs relative">
+      <header className="bg-white/95 dark:bg-[#13151D]/90 backdrop-blur-xl border-b border-red-100 dark:border-gray-800 sticky top-16 z-30 shadow-xs relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Exam Subject & Roll with Official Logo */}
@@ -420,7 +413,7 @@ export const LiveExam: React.FC = () => {
               {/* Fullscreen Secure Mode Toggle */}
               <button
                 onClick={toggleFullscreen}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-700 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-100 dark:border-gray-700 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50/50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                 title="Toggle Fullscreen Lockdown Container"
               >
                 {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
@@ -428,15 +421,15 @@ export const LiveExam: React.FC = () => {
               </button>
 
               {/* Timer Pill */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gray-900 dark:bg-[#1C202C] text-white font-mono text-xs font-black shadow-md border border-gray-700">
-                <Clock className="w-3.5 h-3.5 text-[#E53935]" />
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#C62828] dark:bg-[#1C202C] text-white font-mono text-xs font-black shadow-md border border-red-700 dark:border-gray-700">
+                <Clock className="w-3.5 h-3.5 text-white" />
                 <span className="tracking-wider">{formatTime(timeRemainingSeconds)}</span>
               </div>
 
               {/* Mobile Palette Button */}
               <button
                 onClick={() => setPaletteMobileOpen(!paletteMobileOpen)}
-                className="lg:hidden p-2 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="lg:hidden p-2 rounded-xl border border-red-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-red-50 dark:hover:bg-gray-800"
                 aria-label="Toggle Question Palette"
               >
                 <Menu className="w-4 h-4" />
@@ -458,7 +451,7 @@ export const LiveExam: React.FC = () => {
                 ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200' 
                 : networkStatus === 'reconnecting'
                 ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-200'
-                : 'bg-white dark:bg-[#13151D] border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white shadow-xs'
+                : 'bg-white dark:bg-[#13151D] border-red-100 dark:border-gray-800 text-gray-900 dark:text-white shadow-xs'
             }`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-start sm:items-center gap-2.5">
@@ -474,7 +467,7 @@ export const LiveExam: React.FC = () => {
 
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-50 dark:bg-white/10 text-[#C62828] dark:text-white border border-red-100 dark:border-transparent">
                         Requirement 8: Candidate Advisory
                       </span>
                       <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
@@ -486,7 +479,7 @@ export const LiveExam: React.FC = () => {
                       </span>
                     </div>
 
-                    <p className="text-xs mt-1 font-medium leading-relaxed">
+                    <p className="text-xs mt-1 font-medium leading-relaxed text-gray-700 dark:text-gray-300">
                       {networkStatus === 'interrupted' && (
                         <span>
                           <strong>Please remain seated and calm.</strong> Your session has been interrupted, and your saved responses are safely encrypted locally. The central authority is checking your records and establishing secondary link.
@@ -509,7 +502,7 @@ export const LiveExam: React.FC = () => {
                 <div className="shrink-0 flex items-center gap-2">
                   <button
                     onClick={() => setCommunicationHistoryOpen(true)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-red-50 dark:bg-white/10 hover:bg-red-100 dark:hover:bg-white/20 text-[#C62828] dark:text-gray-200 border border-red-200 dark:border-transparent transition-colors cursor-pointer flex items-center gap-1.5"
                     title="View candidate communication history"
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
@@ -520,20 +513,20 @@ export const LiveExam: React.FC = () => {
             </div>
 
             {/* Question Card */}
-            <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-7 shadow-xs relative">
+            <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-red-100 dark:border-gray-800 p-6 sm:p-7 shadow-xs relative">
               {/* Security Shield Watermark Pill */}
-              <div className="absolute top-4 right-4 flex items-center gap-1.5 text-[10px] font-mono text-gray-400 bg-gray-50 dark:bg-gray-900 px-2.5 py-1 rounded-full border border-gray-200 dark:border-gray-800">
+              <div className="absolute top-4 right-4 flex items-center gap-1.5 text-[10px] font-mono text-gray-500 bg-red-50/50 dark:bg-gray-900 px-2.5 py-1 rounded-full border border-red-100 dark:border-gray-800">
                 <Lock className="w-3 h-3 text-[#16803C]" />
                 <span>Anti-Copy Protected</span>
               </div>
 
               {/* Question Header */}
-              <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4 mb-5">
+              <div className="flex items-center justify-between border-b border-red-100 dark:border-gray-800 pb-4 mb-5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Question {currentQ.questionNumber} of {currentQ.totalQuestions}
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-50 dark:bg-gray-800 text-[#C62828] dark:text-gray-300 font-medium border border-red-100 dark:border-transparent">
                     Single Choice (+4, -1)
                   </span>
                 </div>
@@ -574,8 +567,8 @@ export const LiveExam: React.FC = () => {
                       onClick={() => answerQuestion(currentQ.id, option.id)}
                       className={`flex items-start gap-3.5 p-4 rounded-xl border transition-all cursor-pointer ${
                         isChecked
-                          ? 'border-[#C62828] bg-red-50/40 dark:bg-red-950/30 text-gray-900 dark:text-white ring-1 ring-[#C62828]/30 shadow-xs'
-                          : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-[#181B26] hover:bg-gray-50 dark:hover:bg-gray-850 text-gray-800 dark:text-gray-200'
+                          ? 'border-[#C62828] bg-red-50/70 dark:bg-red-950/30 text-gray-900 dark:text-white ring-2 ring-[#C62828]/25 shadow-xs'
+                          : 'border-red-100 dark:border-gray-800 bg-white dark:bg-[#181B26] hover:bg-red-50/30 dark:hover:bg-gray-850 text-gray-800 dark:text-gray-200'
                       }`}
                     >
                       <div className="mt-0.5 shrink-0">
@@ -596,11 +589,11 @@ export const LiveExam: React.FC = () => {
               </div>
 
               {/* Action Buttons: [Previous] [Mark for Review] [Save & Next] */}
-              <div className="mt-8 pt-5 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-3">
+              <div className="mt-8 pt-5 border-t border-red-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-3">
                 <button
                   onClick={handlePrev}
                   disabled={currentQuestionIndex === 0}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold border border-red-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-red-50/50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
@@ -612,7 +605,7 @@ export const LiveExam: React.FC = () => {
                     className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                       isMarked
                         ? 'border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300'
-                        : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50'
+                        : 'border-red-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50/50'
                     }`}
                   >
                     <Bookmark className="w-3.5 h-3.5" />
@@ -640,8 +633,8 @@ export const LiveExam: React.FC = () => {
             <AIProctoringHUD onCheatingViolation={handleSecurityStrike} />
 
             {/* Question Palette */}
-            <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-xs">
-              <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
+            <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-red-100 dark:border-gray-800 p-5 shadow-xs">
+              <div className="flex items-center justify-between border-b border-red-100 dark:border-gray-800 pb-3 mb-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-white">
                   Question Palette (40 Questions)
                 </h3>
@@ -651,7 +644,7 @@ export const LiveExam: React.FC = () => {
               </div>
 
               {/* Status Legend */}
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600 dark:text-gray-400 mb-4 pb-3 border-b border-gray-100 dark:border-gray-800">
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600 dark:text-gray-400 mb-4 pb-3 border-b border-red-100 dark:border-gray-800">
                 <div className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded bg-[#16803C]" />
                   <span>Answered</span>
@@ -677,7 +670,7 @@ export const LiveExam: React.FC = () => {
                   const isAnswered = !!answers[qNum];
                   const isReview = markedForReview.includes(qNum);
 
-                  let bgStyle = 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 border border-transparent';
+                  let bgStyle = 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 hover:text-[#C62828] border border-transparent';
                   if (isCurrent) {
                     bgStyle = 'bg-red-50 dark:bg-red-950 text-[#C62828] border-2 border-[#C62828] font-bold shadow-xs';
                   } else if (isReview) {
@@ -706,12 +699,12 @@ export const LiveExam: React.FC = () => {
               </div>
 
               {/* Submit Final Assessment */}
-              <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
+              <div className="mt-6 pt-4 border-t border-red-100 dark:border-gray-800 space-y-2">
                 <button
                   onClick={() => setCurrentView('audit')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gray-900 hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[#C62828]/25"
                 >
-                  <FileCheck className="w-4 h-4 text-[#16803C]" />
+                  <FileCheck className="w-4 h-4 text-white" />
                   <span>Submit Exam & View Audit Proof</span>
                 </button>
                 <p className="text-[10px] text-gray-500 text-center">
@@ -737,10 +730,10 @@ export const LiveExam: React.FC = () => {
       {/* REQUIREMENT 8: CANDIDATE COMMUNICATION HISTORY MODAL */}
       {communicationHistoryOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#13151D] text-gray-900 dark:text-white rounded-3xl max-w-lg w-full border border-gray-200 dark:border-gray-800 shadow-2xl p-6 sm:p-7 space-y-6">
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+          <div className="bg-white dark:bg-[#13151D] text-gray-900 dark:text-white rounded-3xl max-w-lg w-full border border-red-100 dark:border-gray-800 shadow-2xl p-6 sm:p-7 space-y-6">
+            <div className="flex items-center justify-between border-b border-red-100 dark:border-gray-800 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-blue-950/60 text-[#C62828] dark:text-blue-400 flex items-center justify-center">
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <div>

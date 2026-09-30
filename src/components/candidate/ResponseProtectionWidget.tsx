@@ -75,38 +75,38 @@ export const ResponseProtectionWidget: React.FC = () => {
   const currentIdx = getStageIndex(protectionStage);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-3 mb-3">
+    <div className="bg-white dark:bg-[#13151D] rounded-xl border border-red-100 dark:border-gray-800 p-4 shadow-xs transition-colors">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-red-100 dark:border-gray-800 pb-3 mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center text-[#C62828]">
+          <div className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-[#C62828]">
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h4 className="text-xs font-bold text-gray-900 tracking-tight">RESPONSE PROTECTION ENGINE</h4>
+              <h4 className="text-xs font-bold text-gray-900 dark:text-white tracking-tight">RESPONSE PROTECTION ENGINE</h4>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Periodic auto-save heartbeat active (every 3s)" />
             </div>
-            <p className="text-[10px] text-gray-500 font-mono">Client-Side AES-256 GCM + IndexedDB Sandbox (Req 4.1)</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono">Client-Side AES-256 GCM + IndexedDB Sandbox (Req 4.1)</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {compensatoryTimeAdded > 0 && (
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center gap-1">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold flex items-center gap-1">
               +{compensatoryTimeAdded}s Compensatory Credit
             </span>
           )}
 
           {offlineQueueCount > 0 && (
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold flex items-center gap-1">
-              <Lock className="w-3 h-3 text-amber-700" />
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-semibold flex items-center gap-1">
+              <Lock className="w-3 h-3 text-amber-700 dark:text-amber-400" />
               {offlineQueueCount} Protected Locally
             </span>
           )}
 
           <button
             onClick={forcePeriodicSave}
-            className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 cursor-pointer transition-colors"
+            className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-50 dark:bg-gray-800 hover:bg-red-100 dark:hover:bg-gray-700 text-[#C62828] dark:text-gray-300 border border-red-200 dark:border-gray-700 cursor-pointer transition-colors"
             title="Force immediate periodic response commit"
           >
             Seal: {lastSavedHash.substring(0, 8)}...
@@ -125,21 +125,21 @@ export const ResponseProtectionWidget: React.FC = () => {
               key={item.stage}
               className={`p-2.5 rounded-lg border text-center transition-all duration-300 relative ${
                 isActive
-                  ? 'border-[#C62828] bg-red-50/70 shadow-xs ring-1 ring-[#C62828]/20 scale-[1.02]'
+                  ? 'border-[#C62828] bg-red-50/80 dark:bg-red-950/40 shadow-xs ring-1 ring-[#C62828]/20 scale-[1.02]'
                   : isPassed
-                  ? 'border-gray-200 bg-gray-50 text-gray-700'
-                  : 'border-dashed border-gray-200 bg-white opacity-50'
+                  ? 'border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 text-gray-700 dark:text-gray-300'
+                  : 'border-dashed border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/20 opacity-50'
               }`}
             >
               <div className="flex justify-center mb-1">
                 {item.icon}
               </div>
               <span className={`text-[11px] font-bold block truncate ${
-                isActive ? 'text-[#C62828]' : 'text-gray-800'
+                isActive ? 'text-[#C62828]' : 'text-gray-800 dark:text-gray-200'
               }`}>
                 {item.label}
               </span>
-              <span className="text-[9px] text-gray-600 block truncate mt-0.5">
+              <span className="text-[9px] text-gray-600 dark:text-gray-400 block truncate mt-0.5">
                 {item.sub}
               </span>
 
@@ -155,9 +155,9 @@ export const ResponseProtectionWidget: React.FC = () => {
       </div>
 
       {/* Live explanation footer */}
-      <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-600">
+      <div className="mt-3 pt-2.5 border-t border-red-100 dark:border-gray-800 flex items-center justify-between text-[11px] text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-1.5">
-          <Database className="w-3.5 h-3.5 text-gray-500" />
+          <Database className="w-3.5 h-3.5 text-gray-500 shrink-0" />
           <span>
             {protectionStage === 'normal_saved' && 'Normal Cloud Connectivity: Each answer is committed immediately with TLS handshake.'}
             {protectionStage === 'connection_lost' && 'Uplink disruption detected. Transitioning seamlessly to client memory buffer.'}
@@ -167,7 +167,7 @@ export const ResponseProtectionWidget: React.FC = () => {
             {protectionStage === 'response_verified' && '100% Verified! Local hash validated against central ledger.'}
           </span>
         </div>
-        <span className="text-[10px] text-gray-500 font-mono hidden sm:inline">MTTD: 1.2s</span>
+        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-mono hidden sm:inline shrink-0">MTTD: 1.2s</span>
       </div>
     </div>
   );
