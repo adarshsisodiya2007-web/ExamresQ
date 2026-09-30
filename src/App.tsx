@@ -4,8 +4,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Navbar } from './components/layout/Navbar';
 import { NotificationToast } from './components/layout/NotificationToast';
-import { DemoModal } from './components/layout/DemoModal';
-import { ThemeSwitcher } from './components/layout/ThemeSwitcher';
 import { HackathonModal } from './components/layout/HackathonModal';
 import { LandingPage } from './components/landing/LandingPage';
 import { LiveExam } from './components/candidate/LiveExam';
@@ -87,12 +85,6 @@ const AppContent: React.FC = () => {
 
       {/* Real-Time Toast Notifications (Candidate & Admin channels) */}
       <NotificationToast />
-
-      {/* 7-Step Hackathon Resilience Demo Tour Modal */}
-      <DemoModal />
-
-      {/* Luxury Theme Switcher Floating Pill & Modal */}
-      <ThemeSwitcher />
 
       {/* Architecture & Problem Statement Modal */}
       <HackathonModal 

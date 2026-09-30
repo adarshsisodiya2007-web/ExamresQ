@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useResilience, AppView } from '../../context/ResilienceContext';
-import { useTheme } from '../../context/ThemeContext';
 import { 
   ShieldCheck, 
   Activity, 
@@ -67,7 +66,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     activeCandidates
   } = useResilience();
 
-  const { activeTheme, setIsThemeDrawerOpen } = useTheme();
   const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
 
   const handleItemClick = (view: AppView) => {
@@ -107,11 +105,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'VERIFIED',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
-        },
-        {
-          id: 'landing',
-          label: 'Platform Rules & Continuity',
-          icon: <Globe className="w-4 h-4 text-gray-400" />
         }
       ]
     }
@@ -338,20 +331,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             )}
 
-            <div className="grid grid-cols-2 gap-1.5 pt-1">
-              <button
-                onClick={startDemo}
-                className="py-1 px-2 rounded-lg text-[10px] font-bold bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-center cursor-pointer transition-colors"
-              >
-                Demo Tour
-              </button>
-              <button
-                onClick={onOpenHackathonModal}
-                className="py-1 px-2 rounded-lg text-[10px] font-bold bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-center cursor-pointer transition-colors"
-              >
-                Architecture
-              </button>
-            </div>
+            <button
+              onClick={onOpenHackathonModal}
+              className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-center cursor-pointer transition-colors"
+            >
+              🏛️ Challenge Architecture & Guidelines
+            </button>
           </div>
         )}
 
@@ -471,25 +456,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
         </div>
-
-        {/* SYSTEM THEME SWITCHER */}
-        <div className="space-y-1 pt-1">
-          <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#5A6E8C] px-3 pb-1">
-            AESTHETICS
-          </h2>
-
-          <button
-            onClick={() => setIsThemeDrawerOpen(true)}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-[#9AAEC8] hover:text-white hover:bg-[#121B2B] transition-colors cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-[#E53935]" />
-              <span>Theme: {activeTheme.name}</span>
-            </div>
-            <span className="text-[9px] font-mono text-[#64748B]">THEME</span>
-          </button>
-        </div>
-
       </div>
 
       {/* Bottom Footer Status */}

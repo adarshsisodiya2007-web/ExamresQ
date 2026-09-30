@@ -430,43 +430,6 @@ export const LiveExam: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* Quick Resilient Simulation Bar inside Exam */}
-          <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#16803C]" />
-              <span className="hidden sm:inline">ExamresQ Active Protection Daemon</span>
-              <span>•</span>
-              <span className="text-[#C62828] font-bold">Anti-Cheating & Outage Controls:</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {networkStatus === 'connected' ? (
-                <button
-                  onClick={triggerNetworkInterruption}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer"
-                >
-                  ⚡ Simulate Disconnection
-                </button>
-              ) : (
-                <button
-                  onClick={restoreNetwork}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#16803C] hover:bg-emerald-700 text-white transition-colors cursor-pointer"
-                >
-                  ✓ Restore Connection & Sync
-                </button>
-              )}
-
-              {/* Immediate Disqualification Simulation for Judge */}
-              <button
-                onClick={() => triggerExamTermination('Multiple faces & secondary device detected by AI integrity classifier.')}
-                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-900 hover:bg-black text-red-400 border border-red-900/50 transition-colors cursor-pointer"
-                title="Test how paper immediately terminates upon severe malpractice"
-              >
-                🚨 Test Malpractice Lockout
-              </button>
-            </div>
-          </div>
         </div>
       </header>
 

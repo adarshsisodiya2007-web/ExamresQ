@@ -39,13 +39,13 @@ export const LandingPage: React.FC = () => {
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 dark:bg-[#13151D]/90 border border-gray-200 dark:border-gray-800 shadow-lg shadow-gray-200/40 dark:shadow-black/40 backdrop-blur-md mb-6 hover:scale-105 transition-all">
             <span className="w-2.5 h-2.5 rounded-full bg-[#C62828] animate-ping" />
             <span className="text-xs font-black uppercase tracking-wider text-gray-800 dark:text-gray-200 font-mono">
-              Idea & Innovation Hackathon 2026 • Presidential Grade Ecosystem
+              National Examination Resilience Framework • Zero-Loss Architecture
             </span>
           </div>
 
           {/* Main Hero Title */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#171717] dark:text-white tracking-tight leading-tight">
-            EVAL<span className="text-[#C62828] drop-shadow-sm">TRUST</span>
+            Exam<span className="text-[#C62828] drop-shadow-sm">resQ</span>
           </h1>
 
           <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#C62828] mt-3 tracking-tight">
