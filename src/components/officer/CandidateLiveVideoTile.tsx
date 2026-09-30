@@ -15,9 +15,13 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
   size = 'normal'
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [timeString, setTimeString] = useState('');
+
+  const remoteStream = (candidate as any).remoteMediaStream as MediaStream | undefined;
+  const frameDataUrl = (candidate as any).lastFrameDataUrl as string | undefined;
 
   // Live timestamp for CCTV overlay
   useEffect(() => {
@@ -30,7 +34,7 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // For isSelf (Adarsh Singh / current active candidate), bind real webcam
+  // For isSelf (local hardware camera), bind real webcam
   useEffect(() => {
     if (!candidate.isSelf) return;
 
@@ -41,7 +45,6 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
       }
     });
 
-    // Automatically attempt to start webcam if not running
     if (!cameraStreamService.getStream()) {
       cameraStreamService.startStream().catch(() => {});
     }
@@ -50,6 +53,13 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
       unsubscribe();
     };
   }, [candidate.isSelf]);
+
+  // For remote WebRTC stream from another laptop
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteStream) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
 
   const handleConnectCamera = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,6 +72,7 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
   };
 
   const isLiveHardware = candidate.isSelf && stream && stream.active;
+  const isTrulyLive = isLiveHardware || Boolean(remoteStream) || Boolean(frameDataUrl);
 
   return (
     <div 
@@ -73,7 +84,7 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
       `}
       title="Click to open full-screen CCTV Surveillance Console with Intercom"
     >
-      {/* 1. Real Hardware Webcam for Current Student */}
+      {/* 1. Real Hardware Webcam for Local Tab */}
       {candidate.isSelf && (
         <video
           ref={videoRef}
@@ -84,8 +95,28 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
         />
       )}
 
-      {/* 2. Fallback / Simulated Feed */}
-      {(!candidate.isSelf || !isLiveHardware) && (
+      {/* 2. WebRTC Live Video Stream from Another Laptop */}
+      {remoteStream && (
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full h-full object-cover transform scale-x-[-1] block"
+        />
+      )}
+
+      {/* 3. Real-time Multi-Tab Canvas Live Frame from Another Tab */}
+      {!remoteStream && frameDataUrl && (
+        <img
+          src={frameDataUrl}
+          alt={candidate.name}
+          className="w-full h-full object-cover transform scale-x-[-1] block"
+        />
+      )}
+
+      {/* 4. Fallback / Simulated Feed */}
+      {!candidate.isSelf && !remoteStream && !frameDataUrl && (
         <div className="relative w-full h-full">
           <img
             src={candidate.avatar}
@@ -109,8 +140,8 @@ export const CandidateLiveVideoTile: React.FC<CandidateLiveVideoTileProps> = ({
         </div>
 
         <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[9px] font-mono text-emerald-400 font-bold border border-white/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-          <span>{isLiveHardware ? '1080p 30fps' : '720p LIVE'}</span>
+          <span className={`w-1.5 h-1.5 rounded-full ${isTrulyLive ? 'bg-emerald-400 animate-pulse' : 'bg-gray-400'}`} />
+          <span>{isTrulyLive ? '1080p LIVE' : '720p STANDBY'}</span>
         </div>
       </div>
 

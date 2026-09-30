@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useResilience } from '../../context/ResilienceContext';
 import { 
   Users, 
@@ -26,6 +26,7 @@ import examresqLogo from '../../assets/examresq-logo.png';
 import { ActiveCandidateSession } from '../../types';
 import { CandidateLiveVideoTile } from './CandidateLiveVideoTile';
 import { CCTVSurveillanceModal } from './CCTVSurveillanceModal';
+import { multiCandidateMeshService } from '../../services/multiCandidateMeshService';
 
 export const LiveCandidateMonitor: React.FC = () => {
   const { 
@@ -45,6 +46,40 @@ export const LiveCandidateMonitor: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'active' | 'offline_buffering' | 'flagged'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Real-Time Mesh Candidates (From concurrent student tabs and other laptops)
+  const [meshCandidates, setMeshCandidates] = useState<ActiveCandidateSession[]>([]);
+
+  useEffect(() => {
+    multiCandidateMeshService.initOfficerMode();
+    const unsubscribe = multiCandidateMeshService.subscribeToMesh((candidates) => {
+      setMeshCandidates(candidates);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  // Merge context baseline candidates with all dynamically discovered live student tabs & laptops
+  const combinedCandidates: ActiveCandidateSession[] = React.useMemo(() => {
+    const list: ActiveCandidateSession[] = [];
+    const seenIds = new Set<string>();
+
+    // 1. First add all dynamically active mesh student tabs (live tabs from this or other laptops)
+    meshCandidates.forEach(c => {
+      seenIds.add(c.id);
+      list.push(c);
+    });
+
+    // 2. Then add any context active candidates not already in mesh
+    activeCandidates.forEach(c => {
+      if (!seenIds.has(c.id)) {
+        list.push(c);
+      }
+    });
+
+    return list;
+  }, [meshCandidates, activeCandidates]);
+
   // Video Surveillance & CCTV Console States
   const [cctvCandidate, setCctvCandidate] = useState<ActiveCandidateSession | null>(null);
   const [displayMode, setDisplayMode] = useState<'cards' | 'cctv_wall'>('cards');
@@ -55,7 +90,7 @@ export const LiveCandidateMonitor: React.FC = () => {
   const [announcementMessage, setAnnouncementMessage] = useState('All candidates: You have 30 minutes remaining. Remember all answers are continuously saved.');
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
 
-  const filteredCandidates = activeCandidates.filter(c => {
+  const filteredCandidates = combinedCandidates.filter(c => {
     const matchesFilter = 
       filter === 'all' ? true :
       filter === 'active' ? c.status === 'active' :
@@ -70,13 +105,14 @@ export const LiveCandidateMonitor: React.FC = () => {
     return matchesFilter && matchesSearch;
   });
 
-  const activeCount = activeCandidates.filter(c => c.status === 'active').length;
-  const offlineCount = activeCandidates.filter(c => c.status === 'offline_buffering').length;
-  const flaggedCount = activeCandidates.filter(c => c.status === 'flagged' || c.strikes > 0).length;
+  const activeCount = combinedCandidates.filter(c => c.status === 'active').length;
+  const offlineCount = combinedCandidates.filter(c => c.status === 'offline_buffering').length;
+  const flaggedCount = combinedCandidates.filter(c => c.status === 'flagged' || c.strikes > 0).length;
 
   const handleSendWarningSubmit = () => {
     if (selectedCandidateId && warningMessage.trim()) {
       sendOfficerWarning(selectedCandidateId, warningMessage.trim());
+      multiCandidateMeshService.sendOfficerWarningToCandidate(selectedCandidateId, warningMessage.trim());
       setSelectedCandidateId(null);
     }
   };
@@ -384,7 +420,19 @@ export const LiveCandidateMonitor: React.FC = () => {
                           <span className="text-[#C62828] dark:text-[#38BDF8] font-bold">{candidate.stationId}</span>
                         </div>
 
-                        <div className="text-[10px] text-gray-500 truncate max-w-[200px]">
+                        {/* Aadhaar and Phone Identity Tag */}
+                        {((candidate as any).aadharCard || (candidate as any).phoneNumber) && (
+                          <div className="flex items-center gap-2 text-[10px] font-mono text-gray-600 dark:text-gray-300 mt-1 bg-red-50/60 dark:bg-black/40 px-2 py-0.5 rounded-md border border-red-100 dark:border-white/10 w-fit">
+                            {(candidate as any).aadharCard && (
+                              <span>Aadhaar: ●●●● ●●●● {(candidate as any).aadharCard.slice(-4)}</span>
+                            )}
+                            {(candidate as any).phoneNumber && (
+                              <span>• Ph: +91 {(candidate as any).phoneNumber}</span>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="text-[10px] text-gray-500 truncate max-w-[200px] mt-0.5">
                           {candidate.centreName}
                         </div>
                       </div>

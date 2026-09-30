@@ -27,6 +27,10 @@ export interface ActiveCandidateSession {
   merkleHash: string;
   deviceInfo: string;
   isSelf?: boolean;
+  lastFrameDataUrl?: string;
+  aadharCard?: string;
+  phoneNumber?: string;
+  remoteMediaStream?: any;
 }
 
 export interface CandidateTelemetryEvent {

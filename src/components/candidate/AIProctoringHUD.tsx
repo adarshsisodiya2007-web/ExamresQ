@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import { cameraStreamService } from '../../services/cameraStreamService';
+import { multiCandidateMeshService } from '../../services/multiCandidateMeshService';
 
 interface AIProctoringHUDProps {
   onCheatingViolation?: (reason: string, isSevere?: boolean) => void;
@@ -137,6 +138,9 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          // Broadcast live video feed across all officer tabs & laptops
+          multiCandidateMeshService.startWebcamBroadcast(videoRef.current);
+          multiCandidateMeshService.sendMediaStreamToOfficer(stream);
         }
         setCameraActive(true);
       }
@@ -146,6 +150,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
     return () => {
       unsubscribe();
+      multiCandidateMeshService.stopWebcamBroadcast();
       stopCamera();
     };
   }, []);

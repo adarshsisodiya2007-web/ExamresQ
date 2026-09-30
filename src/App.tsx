@@ -18,6 +18,7 @@ import { AuditTrust } from './components/audit/AuditTrust';
 import { SuspiciousPatternCenter } from './components/security/SuspiciousPatternCenter';
 import { ReconciliationCenter } from './components/audit/ReconciliationCenter';
 import { OfficerLoginModal } from './components/layout/OfficerLoginModal';
+import { CandidateVerificationModal } from './components/candidate/CandidateVerificationModal';
 import { RoleTransitionSplash } from './components/layout/RoleTransitionSplash';
 import { DecisionSupportCenter } from './components/operations/DecisionSupportCenter';
 import { Reports } from './components/reports/Reports';
@@ -90,6 +91,9 @@ const AppContent: React.FC = () => {
 
       {/* 3-Second Role Transition Simulation Splash (Student & Officer, Light & Dark) */}
       <RoleTransitionSplash />
+
+      {/* Mandatory Candidate Identity Verification Gate (Name, Aadhaar, Phone) */}
+      <CandidateVerificationModal />
 
       {/* Officer-Only Authentication Modal */}
       <OfficerLoginModal />

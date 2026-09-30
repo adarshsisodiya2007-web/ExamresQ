@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { sampleCandidateBroadcastHistory } from '../../data/governanceSecurityData';
 import examresqLogo from '../../assets/examresq-logo.png';
+import { multiCandidateMeshService } from '../../services/multiCandidateMeshService';
 
 export const LiveExam: React.FC = () => {
   const { 
@@ -61,6 +62,32 @@ export const LiveExam: React.FC = () => {
   const [warningBanner, setWarningBanner] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [communicationHistoryOpen, setCommunicationHistoryOpen] = useState<boolean>(false);
+
+  // Synchronize Live Exam Progress with Officer Mesh
+  useEffect(() => {
+    const answeredCount = Object.keys(answers).length;
+    multiCandidateMeshService.updateLocalCandidateProgress({
+      answeredCount,
+      currentQuestion: currentQuestionIndex + 1,
+      strikes: strikeCount
+    });
+  }, [answers, currentQuestionIndex, strikeCount]);
+
+  // Listen for Live Direct Warnings from Officer Console
+  useEffect(() => {
+    const unsubscribe = multiCandidateMeshService.subscribeToWarnings((warning) => {
+      setWarningBanner({ show: true, message: warning });
+      addNotification({
+        target: 'candidate',
+        type: 'alert',
+        title: 'OFFICIAL INSTRUCTOR NOTICE',
+        message: warning
+      });
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [addNotification]);
 
   // Format time MM:SS
   const formatTime = (secs: number) => {
