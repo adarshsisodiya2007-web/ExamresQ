@@ -190,6 +190,57 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     }
   };
 
+  const startVirtualFeed = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=640&q=80';
+
+      const draw = () => {
+        if (!ctx) return;
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, 640, 480);
+        if (img.complete && img.naturalWidth > 0) {
+          ctx.drawImage(img, 120, 40, 400, 400);
+        } else {
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.arc(320, 200, 100, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(0, 255, 128, 0.85)';
+        ctx.font = '13px monospace';
+        ctx.fillText(`AI VIRTUAL FEED • ${new Date().toTimeString().split(' ')[0]}`, 20, 30);
+        requestAnimationFrame(draw);
+      };
+      draw();
+
+      const canvasStream = (canvas as any).captureStream ? (canvas as any).captureStream(25) : null;
+      if (canvasStream && videoRef.current) {
+        streamRef.current = canvasStream;
+        videoRef.current.srcObject = canvasStream;
+        setCameraActive(true);
+        setCameraError(null);
+        multiCandidateMeshService.startWebcamBroadcast(videoRef.current);
+        multiCandidateMeshService.sendMediaStreamToOfficer(canvasStream);
+        addNotification({
+          target: 'candidate',
+          type: 'info',
+          title: 'Virtual Proctor Stream Active',
+          message: 'Running in simulated AI testing mode (Physical camera bypassed).'
+        });
+      }
+    } catch (e) {
+      console.warn('Virtual feed fallback error:', e);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = cameraStreamService.subscribe((stream) => {
       if (stream && stream.active) {
@@ -813,18 +864,33 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             </p>
           </div>
         ) : !cameraActive ? (
-          <div className="text-center p-4 space-y-2">
-            <VideoOff className="w-8 h-8 text-gray-500 mx-auto" />
-            <p className="text-xs text-gray-300 font-medium leading-relaxed">
-              {cameraError || 'Camera stream is connecting...'}
-            </p>
-            <button
-              onClick={startCamera}
-              className="px-3 py-1 rounded-lg text-xs font-bold bg-[#C62828] text-white hover:bg-[#8E1B1B] transition-colors cursor-pointer inline-flex items-center gap-1.5"
-            >
-              <Camera className="w-3.5 h-3.5" />
-              <span>Allow Camera Access</span>
-            </button>
+          <div className="text-center p-4 space-y-2.5 max-w-sm mx-auto">
+            <VideoOff className="w-8 h-8 text-red-500 mx-auto animate-pulse" />
+            <div>
+              <p className="text-xs text-gray-200 font-bold leading-relaxed">
+                {cameraError || 'Webcam device unavailable or locked.'}
+              </p>
+              <p className="text-[10px] text-gray-400 mt-1">
+                Tip: Browser ke URL bar me 🔒 Lock icon par click karke Camera "Allow" karein, ya neeche Virtual Camera use karein.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              <button
+                onClick={startCamera}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#C62828] text-white hover:bg-[#8E1B1B] transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <span>Allow Camera Access</span>
+              </button>
+              <button
+                onClick={startVirtualFeed}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-emerald-400 hover:bg-gray-700 border border-emerald-500/40 transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                title="Bypass physical webcam and use real-time AI simulated feed for testing"
+              >
+                <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                <span>Use Virtual Camera (Demo)</span>
+              </button>
+            </div>
           </div>
         ) : null}
 
