@@ -258,7 +258,7 @@ const initialPredictiveCentres: PredictiveCentre[] = [
 ];
 
 export const EarlyDetectionDashboard: React.FC = () => {
-  const { addNotification } = useResilience();
+  const { addNotification, earlyDetectionMetrics, toggleDegradationSimulation } = useResilience();
   const [centres, setCentres] = useState<PredictiveCentre[]>(initialPredictiveCentres);
   const [selectedRiskFilter, setSelectedRiskFilter] = useState<'all' | 'critical' | 'high' | 'moderate' | 'low'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -359,6 +359,7 @@ export const EarlyDetectionDashboard: React.FC = () => {
 
   // Simulate Anomaly on Centre 08 for Hackathon Demonstration
   const handleSimulateInstabilitySpike = () => {
+    toggleDegradationSimulation(true);
     setCentres(prev => prev.map(c => {
       if (c.id === 'centre-08') {
         return {
@@ -366,16 +367,16 @@ export const EarlyDetectionDashboard: React.FC = () => {
           riskCategory: 'critical',
           stabilityScore: 54.2,
           repeatedDisconnections: 7,
-          predictedDisruptionProbability: 92,
-          packetLossPercent: 14.8,
-          networkLatency: 284,
+          predictedDisruptionProbability: earlyDetectionMetrics.disruptionRiskPercent > 60 ? earlyDetectionMetrics.disruptionRiskPercent : 88,
+          packetLossPercent: earlyDetectionMetrics.packetLossPercent > 0 ? earlyDetectionMetrics.packetLossPercent : 8.4,
+          networkLatency: earlyDetectionMetrics.currentLatencyMs > 50 ? earlyDetectionMetrics.currentLatencyMs : 240,
           healthScore: 64.1,
           edgeGatewayStatus: 'degraded',
           warningNoticeIssued: false,
           observedIndicators: [
-            "⚠️ CRITICAL: 7 consecutive latency spikes (>280ms) over last 30 minutes",
-            "Packet loss surged to 14.8% on primary WAN uplink",
-            "Gateway BGP instability: 92% probability of total disconnect before next shift"
+            `⚠️ CRITICAL: Rolling telemetry jitter surge (${earlyDetectionMetrics.jitterMs}ms) detected`,
+            `Packet loss surged to ${earlyDetectionMetrics.packetLossPercent}% on primary WAN uplink`,
+            `Prediction Engine: High disruption probability (${earlyDetectionMetrics.disruptionRiskPercent}%) calculated`
           ]
         };
       }
@@ -385,8 +386,8 @@ export const EarlyDetectionDashboard: React.FC = () => {
     addNotification({
       target: 'admin',
       type: 'alert',
-      title: 'Predictive Anomaly Detected',
-      message: 'CENTRE 08: 7 network drops detected. 92% disruption probability predicted.'
+      title: 'Predictive Anomaly Detected (Req 02)',
+      message: 'CENTRE 08: 7 network drops detected. 88% disruption probability predicted.'
     });
   };
 
@@ -418,16 +419,21 @@ export const EarlyDetectionDashboard: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
-              onClick={handleSimulateInstabilitySpike}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-[#C77A00] border border-amber-300 dark:border-amber-800 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-              title="Simulate network instability on Centre 08"
+              onClick={() => toggleDegradationSimulation(!earlyDetectionMetrics.isDegradationSimulated)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                earlyDetectionMetrics.isDegradationSimulated 
+                  ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
+                  : 'bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-[#C77A00] border border-amber-300 dark:border-amber-800'
+              }`}
+              title="Toggle real-time degradation injection"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span>Simulate Anomaly</span>
+              <Zap className="w-3.5 h-3.5" />
+              <span>{earlyDetectionMetrics.isDegradationSimulated ? 'Clear Degradation Test' : 'Inject Jitter & Loss'}</span>
             </button>
 
             <button
               onClick={() => {
+                toggleDegradationSimulation(false);
                 setCentres(initialPredictiveCentres);
                 setSelectedCentre(initialPredictiveCentres[0]);
                 setActionSuccessMessage(null);
@@ -437,6 +443,46 @@ export const EarlyDetectionDashboard: React.FC = () => {
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset State</span>
             </button>
+          </div>
+        </div>
+
+        {/* Live Mathematical Telemetry Analysis Bar */}
+        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700">
+            <span className="text-[10px] uppercase font-bold text-gray-400 block">Computed Risk Probability</span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className={`text-lg font-black font-mono ${
+                earlyDetectionMetrics.disruptionRiskPercent >= 60 ? 'text-red-600' : 'text-emerald-600'
+              }`}>
+                {earlyDetectionMetrics.disruptionRiskPercent}%
+              </span>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                earlyDetectionMetrics.disruptionRiskPercent >= 60 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
+              }`}>
+                {earlyDetectionMetrics.riskCategory}
+              </span>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700">
+            <span className="text-[10px] uppercase font-bold text-gray-400 block">Rolling Latency & Mean</span>
+            <div className="text-lg font-black text-gray-900 dark:text-white font-mono mt-0.5">
+              {earlyDetectionMetrics.currentLatencyMs}ms <span className="text-xs font-normal text-gray-400">(avg: {earlyDetectionMetrics.rollingLatencyMean}ms)</span>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700">
+            <span className="text-[10px] uppercase font-bold text-gray-400 block">Latency Jitter (Std Dev)</span>
+            <div className="text-lg font-black text-gray-900 dark:text-white font-mono mt-0.5">
+              ±{earlyDetectionMetrics.jitterMs}ms
+            </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700">
+            <span className="text-[10px] uppercase font-bold text-gray-400 block">Packet Loss Rate</span>
+            <div className="text-lg font-black text-gray-900 dark:text-white font-mono mt-0.5">
+              {earlyDetectionMetrics.packetLossPercent}%
+            </div>
           </div>
         </div>
       </div>

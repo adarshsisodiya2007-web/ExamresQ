@@ -54,165 +54,97 @@ export const SuspiciousPatternCenter: React.FC = () => {
     <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-gray-200 shadow-xs">
+        {/* Header - Simple & Clean */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 rounded-2xl border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#C62828] animate-pulse" />
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C62828]">
-                Behavior Monitoring
-              </span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-50 text-[#C62828] border border-red-200">
-                Evidence-Based
+              <span className="w-2.5 h-2.5 rounded-full bg-[#B91C3C] animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#B91C3C] dark:text-[#38BDF8]">
+                Student Safety & Integrity
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Suspicious Patterns
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
+              Security Alerts
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Anomaly detection and evidence-based review queue.
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              Identifies unusual activity requiring faculty attention
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
-              {alerts.filter(a => a.status === 'Flagged for Review' || a.status === 'Under Investigation').length} Pending Action
-            </span>
+          <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 self-start sm:self-auto">
+            02 Requiring Review
+          </span>
+        </div>
+
+        {/* Attention Summary Cards (3 simple cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Total Alerts Today</span>
+            <div className="text-2xl font-black text-gray-900 dark:text-white font-mono mt-1">03</div>
+            <span className="text-[11px] text-gray-500 mt-1 block">Low rate across all halls</span>
+          </div>
+
+          <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Pending Review</span>
+            <div className="text-2xl font-black text-[#B91C3C] font-mono mt-1">02</div>
+            <span className="text-[11px] text-amber-600 font-semibold mt-1 block">Quick action recommended</span>
+          </div>
+
+          <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Resolved Today</span>
+            <div className="text-2xl font-black text-emerald-600 font-mono mt-1">01</div>
+            <span className="text-[11px] text-emerald-600 font-semibold mt-1 block">Cleared as normal activity</span>
           </div>
         </div>
 
-        {/* 4 Pillars of Pattern Detection */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
-            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-[#C62828]">
-              <BrainCircuit className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold uppercase text-gray-900">Pattern Telemetry</h4>
-            <p className="text-xs text-gray-500">
-              Sub-cognitive bursts and irregular cadence.
-            </p>
+        {/* Alerts Cards List (Maximum 3 sample records per Rule 4, 13) */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              Recent Alerts (3)
+            </h2>
+            <span className="text-xs text-gray-500">Click review to inspect</span>
           </div>
 
-          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-              <Fingerprint className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold uppercase text-gray-900">Session Integrity</h4>
-            <p className="text-xs text-gray-500">
-              Concurrent logins and network hops.
-            </p>
-          </div>
-
-          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
-              <Scale className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold uppercase text-gray-900">Review Queue</h4>
-            <p className="text-xs text-gray-500">
-              Official supervisor evidence sign-off.
-            </p>
-          </div>
-
-          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-[#16803C]">
-              <ShieldAlert className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold uppercase text-gray-900">Zero False Accusations</h4>
-            <p className="text-xs text-gray-500">
-              Distinguishes legitimate network failover IP shifts from malicious proxy spoofing with cryptographic proof.
-            </p>
-          </div>
-        </div>
-
-        {/* Review Queue Table */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
-            <div>
-              <h3 className="text-base font-black text-gray-900">
-                Official Examination Official Review Queue
-              </h3>
-              <p className="text-xs text-gray-500">
-                Evidence-backed alerts awaiting verification by Central Examination Authorities
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Filter className="w-3.5 h-3.5 text-gray-400" />
-              <select
-                value={filterSeverity}
-                onChange={(e) => setFilterSeverity(e.target.value)}
-                className="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-gray-700 cursor-pointer"
+          <div className="space-y-3">
+            {filteredAlerts.slice(0, 3).map((item) => (
+              <div 
+                key={item.id}
+                className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
-                <option value="all">All Severities</option>
-                <option value="critical">Critical</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </select>
-            </div>
-          </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      item.status.includes('Review') || item.status.includes('Invest')
+                        ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300'
+                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                    }`}>
+                      {item.status.includes('Review') ? 'Needs Review' : item.status.includes('Cleared') ? 'Safe / Cleared' : 'Under Review'}
+                    </span>
+                    <span className="text-xs text-gray-400 font-mono">Flagged at {item.flaggedAt}</span>
+                  </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-gray-100 text-gray-500 uppercase text-[11px]">
-                  <th className="py-2.5 px-3">Alert Code</th>
-                  <th className="py-2.5 px-3">Candidate / Centre</th>
-                  <th className="py-2.5 px-3">Suspicious Pattern Category</th>
-                  <th className="py-2.5 px-3">Confidence</th>
-                  <th className="py-2.5 px-3">Severity</th>
-                  <th className="py-2.5 px-3">Review Status</th>
-                  <th className="py-2.5 px-3 text-right">Official Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 font-mono">
-                {filteredAlerts.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="py-3.5 px-3 font-bold text-gray-900">{item.id}</td>
-                    <td className="py-3.5 px-3 font-sans">
-                      <span className="font-bold text-gray-900 block">{item.candidateName}</span>
-                      <span className="text-gray-500 text-[11px] font-mono">{item.rollNumber} • {item.centreId}</span>
-                    </td>
-                    <td className="py-3.5 px-3 font-sans">
-                      <span className="font-bold text-[#C62828] block">{item.category}</span>
-                      <span className="text-[11px] text-gray-500">Flagged at {item.flaggedAt}</span>
-                    </td>
-                    <td className="py-3.5 px-3 font-bold text-gray-800">{item.confidenceScore}% AI Confidence</td>
-                    <td className="py-3.5 px-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-sans ${
-                        item.severity === 'Critical' ? 'bg-red-100 text-[#C62828]' :
-                        item.severity === 'High' ? 'bg-orange-100 text-orange-800' :
-                        item.severity === 'Medium' ? 'bg-amber-100 text-amber-800' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {item.severity}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-3 font-sans">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold ${
-                        item.status === 'Cleared (Legitimate)' ? 'bg-emerald-50 text-[#16803C] border border-emerald-200' :
-                        item.status === 'Sanction Recommended' ? 'bg-red-50 text-[#C62828] border border-red-200' :
-                        'bg-amber-50 text-amber-800 border border-amber-200'
-                      }`}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-3 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedAlert(item);
-                          setEvidenceModalOpen(true);
-                        }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#171717] hover:bg-black text-white transition-colors cursor-pointer inline-flex items-center gap-1"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Inspect Evidence</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                    {item.candidateName} <span className="text-xs font-normal text-gray-500">({item.rollNumber})</span>
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    <strong>Issue:</strong> {item.category} • {item.centreId}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      setSelectedAlert(item);
+                      setEvidenceModalOpen(true);
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#B91C3C] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-xs"
+                  >
+                    Review Details
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

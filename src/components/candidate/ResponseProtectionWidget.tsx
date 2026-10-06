@@ -83,10 +83,10 @@ export const ResponseProtectionWidget: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h4 className="text-xs font-bold text-gray-900 dark:text-white tracking-tight">RESPONSE PROTECTION ENGINE</h4>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Periodic auto-save heartbeat active (every 3s)" />
+              <h4 className="text-xs font-bold text-gray-900 dark:text-white tracking-tight">Smart Response Protection</h4>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Auto-save active" />
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono">Client-Side AES-256 GCM + IndexedDB Sandbox (Req 4.1)</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400">Continuous local protection • Zero response loss</p>
           </div>
         </div>
 

@@ -163,22 +163,17 @@ export const RoleTransitionSplash: React.FC = () => {
               : (isDark ? 'bg-sky-500/20 border-sky-500' : 'bg-red-500/20 border-red-500')}
           `} style={{ animationDuration: '2.4s' }} />
 
-          {/* Official ExamresQ Logo Image with Progressive Cinematic Zoom */}
+          {/* Official ExamresQ Logo Image with Progressive Cinematic Zoom (Circular Emblem) */}
           <div 
-            className={`
-              w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-5 border-2 shadow-2xl flex items-center justify-center relative z-10 transition-transform duration-300 ease-out
-              ${isDark 
-                ? 'bg-[#0A0E1A] border-[#1E293B] shadow-[0_0_50px_rgba(2,132,199,0.3)]' 
-                : 'bg-white border-red-200 shadow-[0_20px_50px_rgba(198,40,40,0.22)]'}
-            `}
+            className="w-40 h-40 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-full flex items-center justify-center relative z-10 transition-transform duration-300 ease-out"
             style={{
-              transform: `scale(${1.02 + (progress / 100) * 0.16})`
+              transform: `scale(${1.02 + (progress / 100) * 0.14})`
             }}
           >
             <img 
               src={examresqLogo} 
               alt="ExamresQ Official Logo" 
-              className="w-full h-full object-contain filter drop-shadow-xl transition-all duration-300 hover:scale-105"
+              className="w-full h-full object-contain rounded-full drop-shadow-[0_16px_36px_rgba(198,40,40,0.28)] dark:drop-shadow-[0_16px_36px_rgba(2,132,199,0.35)] transition-all duration-300 hover:scale-105"
             />
           </div>
 

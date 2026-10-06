@@ -29,67 +29,51 @@ export const HeroVisualization: React.FC = () => {
   const stages: StageConfig[] = [
     {
       id: 'candidate',
-      name: '1. CANDIDATE',
-      sub: 'Session Active',
+      name: '1. Student',
+      sub: 'Active Exam',
       icon: <User className="w-5 h-5" />,
       badgeColor: 'border-gray-200 bg-white text-gray-800',
-      statusText: 'Candidate selects Option B on Question 14'
-    },
-    {
-      id: 'response',
-      name: '2. RESPONSE',
-      sub: 'Payload Formed',
-      icon: <Send className="w-5 h-5 text-gray-700" />,
-      badgeColor: 'border-gray-300 bg-white text-gray-800',
-      statusText: 'Answer payload signed with candidate session key'
+      statusText: 'Student selects answer'
     },
     {
       id: 'saved',
-      name: '3. SAVED',
-      sub: 'Cloud Sync 18ms',
-      icon: <Database className="w-5 h-5 text-[#16803C]" />,
-      badgeColor: 'border-emerald-200 bg-emerald-50 text-[#16803C]',
-      statusText: 'Pre-outage state acknowledged by cloud primary DB'
+      name: '2. Normal Save',
+      sub: 'Instant Sync',
+      icon: <Database className="w-5 h-5 text-emerald-600" />,
+      badgeColor: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+      statusText: 'Answer saved instantly to system'
     },
     {
       id: 'interruption',
-      name: '4. NETWORK OUTAGE',
-      sub: 'Uplink Lost',
-      icon: <WifiOff className="w-5 h-5 text-[#C62828]" />,
-      badgeColor: 'border-red-300 bg-red-50 text-[#C62828] animate-pulse',
-      statusText: 'Centre 08 WAN severed — 100% packet loss simulated'
+      name: '3. Connection Drop',
+      sub: 'Network Outage',
+      icon: <WifiOff className="w-5 h-5 text-[#B91C3C]" />,
+      badgeColor: 'border-red-300 bg-red-50 text-[#B91C3C] animate-pulse',
+      statusText: 'Internet disconnects unexpectedly'
     },
     {
       id: 'protected',
-      name: '5. PROTECTED',
-      sub: 'Encrypted Ledger',
-      icon: <ShieldCheck className="w-5 h-5 text-[#C62828]" />,
-      badgeColor: 'border-[#C62828] bg-red-50 text-[#C62828] font-bold',
-      statusText: 'Local SHA-256 tamper-proof ledger seals response in 0.04s'
+      name: '4. Safe Mode',
+      sub: 'Protected Offline',
+      icon: <ShieldCheck className="w-5 h-5 text-[#B91C3C]" />,
+      badgeColor: 'border-[#B91C3C] bg-red-50 text-[#B91C3C] font-bold',
+      statusText: 'Student continues without losing answers or time'
     },
     {
       id: 'restored',
-      name: '6. NET RESTORED',
-      sub: 'Mesh Backhaul',
+      name: '5. Restored',
+      sub: 'Backup Link',
       icon: <Wifi className="w-5 h-5 text-blue-600" />,
       badgeColor: 'border-blue-200 bg-blue-50 text-blue-700',
-      statusText: 'Failover carrier establishes authenticated TLS 1.3 tunnel'
-    },
-    {
-      id: 'synchronizing',
-      name: '7. SYNCHRONIZING',
-      sub: 'Delta Stream',
-      icon: <RefreshCw className="w-5 h-5 text-amber-600 animate-spin" />,
-      badgeColor: 'border-amber-300 bg-amber-50 text-amber-700',
-      statusText: 'Offline queue streams delta packets with vector clocks'
+      statusText: 'Connection safely reconnects'
     },
     {
       id: 'verified',
-      name: '8. VERIFIED',
-      sub: 'Zero Data Loss',
-      icon: <CheckCircle2 className="w-5 h-5 text-[#16803C]" />,
-      badgeColor: 'border-emerald-300 bg-emerald-100 text-[#16803C]',
-      statusText: 'Central Merkle root matches client hash with 100% precision'
+      name: '6. All Verified',
+      sub: 'Zero Loss',
+      icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
+      badgeColor: 'border-emerald-300 bg-emerald-100 text-emerald-800',
+      statusText: 'All responses matched and verified'
     }
   ];
 

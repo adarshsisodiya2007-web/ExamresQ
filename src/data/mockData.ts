@@ -164,7 +164,7 @@ export const activeIncidentRecord: IncidentRecord = {
 
 export const sampleAuditTrail: AuditRecord = {
   sessionId: "SES-2026-ET-9941",
-  candidateName: "Adarsh Singh",
+  candidateName: "Aarav Sharma",
   candidateRoll: "ET-2026-ENG-4418",
   centreId: "Centre 08 (Delhi North)",
   examName: "Engineering Mathematics III — National Assessment 2026",
@@ -216,7 +216,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
   {
     id: 'cand-4418',
     rollNo: 'ET-2026-ENG-4418',
-    name: 'Adarsh Singh',
+    name: 'Aarav Sharma',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
     stationId: 'STATION-14',
     centreId: 'centre-08',
@@ -234,7 +234,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
     pendingOfflineAnswers: 0,
     compensationMinutes: 0,
     ipAddress: '192.168.8.114',
-    lastAction: 'Saved Q14 Option A (Synchronized)',
+    lastAction: 'Saved Q14 Option A (Safe)',
     merkleHash: '0x7f9a842b109e4d58',
     deviceInfo: 'Terminal 14 • Chrome 124 • Linux EdgeOS',
     isSelf: true
@@ -242,7 +242,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
   {
     id: 'cand-4419',
     rollNo: 'ET-2026-ENG-4419',
-    name: 'Priya Sharma',
+    name: 'Riya Patel',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
     stationId: 'STATION-15',
     centreId: 'centre-08',
@@ -260,7 +260,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
     pendingOfflineAnswers: 0,
     compensationMinutes: 0,
     ipAddress: '192.168.8.115',
-    lastAction: 'Saved Q21 Option C (Synchronized)',
+    lastAction: 'Saved Q21 Option C (Safe)',
     merkleHash: '0x3a4b912c4488de10',
     deviceInfo: 'Terminal 15 • Chrome 124 • Linux EdgeOS',
     isSelf: false
@@ -268,7 +268,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
   {
     id: 'cand-4420',
     rollNo: 'ET-2026-ENG-4420',
-    name: 'Rahul Verma',
+    name: 'Kabir Singh',
     avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
     stationId: 'STATION-16',
     centreId: 'centre-08',
@@ -277,7 +277,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
     totalQuestions: 25,
     answeredCount: 16,
     markedReviewCount: 3,
-    status: 'offline_buffering',
+    status: 'flagged',
     connectionLatency: 480,
     strikes: 1,
     faceStatus: 'looking_away',
@@ -286,7 +286,7 @@ export const initialActiveCandidates: import('../types').ActiveCandidateSession[
     pendingOfflineAnswers: 2,
     compensationMinutes: 2,
     ipAddress: '192.168.8.116',
-    lastAction: 'Offline Buffered Q16 (AES-256 Protected)',
+    lastAction: 'Unusual activity detected (Needs Review)',
     merkleHash: '0x918c5e21908bf112',
     deviceInfo: 'Terminal 16 • Chrome 124 • Linux EdgeOS',
     isSelf: false
@@ -297,31 +297,31 @@ export const initialTelemetryEvents: import('../types').CandidateTelemetryEvent[
   {
     id: 'evt-1',
     candidateId: 'cand-4418',
-    candidateName: 'Adarsh Singh',
+    candidateName: 'Aarav Sharma',
     rollNo: 'ET-2026-ENG-4418',
     timestamp: '10:44:12',
     type: 'answer_saved',
-    message: 'Submitted Option A for Question 14; State locked in AES-256 buffer.',
+    message: 'Submitted Option A for Question 14. Activity normal.',
     severity: 'info'
   },
   {
     id: 'evt-2',
-    candidateId: 'cand-4420',
-    candidateName: 'Rahul Verma',
-    rollNo: 'ET-2026-ENG-4420',
-    timestamp: '10:43:55',
-    type: 'offline_buffer',
-    message: 'Uplink dropped at Station 16. Response encrypted in local IndexedDB.',
-    severity: 'warning'
+    candidateId: 'cand-4419',
+    candidateName: 'Riya Patel',
+    rollNo: 'ET-2026-ENG-4419',
+    timestamp: '10:44:05',
+    type: 'answer_saved',
+    message: 'Submitted Option C for Question 21. Activity normal.',
+    severity: 'info'
   },
   {
     id: 'evt-3',
     candidateId: 'cand-4420',
-    candidateName: 'Rahul Verma',
+    candidateName: 'Kabir Singh',
     rollNo: 'ET-2026-ENG-4420',
     timestamp: '10:43:10',
     type: 'strike_issued',
-    message: 'Gaze deviation detected. Strike 1/3 issued by Proctor AI.',
+    message: 'Unusual activity detected. Review recommended.',
     severity: 'critical'
   }
 ];

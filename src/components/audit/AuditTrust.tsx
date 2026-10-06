@@ -23,44 +23,76 @@ import {
   Database,
   History,
   X,
-  Printer
+  Printer,
+  FileSpreadsheet
 } from 'lucide-react';
 
 export const AuditTrust: React.FC = () => {
-  const { auditTrail, addNotification, setCurrentView } = useResilience();
+  const { 
+    auditTrail, 
+    addNotification, 
+    setCurrentView,
+    verifyAuditIntegrity,
+    simulateTamperAttempt,
+    restoreAuditIntegrity,
+    computedMerkleRoot,
+    integrityResult,
+    canonicalAuditEvents,
+    downloadAuditDossierPDF,
+    downloadAuditLedgerCSV
+  } = useResilience();
+
   const [copiedHash, setCopiedHash] = useState<boolean>(false);
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
   const [accessLogs, setAccessLogs] = useState<AuditAccessRecord[]>(sampleAuditAccessLogs);
   const [activeAuditorRole, setActiveAuditorRole] = useState<'Central Auditor' | 'Chief Invigilator' | 'Read-Only Inspector'>('Central Auditor');
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const handleCopyHash = () => {
-    navigator.clipboard?.writeText(auditTrail.merkleRoot);
+    navigator.clipboard?.writeText(computedMerkleRoot || auditTrail.merkleRoot);
     setCopiedHash(true);
     setTimeout(() => setCopiedHash(false), 2000);
   };
 
   // Test Tamper Prevention Action (Requirement 5)
   const handleTestTamperAttempt = () => {
+    const result = simulateTamperAttempt();
     const newLog: AuditAccessRecord = {
       id: `ACC-LOG-${Math.floor(Math.random() * 9000 + 1000)}`,
-      accessorName: 'Simulated Malicious Payload',
+      accessorName: 'Simulated Payload Mutation',
       role: 'Read-Only Inspector',
-      action: 'ATTEMPT_EDIT_REJECTED',
-      targetCandidate: `${auditTrail.candidateRoll} (Direct SQL / Storage Mutation)`,
+      action: 'PAYLOAD_MUTATED_TEST',
+      targetCandidate: `${auditTrail.candidateRoll} (Block #${result.tamperedIndex})`,
       timestamp: new Date().toLocaleTimeString(),
-      ipAddress: '192.168.1.199 (Blocked)',
+      ipAddress: '192.168.1.199 (Simulated Test)',
       authLevel: 'Arbitrary Write Injection',
-      outcome: 'TAMPER_PREVENTED'
+      outcome: 'MUTATION_RECORDED'
     };
-
     setAccessLogs(prev => [newLog, ...prev]);
+  };
 
-    addNotification({
-      target: 'admin',
-      type: 'alert',
-      title: 'SECURITY ALARM: Tamper Attempt Defended',
-      message: 'Direct memory edit blocked. Merkle root hash validation rejected foreign payload. Zero data altered.'
-    });
+  // Verify Audit Integrity with real SHA-256 recalculation
+  const handleVerifyIntegrity = async () => {
+    setIsVerifying(true);
+    await verifyAuditIntegrity();
+    setIsVerifying(false);
+  };
+
+  // Repair and Restore Audit Integrity
+  const handleRestoreIntegrity = async () => {
+    await restoreAuditIntegrity();
+    const newLog: AuditAccessRecord = {
+      id: `ACC-LOG-${Math.floor(Math.random() * 9000 + 1000)}`,
+      accessorName: 'Self-Healing Cryptographic Engine',
+      role: 'Central Auditor',
+      action: 'HASH_CHAIN_RESTORED',
+      targetCandidate: `${auditTrail.candidateRoll} (Chain Resealed)`,
+      timestamp: new Date().toLocaleTimeString(),
+      ipAddress: '127.0.0.1 (Local Key)',
+      authLevel: 'Master Authority Key',
+      outcome: 'RECOVERED_100%'
+    };
+    setAccessLogs(prev => [newLog, ...prev]);
   };
 
   return (
@@ -78,31 +110,65 @@ export const AuditTrust: React.FC = () => {
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200">
                 WORM Locked
               </span>
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                {canonicalAuditEvents.length} Blocks
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1.5 tracking-tight">
               Audit Ledger
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Cryptographic response validation and immutable access logs.
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-3xl">
+              Cryptographic response validation, Merkle root verification, and immutable access logs.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
             <button
-              onClick={handleTestTamperAttempt}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-red-700 border border-red-200 transition-colors cursor-pointer flex items-center gap-1.5"
-              title="Test system rejection of unauthorized response editing"
+              onClick={handleVerifyIntegrity}
+              disabled={isVerifying}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              title="Verify entire Merkle hash chain using WebCrypto SHA-256"
             >
-              <ShieldAlert className="w-3.5 h-3.5 text-[#C62828]" />
-              <span>Simulate Tamper</span>
+              <ShieldCheck className={`w-3.5 h-3.5 text-emerald-600 ${isVerifying ? 'animate-spin' : ''}`} />
+              <span>{isVerifying ? 'Verifying Tree...' : 'Verify Merkle Tree'}</span>
             </button>
 
             <button
-              onClick={() => setShowCertificateModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
+              onClick={handleTestTamperAttempt}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition-colors cursor-pointer flex items-center gap-1.5"
+              title="Test system rejection of unauthorized response editing"
             >
-              <Award className="w-4 h-4" />
-              <span>Generate Certificate</span>
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-700" />
+              <span>Simulate Tamper</span>
+            </button>
+
+            {integrityResult && !integrityResult.isValid && (
+              <button
+                onClick={handleRestoreIntegrity}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer flex items-center gap-1.5 animate-pulse"
+                title="Repair tampered block using local cryptographic signature"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Repair Ledger</span>
+              </button>
+            )}
+
+            <button
+              onClick={downloadAuditDossierPDF}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white dark:bg-white dark:text-black transition-colors cursor-pointer shadow-xs"
+              title="Generate comprehensive post-examination audit PDF dossier"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Export PDF Dossier</span>
+            </button>
+
+            <button
+              onClick={downloadAuditLedgerCSV}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 transition-colors cursor-pointer shadow-xs"
+              title="Export raw cryptographic block ledger in CSV format"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-blue-500" />
+              <span>CSV Ledger</span>
             </button>
           </div>
         </div>
@@ -128,8 +194,20 @@ export const AuditTrust: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-100">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#16803C] border border-emerald-200 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> 100% Cryptographically Verified
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
+                  integrityResult && !integrityResult.isValid 
+                    ? 'bg-red-50 text-red-700 border border-red-200'
+                    : 'bg-emerald-50 text-[#16803C] border border-emerald-200'
+                }`}>
+                  {integrityResult && !integrityResult.isValid ? (
+                    <>
+                      <AlertTriangle className="w-3.5 h-3.5 text-red-600" /> Tamper Detected (Block #{integrityResult.tamperedBlockIndex})
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" /> 100% Cryptographically Verified
+                    </>
+                  )}
                 </span>
                 <span className="text-xs font-mono text-gray-400">Audited at {auditTrail.lastVerificationTime}</span>
               </div>
@@ -144,7 +222,7 @@ export const AuditTrust: React.FC = () => {
             {/* Cryptographic Merkle Root Pill */}
             <div className="p-3.5 rounded-xl bg-[#F8F8F6] border border-gray-200 flex flex-col gap-1 max-w-md w-full">
               <div className="flex items-center justify-between text-xs text-gray-500">
-                <span className="font-semibold uppercase text-[10px]">Session Merkle State Root</span>
+                <span className="font-semibold uppercase text-[10px]">Session Merkle State Root (SHA-256)</span>
                 <button
                   onClick={handleCopyHash}
                   className="text-[11px] text-[#C62828] hover:underline flex items-center gap-1 cursor-pointer"
@@ -154,13 +232,52 @@ export const AuditTrust: React.FC = () => {
                 </button>
               </div>
               <span className="font-mono text-xs text-gray-900 font-bold truncate">
-                {auditTrail.merkleRoot}
+                {computedMerkleRoot || auditTrail.merkleRoot}
               </span>
               <span className="text-[10px] text-gray-500">
-                Verifiable proof that records have not been improperly altered.
+                Computed dynamically from candidate answers & event hash chain.
               </span>
             </div>
           </div>
+
+          {/* Verification Status Banner */}
+          {integrityResult && (
+            <div className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 text-xs ${
+              integrityResult.isValid 
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                : 'bg-red-50 border-red-300 text-red-950'
+            }`}>
+              <div className="flex items-center gap-2.5">
+                {integrityResult.isValid ? (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                ) : (
+                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+                )}
+                <div>
+                  <strong className="block font-bold">
+                    {integrityResult.isValid 
+                      ? `Merkle Root Verified Intact (${integrityResult.totalEvents} Blocks Validated)`
+                      : `Cryptographic Breach Detected at Block #${integrityResult.tamperedBlockIndex}`
+                    }
+                  </strong>
+                  <span className="text-[11px] opacity-80">
+                    {integrityResult.isValid
+                      ? 'Every answer block SHA-256 digest re-computed and confirmed matching. Zero discrepancies.'
+                      : 'Payload hash signature discrepancy detected between immutable ledger and memory buffer.'
+                    }
+                  </span>
+                </div>
+              </div>
+              {!integrityResult.isValid && (
+                <button
+                  onClick={handleRestoreIntegrity}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-xs cursor-pointer shrink-0 shadow-xs"
+                >
+                  Repair & Reseal
+                </button>
+              )}
+            </div>
+          )}
 
           {/* 4 Core Integrity Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">

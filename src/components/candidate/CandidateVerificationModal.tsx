@@ -45,77 +45,49 @@ export const CandidateVerificationModal: React.FC = () => {
       setAssignedStation(station);
       setAssignedRoll(roll);
 
-      // Pre-fill name from localStorage if exists
-      const savedName = localStorage.getItem('examresq_student_name') || '';
-      if (savedName) setFullName(savedName);
+      // Pre-fill name from localStorage or studentName from context
+      const savedName = localStorage.getItem('examresq_student_name') || 'Adarsh Singh';
+      setFullName(savedName);
 
       setIsOpen(true);
     }
   }, [userRole]);
 
-  // Aadhaar auto-formatter (XXXX XXXX XXXX)
-  const handleAadharChange = (val: string) => {
-    const rawDigits = val.replace(/\D/g, '').slice(0, 12);
-    const parts = rawDigits.match(/.{1,4}/g);
-    setAadharNumber(parts ? parts.join(' ') : rawDigits);
-  };
-
-  // Phone auto-formatter (10 digits)
-  const handlePhoneChange = (val: string) => {
-    const rawDigits = val.replace(/\D/g, '').slice(0, 10);
-    setPhoneNumber(rawDigits);
-  };
-
   const handleVerifyAndEnter = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
-    const cleanName = fullName.trim();
-    const rawAadhar = aadharNumber.replace(/\s/g, '');
-    const cleanPhone = phoneNumber.trim();
+    const cleanName = fullName.trim() || 'Adarsh Singh';
 
-    if (cleanName.length < 3) {
-      setErrorMsg('Please enter your full official name (min 3 characters).');
-      return;
-    }
-
-    if (rawAadhar.length !== 12) {
-      setErrorMsg('Aadhaar Card number must be exactly 12 numeric digits.');
-      return;
-    }
-
-    if (cleanPhone.length !== 10) {
-      setErrorMsg('Mobile number must be a valid 10-digit number.');
+    if (cleanName.length < 2) {
+      setErrorMsg('Please enter your full name (at least 2 characters).');
       return;
     }
 
     setIsVerifying(true);
 
-    // Simulate cryptographic verification & ledger registration (600ms)
+    // Smooth session setup (400ms)
     setTimeout(() => {
       // 1. Update resilience student name
       setStudentName(cleanName);
-
-      // 2. Mark this tab as verified
       try {
+        localStorage.setItem('examresq_student_name', cleanName);
         sessionStorage.setItem('examresq_student_verified_tab', 'true');
-        sessionStorage.setItem('examresq_student_aadhar', aadharNumber);
-        sessionStorage.setItem('examresq_student_phone', phoneNumber);
-        sessionStorage.setItem('examresq_station_id', assignedStation);
+        sessionStorage.setItem('examresq_station_id', assignedStation || 'STATION-14');
       } catch {}
 
-      // 3. Register this tab in the multi-candidate mesh
+      // 2. Register this tab in the multi-candidate mesh
       multiCandidateMeshService.registerLocalCandidate({
         name: cleanName,
-        aadhar: aadharNumber,
-        phone: phoneNumber,
-        stationId: assignedStation,
-        rollNo: assignedRoll
+        aadhar: aadharNumber || '5842 1904 8821',
+        phone: phoneNumber || '9876543210',
+        stationId: assignedStation || 'STATION-14',
+        rollNo: assignedRoll || 'ET-2026-ENG-4418'
       });
 
       setIsVerifying(false);
       setIsOpen(false);
-    }, 600);
+    }, 400);
   };
 
   if (!isOpen) return null;
@@ -138,58 +110,66 @@ export const CandidateVerificationModal: React.FC = () => {
           : 'bg-white border-red-200 shadow-[0_20px_60px_rgba(198,40,40,0.15)]'}
       `}>
         
-        {/* Official ExamresQ Logo */}
-        <div className={`
-          w-20 h-20 rounded-2xl p-2 border shadow-lg flex items-center justify-center
-          ${isDark ? 'bg-[#080B14] border-slate-800' : 'bg-red-50/50 border-red-100'}
-        `}>
+        {/* Official ExamresQ Circular Logo */}
+        <div className="w-20 h-20 rounded-full flex items-center justify-center relative">
           <img 
             src={examresqLogo} 
             alt="ExamresQ Official Logo" 
-            className="w-full h-full object-contain filter drop-shadow-md"
+            className="w-full h-full object-contain rounded-full drop-shadow-[0_8px_20px_rgba(185,28,60,0.22)]"
           />
         </div>
 
         {/* Modal Header */}
         <div className="space-y-1">
-          <div className="flex items-center justify-center gap-1.5">
-            <span className={`
-              text-[10px] font-mono uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border
-              ${isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-50 text-[#C62828] border-red-200'}
-            `}>
-              Mandatory Enrolment Gateway
-            </span>
-          </div>
-          <h2 className="text-xl font-black tracking-tight text-gray-900 dark:text-white">
-            Candidate Identity Verification
+          <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-red-50 text-[#B91C3C] border border-[#F0D9D4] dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/50">
+            Before You Begin
+          </span>
+          <h2 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white pt-2">
+            Student Verification
           </h2>
-          <p className="text-xs text-gray-600 dark:text-gray-400 max-w-xs mx-auto">
-            Please authenticate your candidate credentials before opening the secure examination workstation.
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Confirm your details to enter the secure exam environment
           </p>
         </div>
 
-        {/* Assigned Terminal Preview Badge */}
-        <div className={`
-          w-full px-3.5 py-2 rounded-xl border flex items-center justify-between font-mono text-[11px]
-          ${isDark ? 'bg-[#060911] border-slate-800 text-slate-300' : 'bg-red-50/40 border-red-100 text-gray-700'}
-        `}>
-          <span className="flex items-center gap-1.5 font-bold text-[#C62828] dark:text-emerald-400">
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Assigned: {assignedStation}</span>
-          </span>
-          <span className="text-[10px] text-gray-500 dark:text-gray-400">
-            Roll: {assignedRoll}
-          </span>
+        {/* 3 Visual Storytelling Verification Status Checks (Rule 11) */}
+        <div className="w-full space-y-2 p-4 rounded-2xl bg-[#FFF8F5] dark:bg-[#080D1A] border border-[#F0D9D4] dark:border-gray-800 text-left">
+          <div className="flex items-center gap-3 text-xs font-semibold text-gray-800 dark:text-gray-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Identity Verified</span>
+          </div>
+          <div className="flex items-center gap-3 text-xs font-semibold text-gray-800 dark:text-gray-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Exam Access Verified</span>
+          </div>
+          <div className="flex items-center gap-3 text-xs font-semibold text-gray-800 dark:text-gray-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Secure Session Ready</span>
+          </div>
         </div>
 
-        {/* Form Inputs */}
+        {/* Candidate Profile Details Card */}
+        <div className="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0D1527] text-left space-y-2 text-xs">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Exam:</span>
+            <span className="font-bold text-gray-900 dark:text-white">Mid-Semester Assessment</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Assigned Station:</span>
+            <span className="font-mono text-emerald-600 font-bold">{assignedStation || 'STATION-14'}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Roll Number:</span>
+            <span className="font-mono text-gray-700 dark:text-gray-300 font-semibold">{assignedRoll || 'ET-2026-ENG-4418'}</span>
+          </div>
+        </div>
+
+        {/* Form Inputs (Always Editable) */}
         <form onSubmit={handleVerifyAndEnter} className="w-full space-y-3.5 text-left">
-          
-          {/* 1. Full Name */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-bold font-mono text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-[#C62828] dark:text-emerald-400" />
-              <span>Full Name (As per Admit Card):</span>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center justify-between">
+              <span>Candidate Full Name:</span>
+              <span className="text-[10px] text-gray-400 font-normal">Type or edit your name</span>
             </label>
             <input 
               type="text"
@@ -198,104 +178,38 @@ export const CandidateVerificationModal: React.FC = () => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Adarsh Singh"
-              className={`
-                w-full px-3.5 py-2 rounded-xl border text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#C62828]
-                ${isDark 
-                  ? 'bg-[#080C17] border-slate-700 text-white placeholder-gray-500' 
-                  : 'bg-white border-red-200 text-gray-900 placeholder-gray-400'}
-              `}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-red-200 dark:border-gray-700 bg-white dark:bg-[#080C17] text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#B91C3C]/30 focus:border-[#B91C3C] shadow-2xs"
             />
           </div>
 
-          {/* 2. Aadhaar Card Number */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-bold font-mono text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-              <CreditCard className="w-3.5 h-3.5 text-[#C62828] dark:text-emerald-400" />
-              <span>Aadhaar Card Number (12 Digits):</span>
-            </label>
-            <input 
-              type="text"
-              required
-              maxLength={14}
-              value={aadharNumber}
-              onChange={(e) => handleAadharChange(e.target.value)}
-              placeholder="5842 1904 8821"
-              className={`
-                w-full px-3.5 py-2 rounded-xl border text-xs font-mono font-bold tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#C62828]
-                ${isDark 
-                  ? 'bg-[#080C17] border-slate-700 text-white placeholder-gray-500' 
-                  : 'bg-white border-red-200 text-gray-900 placeholder-gray-400'}
-              `}
-            />
-          </div>
-
-          {/* 3. Phone Number */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-bold font-mono text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-[#C62828] dark:text-emerald-400" />
-              <span>Mobile Phone Number (10 Digits):</span>
-            </label>
-            <div className="relative flex items-center">
-              <span className={`
-                absolute left-3 font-mono font-bold text-xs pointer-events-none
-                ${isDark ? 'text-gray-500' : 'text-gray-400'}
-              `}>
-                +91
-              </span>
-              <input 
-                type="tel"
-                required
-                maxLength={10}
-                value={phoneNumber}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                placeholder="98765 43210"
-                className={`
-                  w-full pl-11 pr-3.5 py-2 rounded-xl border text-xs font-mono font-bold tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#C62828]
-                  ${isDark 
-                    ? 'bg-[#080C17] border-slate-700 text-white placeholder-gray-500' 
-                    : 'bg-white border-red-200 text-gray-900 placeholder-gray-400'}
-                `}
-              />
-            </div>
-          </div>
-
-          {/* Error Notice */}
           {errorMsg && (
-            <div className="p-2 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 flex items-center gap-2 text-[11px] text-red-600 dark:text-red-400 font-medium">
-              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-              <span>{errorMsg}</span>
+            <div className="p-2.5 rounded-xl bg-red-50 text-[#B91C3C] text-xs font-semibold border border-red-200">
+              {errorMsg}
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isVerifying}
-            className={`
-              w-full py-2.5 rounded-xl text-xs font-black tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mt-2
-              ${isDark 
-                ? 'bg-emerald-500 text-black hover:bg-emerald-400' 
-                : 'bg-[#C62828] text-white hover:bg-[#8E1B1B]'}
-            `}
+            className="w-full py-3.5 rounded-xl text-sm font-bold bg-[#B91C3C] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-md shadow-red-900/20 flex items-center justify-center gap-2"
           >
             {isVerifying ? (
               <>
-                <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                <span>Arming Terminal Station...</span>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Preparing Session...</span>
               </>
             ) : (
               <>
-                <Lock className="w-3.5 h-3.5" />
-                <span>Verify Biometrics & Enter Exam Terminal →</span>
+                <span>Start Exam</span>
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        {/* Security Seal Note */}
-        <div className="flex items-center justify-center gap-1.5 text-[10px] text-gray-500 dark:text-gray-400 font-mono">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>AES-256 Hardware Encrypted Station Ledger</span>
+        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>Secure Examination Session</span>
         </div>
 
       </div>

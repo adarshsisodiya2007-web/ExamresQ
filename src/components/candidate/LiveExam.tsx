@@ -491,33 +491,21 @@ export const LiveExam: React.FC = () => {
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/60 text-[#C62828] border border-red-200 dark:border-red-900/60 font-mono">
-                    PAPER: ENG-304
-                  </span>
-                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200 hidden sm:inline">{studentName}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">• Roll: ET-2026-4418</span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                    strikeCount === 0 
-                      ? 'bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C] border-emerald-200 dark:border-emerald-800' 
-                      : 'bg-red-50 dark:bg-red-950/60 text-[#C62828] border-red-200 dark:border-red-800 animate-pulse'
-                  }`}>
-                    Strikes: {strikeCount} / 3
-                  </span>
+                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200">{studentName || 'Aarav Sharma'}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">• Station 14</span>
                 </div>
-                <h1 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">
-                  Engineering Mathematics III
+                <h1 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white mt-0.5 tracking-tight">
+                  Mid-Semester Assessment
                 </h1>
               </div>
             </div>
 
             {/* Dynamic Connection Status Notification Bar */}
             <div className="flex items-center gap-3">
-              {networkStatus === 'connected' && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-[#16803C] border border-emerald-200 dark:border-emerald-800 text-xs font-semibold shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-[#16803C]" />
-                  <span>● Connected</span>
-                </div>
-              )}
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>🟢 Secure Session</span>
+              </div>
 
               {networkStatus === 'interrupted' && (
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-[#C77A00] border border-amber-300 dark:border-amber-700 text-xs font-bold animate-pulse shadow-xs">

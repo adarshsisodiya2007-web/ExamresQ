@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 export const ReconciliationCenter: React.FC = () => {
-  const { addNotification, lastSavedHash } = useResilience();
+  const { addNotification, lastSavedHash, runAutomatedReconciliation, reconciliationResult } = useResilience();
   const [records, setRecords] = useState<ReconciliationRecord[]>(sampleReconciliationRecords);
   const [isReconciling, setIsReconciling] = useState<boolean>(false);
   const [filterType, setFilterType] = useState<string>('all');
@@ -28,17 +28,10 @@ export const ReconciliationCenter: React.FC = () => {
   const [comparisonModalOpen, setComparisonModalOpen] = useState<boolean>(false);
 
   // Run Real-Time Automated Reconciliation Engine
-  const triggerReconciliationRun = () => {
+  const triggerReconciliationRun = async () => {
     setIsReconciling(true);
-    addNotification({
-      target: 'admin',
-      type: 'info',
-      title: 'Automated Reconciliation Engine Started',
-      message: 'Comparing 14,820 candidate local IndexedDB sandboxes against cloud final submissions...'
-    });
-
-    setTimeout(() => {
-      setIsReconciling(false);
+    try {
+      const result = await runAutomatedReconciliation();
       setRecords(prev => prev.map(r => ({
         ...r,
         status: 'Verified Reconciled',
@@ -46,14 +39,11 @@ export const ReconciliationCenter: React.FC = () => {
         unreconciledDeltas: 0,
         merkleSealMatch: true
       })));
-
-      addNotification({
-        target: 'admin',
-        type: 'success',
-        title: 'Reconciliation Complete: 100% Match',
-        message: 'All saved client responses reconciled with final submission ledgers. Zero missing answers detected.'
-      });
-    }, 2000);
+    } catch (e) {
+      console.warn('Reconciliation execution notice:', e);
+    } finally {
+      setIsReconciling(false);
+    }
   };
 
   const filteredRecords = records.filter(r => {

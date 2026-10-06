@@ -66,6 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   } = useResilience();
 
   const [lifecycleExpanded, setLifecycleExpanded] = useState(false);
+  const [moreExpanded, setMoreExpanded] = useState(false);
 
   const handleItemClick = (view: AppView) => {
     setCurrentView(view);
@@ -84,119 +85,99 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Student Navigation: Clean, Short & Focused
   const studentSections: SidebarSection[] = [
     {
-      title: language === 'hi' ? 'परीक्षा कक्ष' : 'EXAMINATION',
+      title: language === 'hi' ? 'परीक्षा' : 'EXAMINATION',
       items: [
         {
           id: 'live_exam',
-          label: language === 'hi' ? 'लाइव परीक्षा कक्ष' : 'Live Exam Room',
-          icon: <FileSpreadsheet className="w-4 h-4 text-[#E53935]" />,
+          label: language === 'hi' ? 'लाइव परीक्षा कक्ष' : 'Live Exam',
+          icon: <FileSpreadsheet className="w-4 h-4 text-[#B91C3C]" />,
           badge: language === 'hi' ? 'सक्रिय' : 'ACTIVE',
-          badgeColor: 'bg-red-950/90 text-red-300 border-red-700 animate-pulse'
+          badgeColor: 'bg-red-50 text-[#B91C3C] border-red-200'
         },
         {
           id: 'candidate_portal',
-          label: language === 'hi' ? 'उम्मीदवार पोर्टल' : 'Candidate Portal',
-          icon: <User className="w-4 h-4 text-indigo-400" />
+          label: language === 'hi' ? 'छात्र पोर्टल' : 'Student Portal',
+          icon: <User className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         },
         {
           id: 'audit',
           label: language === 'hi' ? 'सबमिशन पावती' : 'Submission Proof',
-          icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
-          badge: 'SHA-256',
-          badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+          icon: <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+          badge: 'VERIFIED',
+          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
         }
       ]
     }
   ];
 
-  // Officer Navigation: Short, Crisp, Enterprise Grade
+  // Officer / Faculty Navigation: Clean, Presentation-Ready, 5 Core + More
   const officerSections: SidebarSection[] = [
     {
-      title: language === 'hi' ? 'निगरानी एवं केंद्र' : 'MONITORING',
+      title: language === 'hi' ? 'मुख्य अवलोकन' : 'MAIN',
       items: [
-        {
-          id: 'candidate_monitor',
-          label: language === 'hi' ? 'लाइव छात्र निगरानी' : 'Live Monitor',
-          icon: <Users className="w-4 h-4 text-[#38BDF8]" />,
-          badge: `${activeCandidates.length} ${language === 'hi' ? 'लाइव' : 'LIVE'}`,
-          badgeColor: 'bg-cyan-950/90 text-[#38BDF8] border-cyan-800 animate-pulse'
-        },
         {
           id: 'operations',
-          label: language === 'hi' ? 'ऑपरेशन्स केंद्र' : 'Operations',
-          icon: <Compass className="w-4 h-4 text-cyan-400" />,
-          badge: language === 'hi' ? 'सक्रिय' : 'ACTIVE',
-          badgeColor: 'bg-cyan-950/80 text-cyan-300 border-cyan-800'
+          label: language === 'hi' ? 'डैशबोर्ड' : 'Dashboard',
+          icon: <Compass className="w-4 h-4 text-[#B91C3C]" />
         },
         {
-          id: 'centres',
-          label: language === 'hi' ? 'परीक्षा केंद्र स्थिति' : 'Centre Status',
-          icon: <Building2 className="w-4 h-4 text-blue-400" />
-        }
-      ]
-    },
-    {
-      title: language === 'hi' ? 'घटना एवं रिकवरी' : 'INCIDENT & RECOVERY',
-      items: [
-        {
-          id: 'early_detection',
-          label: language === 'hi' ? 'पूर्व चेतावनी' : 'Early Detection',
-          icon: <Radar className="w-4 h-4 text-amber-400" />,
-          badge: language === 'hi' ? 'भविष्यवाणी' : 'PREDICT',
-          badgeColor: 'bg-amber-950/80 text-amber-300 border-amber-800'
-        },
-        {
-          id: 'incidents',
-          label: language === 'hi' ? 'घटना नियंत्रण' : 'Incident Center',
-          icon: <AlertOctagon className="w-4 h-4 text-red-400" />,
-          badge: language === 'hi' ? '१ सक्रिय' : '1 OPEN',
-          badgeColor: 'bg-red-950/80 text-red-300 border-red-800'
-        },
-        {
-          id: 'recovery',
-          label: language === 'hi' ? 'डिजास्टर रिकवरी' : 'Disaster Recovery',
-          icon: <RotateCcw className="w-4 h-4 text-blue-400" />
-        }
-      ]
-    },
-    {
-      title: language === 'hi' ? 'फॉरेंसिक एवं लेजर' : 'FORENSICS & AUDIT',
-      items: [
-        {
-          id: 'audit',
-          label: language === 'hi' ? 'ऑडिट लेजर' : 'Audit Ledger',
-          icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
-          badge: 'WORM',
-          badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+          id: 'candidate_monitor',
+          label: language === 'hi' ? 'लाइव मॉनिटरिंग' : 'Live Monitoring',
+          icon: <Users className="w-4 h-4 text-[#B91C3C]" />,
+          badge: `${activeCandidates.length} LIVE`,
+          badgeColor: 'bg-red-50 text-[#B91C3C] border-red-200 font-bold'
         },
         {
           id: 'suspicious_patterns',
-          label: language === 'hi' ? 'संदेहास्पद हलचल' : 'Suspicious Patterns',
-          icon: <Eye className="w-4 h-4 text-orange-400" />
+          label: language === 'hi' ? 'सुरक्षा अलर्ट' : 'Security Alerts',
+          icon: <Eye className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
+          badge: '02',
+          badgeColor: 'bg-amber-50 text-amber-800 border-amber-200'
         },
         {
-          id: 'reconciliation',
-          label: language === 'hi' ? 'डेटा मिलान' : 'Reconciliation',
-          icon: <GitCompare className="w-4 h-4 text-purple-400" />,
-          badge: 'MATCH',
-          badgeColor: 'bg-purple-950/80 text-purple-300 border-purple-800'
+          id: 'reports',
+          label: language === 'hi' ? 'परिणाम एवं रिपोर्ट' : 'Results & Reports',
+          icon: <BarChart3 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         }
       ]
     },
     {
-      title: language === 'hi' ? 'प्रशासन' : 'GOVERNANCE',
+      title: language === 'hi' ? 'अतिरिक्त मॉड्यूल' : 'EXPLORE CAPABILITIES',
       items: [
         {
-          id: 'decision_support',
-          label: language === 'hi' ? 'निर्णय सहायता' : 'Decision Support',
-          icon: <Scale className="w-4 h-4 text-cyan-400" />
+          id: 'centres',
+          label: language === 'hi' ? 'परीक्षा केंद्र' : 'Exam Centres',
+          icon: <Building2 className="w-4 h-4 text-gray-500" />
         },
         {
-          id: 'reports',
-          label: language === 'hi' ? 'साक्ष्य रिपोर्ट' : 'Evidence Reports',
-          icon: <BarChart3 className="w-4 h-4 text-gray-300" />,
-          badge: language === 'hi' ? 'सत्यापित' : 'SEALED',
-          badgeColor: 'bg-gray-800 text-gray-300 border-gray-700'
+          id: 'early_detection',
+          label: language === 'hi' ? 'पूर्व चेतावनी' : 'Early Warning',
+          icon: <Radar className="w-4 h-4 text-amber-500" />
+        },
+        {
+          id: 'incidents',
+          label: language === 'hi' ? 'घटना प्रबंधन' : 'Event Timeline',
+          icon: <AlertOctagon className="w-4 h-4 text-red-500" />
+        },
+        {
+          id: 'recovery',
+          label: language === 'hi' ? 'ऑटो बैकअप' : 'Resilience Backup',
+          icon: <RotateCcw className="w-4 h-4 text-blue-500" />
+        },
+        {
+          id: 'audit',
+          label: language === 'hi' ? 'सुरक्षा लेजर' : 'Verification Ledger',
+          icon: <FileCheck2 className="w-4 h-4 text-emerald-600" />
+        },
+        {
+          id: 'reconciliation',
+          label: language === 'hi' ? 'डेटा मिलान' : 'Data Match Proof',
+          icon: <GitCompare className="w-4 h-4 text-purple-600" />
+        },
+        {
+          id: 'decision_support',
+          label: language === 'hi' ? 'निर्णय सहायता' : 'Policy Assistant',
+          icon: <Scale className="w-4 h-4 text-cyan-600" />
         },
         {
           id: 'settings',
@@ -339,47 +320,64 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {/* Categorized Navigation Items */}
-        {currentSections.map((section, sIdx) => (
-          <div key={sIdx} className="space-y-1">
-            <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#C62828] dark:text-[#5A6E8C] px-3 pb-1">
-              {section.title}
-            </h2>
+        {currentSections.map((section, sIdx) => {
+          const isExpandableSection = sIdx > 0 && userRole === 'officer';
 
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const isActive = currentView === item.id;
-
-                return (
+          return (
+            <div key={sIdx} className="space-y-1">
+              <div className="flex items-center justify-between px-3 pb-1">
+                <h2 className="text-[10px] font-mono uppercase font-bold tracking-widest text-[#B91C3C] dark:text-[#5A6E8C]">
+                  {section.title}
+                </h2>
+                {isExpandableSection && (
                   <button
-                    key={item.id}
-                    onClick={() => handleItemClick(item.id)}
-                    className={`
-                      w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer group text-left
-                      ${
-                        isActive
-                          ? 'bg-red-50 text-[#C62828] border border-red-200 shadow-2xs font-bold dark:bg-linear-to-r dark:from-[#0C2438] dark:to-[#081826] dark:text-[#38BDF8] dark:border-[#0284C7]/50 dark:shadow-md dark:shadow-[#0284C7]/15'
-                          : 'text-gray-700 hover:text-[#C62828] hover:bg-red-50/50 dark:text-[#9AAEC8] dark:hover:text-white dark:hover:bg-[#121B2B] border border-transparent'
-                      }
-                    `}
+                    onClick={() => setMoreExpanded(!moreExpanded)}
+                    className="text-[10px] text-[#B91C3C] dark:text-[#38BDF8] hover:underline flex items-center gap-0.5 cursor-pointer font-mono font-bold"
                   >
-                    <div className="flex items-center gap-2.5 truncate">
-                      <span className={`shrink-0 transition-colors ${isActive ? 'text-[#C62828] dark:text-[#38BDF8]' : 'text-gray-400 dark:text-[#64748B] group-hover:text-[#C62828] dark:group-hover:text-white'}`}>
-                        {item.icon}
-                      </span>
-                      <span className="truncate">{item.label}</span>
-                    </div>
-
-                    {item.badge && (
-                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border shrink-0 uppercase tracking-wider ${item.badgeColor || 'bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}>
-                        {item.badge}
-                      </span>
-                    )}
+                    <span>{moreExpanded ? 'Hide' : 'More'}</span>
+                    {moreExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
-                );
-              })}
+                )}
+              </div>
+
+              {(!isExpandableSection || moreExpanded) && (
+                <div className="space-y-1 animate-in fade-in">
+                  {section.items.map((item) => {
+                    const isActive = currentView === item.id;
+
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleItemClick(item.id)}
+                        className={`
+                          w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer group text-left
+                          ${
+                            isActive
+                              ? 'bg-red-50 text-[#B91C3C] border border-red-200 shadow-2xs font-bold dark:bg-linear-to-r dark:from-[#0C2438] dark:to-[#081826] dark:text-[#38BDF8] dark:border-[#0284C7]/50'
+                              : 'text-gray-700 hover:text-[#B91C3C] hover:bg-red-50/50 dark:text-[#9AAEC8] dark:hover:text-white dark:hover:bg-[#121B2B] border border-transparent'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <span className={`shrink-0 transition-colors ${isActive ? 'text-[#B91C3C] dark:text-[#38BDF8]' : 'text-gray-400 dark:text-[#64748B] group-hover:text-[#B91C3C] dark:group-hover:text-white'}`}>
+                            {item.icon}
+                          </span>
+                          <span className="truncate">{item.label}</span>
+                        </div>
+
+                        {item.badge && (
+                          <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border shrink-0 uppercase tracking-wider ${item.badgeColor || 'bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* 10-PHASE RESILIENCE LIFECYCLE (Compact in Sidebar) */}
         <div className="space-y-1 pt-1">

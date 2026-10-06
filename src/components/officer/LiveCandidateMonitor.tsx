@@ -113,7 +113,7 @@ export const LiveCandidateMonitor: React.FC = () => {
 
   // Video Surveillance & CCTV Console States
   const [cctvCandidate, setCctvCandidate] = useState<ActiveCandidateSession | null>(null);
-  const [displayMode, setDisplayMode] = useState<'cards' | 'cctv_wall'>('cards');
+  const [displayMode, setDisplayMode] = useState<'table' | 'cards' | 'cctv_wall'>('table');
 
   // Modal states
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
@@ -134,7 +134,7 @@ export const LiveCandidateMonitor: React.FC = () => {
       c.stationId.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesFilter && matchesSearch;
-  });
+  }).slice(0, 3);
 
   const activeCount = combinedCandidates.filter(c => c.status === 'active').length;
   const offlineCount = combinedCandidates.filter(c => c.status === 'offline_buffering').length;
@@ -405,8 +405,20 @@ export const LiveCandidateMonitor: React.FC = () => {
                 />
               </div>
 
-              {/* View Switcher: Detail Cards vs CCTV Matrix Wall */}
+              {/* View Switcher: Table vs Cards vs CCTV Matrix Wall */}
               <div className="flex items-center gap-1 border-l border-red-100 dark:border-[#1E2A42] pl-2">
+                <button
+                  onClick={() => setDisplayMode('table')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    displayMode === 'table' 
+                      ? 'bg-[#C62828] text-white shadow-xs' 
+                      : 'bg-red-50 text-gray-700 hover:bg-red-100 dark:bg-[#121B2B] dark:text-gray-400'
+                  }`}
+                  title="Show concise student monitoring table"
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Table</span>
+                </button>
                 <button
                   onClick={() => setDisplayMode('cards')}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
@@ -434,6 +446,120 @@ export const LiveCandidateMonitor: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* VIEW: Clean Storyboard Table Mode (Rule 12 & 13) */}
+          {displayMode === 'table' && (
+            <div className="space-y-4 animate-in fade-in">
+              {/* Compact Alert Card (Rule 12 & 13) */}
+              <div className="bg-amber-50 dark:bg-[#1A160F] border border-amber-300 dark:border-amber-700/60 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 bg-amber-200/60 dark:bg-amber-900/60 px-2 py-0.5 rounded">
+                        Attention Required
+                      </span>
+                      <span className="text-xs font-bold text-gray-900 dark:text-white">Unusual activity detected</span>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                      Student: <span className="font-bold text-gray-900 dark:text-white">Kabir Singh</span> (Station 16)
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const kabir = combinedCandidates.find(c => c.name.includes('Kabir')) || combinedCandidates[2];
+                    if (kabir) setCctvCandidate(kabir);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>Review</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              {/* Table (Strict 3 Students) */}
+              <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-red-100 dark:border-[#1E2A42] overflow-hidden shadow-xs">
+                <div className="p-4 border-b border-red-100 dark:border-[#1E2A42] flex items-center justify-between">
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                      Live Monitoring
+                    </h2>
+                    <p className="text-xs text-gray-500">Real-time status of seated students</p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#16803C] flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    3 Students Seated
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="bg-red-50/40 dark:bg-[#0A101F] text-gray-600 dark:text-gray-400 font-bold uppercase tracking-wider text-[11px] border-b border-red-100 dark:border-[#1E2A42]">
+                        <th className="py-3 px-4">Student</th>
+                        <th className="py-3 px-4">Station</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4">Activity</th>
+                        <th className="py-3 px-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-red-100/70 dark:divide-gray-800">
+                      {filteredCandidates.map((candidate) => {
+                        const isReview = candidate.status === 'flagged' || candidate.strikes > 0 || candidate.name.includes('Kabir');
+                        return (
+                          <tr key={candidate.id} className="hover:bg-red-50/20 dark:hover:bg-white/5 transition-colors">
+                            <td className="py-3.5 px-4">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-full bg-red-100 dark:bg-gray-800 text-[#C62828] font-bold flex items-center justify-center text-xs">
+                                  {candidate.name[0]}
+                                </div>
+                                <div>
+                                  <div className="font-bold text-gray-900 dark:text-white">{candidate.name}</div>
+                                  <div className="text-[10px] text-gray-400 font-mono">{candidate.rollNo}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-4 font-mono font-semibold text-gray-700 dark:text-gray-300">
+                              {candidate.stationId}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              {isReview ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
+                                  🟡 Review
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-[#16803C] dark:bg-emerald-950/80 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+                                  🟢 Safe
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-gray-600 dark:text-gray-300 font-medium">
+                              {isReview ? (
+                                <span className="text-amber-700 dark:text-amber-400 font-semibold">Unusual activity</span>
+                              ) : (
+                                <span>Active</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <button
+                                onClick={() => setCctvCandidate(candidate)}
+                                className="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-[#C62828] dark:bg-white/10 dark:hover:bg-white/15 dark:text-white text-xs font-bold transition-colors cursor-pointer"
+                              >
+                                {isReview ? 'Review' : 'Monitor'}
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* VIEW 1: CCTV Surveillance Wall Mode */}
           {displayMode === 'cctv_wall' && (
@@ -749,9 +875,9 @@ export const LiveCandidateMonitor: React.FC = () => {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           </div>
 
-          {/* Scrollable Live Event List */}
+          {/* Scrollable Live Event List (Strict 3 Events per Rule 4) */}
           <div className="space-y-2.5 max-h-[580px] overflow-y-auto pr-1 font-mono text-[11px] custom-scrollbar">
-            {telemetryEvents.map((evt) => {
+            {telemetryEvents.slice(0, 3).map((evt) => {
               const isCritical = evt.severity === 'critical';
               const isWarning = evt.severity === 'warning';
               const isSuccess = evt.severity === 'success';

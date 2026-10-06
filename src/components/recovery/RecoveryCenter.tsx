@@ -54,6 +54,7 @@ export const RecoveryCenter: React.FC = () => {
     authorizeCandidateResumption,
     executeDisasterFallback,
     forcePeriodicSave,
+    disasterRecoveryState,
     setCurrentView 
   } = useResilience();
 
@@ -351,6 +352,38 @@ export const RecoveryCenter: React.FC = () => {
                 <p className="text-xs text-gray-500">
                   Continuous SHA-256 digest linked to central Merkle tree for immediate zero-collision verification.
                 </p>
+              </div>
+            </div>
+
+            {/* Live IndexedDB Engine Status Callout */}
+            <div className="bg-emerald-950/30 border border-emerald-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                  <Database className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-emerald-300">Browser-Native Disaster Recovery Sandbox:</span>
+                    <span className="font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded text-[10px] border border-emerald-800 font-bold">
+                      {disasterRecoveryState.storageEngine}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-[11px] mt-0.5">
+                    Persistent database active. Answers committed to encrypted object stores with SHA-256 seal.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0 font-mono text-[11px]">
+                <div className="px-2.5 py-1 rounded bg-black/30 border border-gray-700 text-gray-300">
+                  Persisted: <strong className="text-white">{disasterRecoveryState.totalPersisted}</strong>
+                </div>
+                <div className="px-2.5 py-1 rounded bg-black/30 border border-gray-700 text-gray-300">
+                  Unsynced: <strong className={disasterRecoveryState.unsyncedCount > 0 ? "text-amber-400" : "text-emerald-400"}>{disasterRecoveryState.unsyncedCount}</strong>
+                </div>
+                <div className="px-2.5 py-1 rounded bg-emerald-900/40 border border-emerald-700 text-emerald-300">
+                  {disasterRecoveryState.isOnline ? "● ONLINE" : "● BUFFERING"}
+                </div>
               </div>
             </div>
 

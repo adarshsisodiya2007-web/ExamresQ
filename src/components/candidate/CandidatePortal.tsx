@@ -197,30 +197,30 @@ export const CandidatePortal: React.FC = () => {
         {subTab === 'results' && (
           <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-red-100 dark:border-gray-800 p-6 space-y-4 animate-in fade-in">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-gray-900 dark:text-white">Completed Assessments & Cryptographic Proofs</h2>
+              <h2 className="text-base font-bold text-gray-900 dark:text-white">Completed Assessments</h2>
               <button
-                onClick={() => setCurrentView('audit')}
+                onClick={() => setCurrentView('reports')}
                 className="text-xs font-bold text-[#C62828] hover:underline cursor-pointer"
               >
-                Inspect Live Merkle Audit Explorer →
+                View Assessment Overview →
               </button>
             </div>
 
             <div className="p-4 rounded-xl border border-red-100 dark:border-gray-800 bg-[#FFFBFB] dark:bg-[#080D1A] space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-gray-900 dark:text-white">Session SES-2026-ET-9941</span>
+                  <span className="text-xs font-bold text-gray-900 dark:text-white">Mid-Semester Assessment</span>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Engineering Mathematics III</p>
                 </div>
                 <span className="text-xs font-bold text-[#16803C] dark:text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" /> 100% Cryptographically Verified
+                  <CheckCircle2 className="w-4 h-4" /> 100% Verified Submissions
                 </span>
               </div>
-              <div className="p-2.5 rounded bg-white dark:bg-[#111827] border border-red-100 dark:border-gray-800 font-mono text-[11px] text-gray-700 dark:text-gray-300 break-all">
-                Root Hash: 0x7f9a842b109e4d58a123fec998144001bc9941
+              <div className="p-2.5 rounded bg-white dark:bg-[#111827] border border-red-100 dark:border-gray-800 font-mono text-[11px] text-gray-700 dark:text-gray-300">
+                Verification Token: Verified #ET-2026-ENG-4418
               </div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                1 interruption event detected and healed with 0 lost responses. Audited by National Testing Board.
+                Zero responses lost. Verified by Academic Testing Board.
               </p>
             </div>
           </div>
@@ -229,14 +229,14 @@ export const CandidatePortal: React.FC = () => {
         {/* TAB 4: PROFILE */}
         {subTab === 'profile' && (
           <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-red-100 dark:border-gray-800 p-6 space-y-4 animate-in fade-in">
-            <h2 className="text-base font-bold text-gray-900 dark:text-white">Candidate Security Profile</h2>
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">Student Profile</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div className="p-3.5 rounded-xl bg-[#FFFBFB] dark:bg-[#080D1A] border border-red-100 dark:border-gray-800">
                 <span className="text-gray-500 dark:text-gray-400 block">Candidate Full Name</span>
                 <span className="font-bold text-gray-900 dark:text-white text-sm mt-0.5 block">{studentName}</span>
               </div>
               <div className="p-3.5 rounded-xl bg-[#FFFBFB] dark:bg-[#080D1A] border border-red-100 dark:border-gray-800">
-                <span className="text-gray-500 dark:text-gray-400 block">National Candidate Roll</span>
+                <span className="text-gray-500 dark:text-gray-400 block">Roll Number</span>
                 <span className="font-bold text-gray-900 dark:text-white text-sm font-mono mt-0.5 block">ET-2026-ENG-4418</span>
               </div>
               <div className="p-3.5 rounded-xl bg-[#FFFBFB] dark:bg-[#080D1A] border border-red-100 dark:border-gray-800">
@@ -244,8 +244,8 @@ export const CandidatePortal: React.FC = () => {
                 <span className="font-bold text-gray-900 dark:text-white text-sm mt-0.5 block">Centre 08 — North Academic Complex</span>
               </div>
               <div className="p-3.5 rounded-xl bg-[#FFFBFB] dark:bg-[#080D1A] border border-red-100 dark:border-gray-800">
-                <span className="text-gray-500 dark:text-gray-400 block">Cryptographic Key Pair Status</span>
-                <span className="font-bold text-[#16803C] dark:text-emerald-400 text-sm mt-0.5 block">Ed25519 Session Token Active</span>
+                <span className="text-gray-500 dark:text-gray-400 block">Exam Access Status</span>
+                <span className="font-bold text-[#16803C] dark:text-emerald-400 text-sm mt-0.5 block">Secure Verified Session Active</span>
               </div>
             </div>
           </div>

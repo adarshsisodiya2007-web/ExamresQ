@@ -67,30 +67,31 @@ export const OperationsDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6] py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Operations Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
+    <div className="min-h-screen bg-[#FFF8F5] dark:bg-[#070B14] py-8 px-4 sm:px-6 lg:px-8 transition-colors">
+      <div className="max-w-6xl mx-auto space-y-6">
+        
+        {/* Header - Simple & Clean */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 rounded-2xl border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 font-mono">
-                Operations
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#B91C3C] dark:text-[#38BDF8]">
+                Central Control
               </span>
             </div>
-            <h1 className="text-2xl font-black text-gray-900 mt-1">
-              Operations Center
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
+              Assessment Dashboard
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Live observability and resilience telemetry.
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              Real-time overview of active assessments and student safety
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
             {networkStatus === 'connected' ? (
               <button
                 onClick={triggerNetworkInterruption}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#B91C3C] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-xs"
               >
                 <WifiOff className="w-3.5 h-3.5" />
                 <span>Simulate Outage</span>
@@ -98,7 +99,7 @@ export const OperationsDashboard: React.FC = () => {
             ) : (
               <button
                 onClick={restoreNetwork}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#16803C] hover:bg-emerald-700 text-white transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-xs animate-pulse"
               >
                 <Wifi className="w-3.5 h-3.5" />
                 <span>Restore Network</span>
@@ -106,263 +107,201 @@ export const OperationsDashboard: React.FC = () => {
             )}
 
             <button
-              onClick={startDemo}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#171717] hover:bg-black text-white transition-colors cursor-pointer shadow-xs"
+              onClick={() => setCurrentView('candidate_monitor')}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#181B26] border border-[#E2C2BB] dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-50 transition-all cursor-pointer"
             >
-              <PlayCircle className="w-3.5 h-3.5 text-[#E53935]" />
-              <span>Run Demo</span>
+              <Users className="w-3.5 h-3.5 text-[#B91C3C]" />
+              <span>Live Monitor</span>
             </button>
           </div>
         </div>
 
-        {/* 1. TOP METRICS ROW (Per Requirement 7) */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-xs">
-            <div className="flex items-center justify-between text-gray-500 mb-2">
-              <span className="text-xs font-semibold">Active Candidates</span>
-              <Users className="w-4 h-4 text-gray-400" />
+        {/* 1. KEY STATISTICS (Exactly 4 Cards per Rule 7) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Active Exams</span>
+            <div className="text-3xl font-black text-gray-900 dark:text-white font-mono mt-1">
+              03
             </div>
-            <div className="text-2xl font-black text-gray-900 font-mono">
-              {metrics.activeCandidates.toLocaleString()}
-            </div>
-            <div className="text-[11px] text-[#16803C] font-semibold mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> 100% Retained
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-xs">
-            <div className="flex items-center justify-between text-gray-500 mb-2">
-              <span className="text-xs font-semibold">Active Centres</span>
-              <Building2 className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="text-2xl font-black text-gray-900 font-mono">
-              {metrics.onlineCentres} / {metrics.totalCentres}
-            </div>
-            <div className="text-[11px] text-gray-500 mt-1">
-              38 Connected
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-xs">
-            <div className="flex items-center justify-between text-gray-500 mb-2">
-              <span className="text-xs font-semibold">System Health</span>
-              <Activity className="w-4 h-4 text-[#16803C]" />
-            </div>
-            <div className="text-2xl font-black text-[#16803C] font-mono">
-              {metrics.systemHealthPercent}%
-            </div>
-            <div className="text-[11px] text-gray-500 mt-1">
-              Zero Response Loss
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-xs">
-            <div className="flex items-center justify-between text-gray-500 mb-2">
-              <span className="text-xs font-semibold">Network Health</span>
-              <Wifi className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="text-2xl font-black text-gray-900 font-mono">
-              {metrics.networkHealthPercent}%
-            </div>
-            <div className={`text-[11px] font-semibold mt-1 ${
-              networkStatus === 'connected' ? 'text-[#16803C]' : 'text-[#C62828]'
-            }`}>
-              {networkStatus === 'connected' ? '● Stable 18ms' : '⚠ Failover Active'}
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-xs col-span-2 lg:col-span-1">
-            <div className="flex items-center justify-between text-gray-500 mb-2">
-              <span className="text-xs font-semibold">Open Incidents</span>
-              <AlertOctagon className="w-4 h-4 text-[#C62828]" />
-            </div>
-            <div className={`text-2xl font-black font-mono ${
-              metrics.openIncidentsCount > 0 ? 'text-[#C62828]' : 'text-gray-900'
-            }`}>
-              {metrics.openIncidentsCount} {metrics.openIncidentsCount > 0 ? 'Active' : 'None'}
-            </div>
-            <div className="text-[11px] text-gray-500 mt-1">
-              {metrics.openIncidentsCount > 0 ? '#ET-1042 (Healed)' : 'All Green'}
-            </div>
-          </div>
-        </div>
-
-        {/* 2. LIVE ASSESSMENTS & SYSTEM HEALTH SECTIONS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LIVE ASSESSMENTS (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                  Live Assessments
-                </h3>
-                <p className="text-xs text-gray-500">Active session telemetry</p>
-              </div>
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] font-semibold">
-                1 Active
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Active Exam Card */}
-              <div className="p-4 rounded-xl border border-gray-200 bg-[#F8F8F6] space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-50 text-[#C62828] border border-red-200">
-                      PAPER ENG-304
-                    </span>
-                    <h4 className="text-sm font-bold text-gray-900 mt-1">Engineering Mathematics III</h4>
-                  </div>
-                  <span className="text-xs font-semibold text-[#16803C] flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-[#16803C] animate-pulse" />
-                    14,820 Candidates Seated
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className="p-2 rounded bg-white border border-gray-200 text-center">
-                    <span className="text-gray-400 block text-[10px]">Time Elapsed</span>
-                    <span className="font-bold text-gray-900 font-mono">24m / 60m</span>
-                  </div>
-                  <div className="p-2 rounded bg-white border border-gray-200 text-center">
-                    <span className="text-gray-400 block text-[10px]">Buffered Deltas</span>
-                    <span className="font-bold text-gray-900 font-mono">0 Pending</span>
-                  </div>
-                  <div className="p-2 rounded bg-white border border-gray-200 text-center">
-                    <span className="text-gray-400 block text-[10px]">Sync Accuracy</span>
-                    <span className="font-bold text-[#16803C] font-mono">100.00%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
-                  <span>Centres assigned: 38/38</span>
-                  <button
-                    onClick={() => setCurrentView('live_exam')}
-                    className="font-bold text-[#C62828] hover:text-[#8E1B1B] flex items-center gap-1 cursor-pointer"
-                  >
-                    <span>Inspect Candidate View</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Upcoming Exam */}
-              <div className="p-3.5 rounded-xl border border-gray-200 bg-white flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-bold">
-                    UPCOMING 14:00
-                  </span>
-                  <h4 className="text-xs font-bold text-gray-900 mt-1">CS-502: Distributed Systems</h4>
-                </div>
-                <span className="text-xs text-gray-500">Provisioned for 18,200 seats</span>
-              </div>
-            </div>
-          </div>
-
-          {/* SYSTEM HEALTH DETAILED STATUS (5 cols) */}
-          <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                  System Health
-                </h3>
-                <p className="text-xs text-gray-500">99.4% Operational</p>
-              </div>
-              <span className="text-xs font-bold font-mono text-[#16803C]">
-                ✓ VERIFIED
-              </span>
-            </div>
-
-            <div className="space-y-3.5">
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-gray-700">Platform Reliability</span>
-                  <span className="font-mono font-bold text-gray-900">99.98%</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#16803C] h-full rounded-full" style={{ width: '99.98%' }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-gray-700">Mesh Network Connectivity</span>
-                  <span className="font-mono font-bold text-gray-900">98.70%</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: '98.7%' }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-gray-700">Response Loss Tolerance</span>
-                  <span className="font-mono font-bold text-[#16803C]">0.00% Lost</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#16803C] h-full rounded-full" style={{ width: '100%' }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-gray-700">Failover Recovery Speed</span>
-                  <span className="font-mono font-bold text-gray-900">48s MTTR</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-amber-500 h-full rounded-full" style={{ width: '92%' }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-gray-700">Cryptographic Audit Sealing</span>
-                  <span className="font-mono font-bold text-[#16803C]">100% Sealed</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#16803C] h-full rounded-full" style={{ width: '100%' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. CENTRE TOPOLOGY MAP */}
-        <CentreMap />
-
-        {/* 4. LIVE ACTIVITY STREAM */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-            <div>
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                Live Activity Stream
-              </h3>
-              <p className="text-xs text-gray-500">Real-time telemetry events</p>
-            </div>
-            <span className="text-[11px] font-mono text-gray-500 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" /> Real-time UDP Log
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 block">
+              ● All in progress
             </span>
           </div>
 
-          <div className="divide-y divide-gray-100">
-            {activityFeed.map((item, index) => (
-              <div key={index} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-gray-400 text-[11px] shrink-0">{item.time}</span>
-                  <span className="font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[10px] shrink-0">
-                    {item.centre}
-                  </span>
-                  <span className="text-gray-800">{item.text}</span>
-                </div>
-                <span className={`text-[10px] font-semibold shrink-0 uppercase ${
-                  item.type === 'alert' ? 'text-[#C62828]' : item.type === 'warning' ? 'text-[#C77A00]' : 'text-[#16803C]'
-                }`}>
-                  {item.type}
-                </span>
-              </div>
-            ))}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Students Seated</span>
+            <div className="text-3xl font-black text-gray-900 dark:text-white font-mono mt-1">
+              128
+            </div>
+            <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 block">
+              Across 3 test halls
+            </span>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Completed</span>
+            <div className="text-3xl font-black text-gray-900 dark:text-white font-mono mt-1">
+              82%
+            </div>
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 block">
+              ✓ Zero lost responses
+            </span>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Attention Required</span>
+            <div className="text-3xl font-black text-[#B91C3C] font-mono mt-1">
+              02
+            </div>
+            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-1 block">
+              Review flagged items
+            </span>
           </div>
         </div>
+
+        {/* 2. ATTENTION REQUIRED BANNER (Rule 13 - Plain Language) */}
+        <div className="p-4 rounded-2xl bg-[#FDEBE8] dark:bg-red-950/30 border border-[#E2C2BB] dark:border-red-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#B91C3C] text-white flex items-center justify-center shrink-0">
+              <AlertOctagon className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                Attention Required
+              </h3>
+              <p className="text-xs text-gray-700 dark:text-gray-300">
+                Unusual activity detected • <strong>Kabir Singh (Station 16)</strong>
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setCurrentView('suspicious_patterns')}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#B91C3C] hover:bg-[#8E1B1B] text-white cursor-pointer shadow-xs self-start sm:self-auto"
+          >
+            Review Alert
+          </button>
+        </div>
+
+        {/* 3. ACTIVE EXAMS (Exactly 3 cards per Rule 4 & 7) */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              Active Assessments (3)
+            </h2>
+            <span className="text-xs text-gray-500 font-mono">Real-time status</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Exam 1 */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Active
+                  </span>
+                  <span className="text-xs font-mono text-gray-500">42 Students</span>
+                </div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mt-2">
+                  Mid-Semester Assessment
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">Engineering Mathematics III</p>
+              </div>
+              <button
+                onClick={() => setCurrentView('candidate_monitor')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#B91C3C] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer text-center"
+              >
+                Monitor
+              </button>
+            </div>
+
+            {/* Exam 2 */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Active
+                  </span>
+                  <span className="text-xs font-mono text-gray-500">54 Students</span>
+                </div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mt-2">
+                  Computer Systems & Logic
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">Algorithms & Structures</p>
+              </div>
+              <button
+                onClick={() => setCurrentView('candidate_monitor')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold bg-white dark:bg-[#181B26] border border-[#E2C2BB] dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 transition-all cursor-pointer text-center"
+              >
+                Monitor
+              </button>
+            </div>
+
+            {/* Exam 3 */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-[#F0D9D4] dark:border-[#1E2A42] shadow-xs flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    Final Phase
+                  </span>
+                  <span className="text-xs font-mono text-gray-500">32 Students</span>
+                </div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mt-2">
+                  Applied Physics Core
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">Mechanics & Thermodynamics</p>
+              </div>
+              <button
+                onClick={() => setCurrentView('candidate_monitor')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold bg-white dark:bg-[#181B26] border border-[#E2C2BB] dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 transition-all cursor-pointer text-center"
+              >
+                Monitor
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. LIVE ACTIVITY (Strict limit: 3 entries per Rule 4) */}
+        <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-[#F0D9D4] dark:border-[#1E2A42] p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between border-b border-[#F0D9D4] dark:border-gray-800 pb-2.5">
+            <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              Live Activity (3 Recent)
+            </h3>
+            <span className="text-[11px] font-mono text-gray-400">Auto-updating</span>
+          </div>
+
+          <div className="divide-y divide-[#F0D9D4] dark:divide-gray-800/60">
+            <div className="py-2.5 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">Aarav Sharma</span>
+                <span className="text-gray-500">submitted response safely</span>
+              </div>
+              <span className="text-[11px] font-mono text-gray-400">Just now</span>
+            </div>
+
+            <div className="py-2.5 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">Riya Patel</span>
+                <span className="text-gray-500">progressing normally</span>
+              </div>
+              <span className="text-[11px] font-mono text-gray-400">1m ago</span>
+            </div>
+
+            <div className="py-2.5 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">Kabir Singh</span>
+                <span className="text-amber-700 dark:text-amber-400 font-medium">unusual activity flagged</span>
+              </div>
+              <span className="text-[11px] font-mono text-gray-400">2m ago</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

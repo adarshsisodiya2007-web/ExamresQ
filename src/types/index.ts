@@ -266,12 +266,12 @@ export interface AuditAccessRecord {
   id: string;
   accessorName: string;
   role: 'Central Auditor' | 'Chief Invigilator' | 'Security Officer' | 'Read-Only Inspector';
-  action: 'INSPECT_LEDGER' | 'VERIFY_HASH' | 'EXPORT_CERTIFICATE' | 'ATTEMPT_EDIT_REJECTED';
+  action: 'INSPECT_LEDGER' | 'VERIFY_HASH' | 'EXPORT_CERTIFICATE' | 'ATTEMPT_EDIT_REJECTED' | 'PAYLOAD_MUTATED_TEST' | 'HASH_CHAIN_RESTORED' | string;
   targetCandidate: string;
   timestamp: string;
   ipAddress: string;
   authLevel: string;
-  outcome: 'PERMITTED_READ_ONLY' | 'TAMPER_PREVENTED' | 'AUTHENTICATED';
+  outcome: 'PERMITTED_READ_ONLY' | 'TAMPER_PREVENTED' | 'AUTHENTICATED' | 'MUTATION_RECORDED' | 'RECOVERED_100%' | string;
 }
 
 // Requirement 6: Intelligent Identification of Suspicious Patterns

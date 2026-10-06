@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backup & scratch files
+public - Copy/
+src - Copy/
+*.pyc
+__pycache__/
+test_cropped.png
