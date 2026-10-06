@@ -19,7 +19,8 @@ import {
   Activity,
   Mic,
   Volume2,
-  VolumeX
+  VolumeX,
+  CameraOff
 } from 'lucide-react';
 
 import { cameraStreamService } from '../../services/cameraStreamService';
@@ -795,6 +796,29 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
     );
   };
 
+  const triggerScreenshotViolation = () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText('⚠️ [EXAMRESQ SECURITY] Unauthorized screenshot blocked. Candidate logged.').catch(() => {});
+      }
+    } catch {}
+
+    triggerViolation(
+      'UNAUTHORIZED_NOTES',
+      'WARNING: Screen capture / screenshot clipping attempt intercepted!',
+      false,
+      {
+        x: 10,
+        y: 20,
+        width: 80,
+        height: 60,
+        label: 'ANTI-CAPTURE: SCREENSHOT INTERCEPTED',
+        confidence: 99.8,
+        color: 'red'
+      }
+    );
+  };
+
   return (
     <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs space-y-3.5">
       {/* Header with Pretrained Model Status Badge */}
@@ -1049,8 +1073,8 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           </button>
         </div>
 
-        {/* Warning / Strike Actions (4 Columns: Look Away, Face Absent, Notes/Paper, Speech/Sound) */}
-        <div className="grid grid-cols-4 gap-1">
+        {/* Warning / Strike Actions (5 Columns: Look Away, Face Absent, Notes, Sound, Screenshot) */}
+        <div className="grid grid-cols-5 gap-1">
           <button
             onClick={triggerGazeViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
@@ -1066,7 +1090,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             title="Leave camera view OR click to simulate (Strike 1/3)"
           >
             <UserXIcon className="w-2.5 h-2.5" />
-            <span>Face Absent</span>
+            <span>Absent</span>
           </button>
 
           <button
@@ -1075,7 +1099,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             title="Hold a book/paper to camera OR click to simulate (Strike 1/3)"
           >
             <FileText className="w-2.5 h-2.5" />
-            <span>Notes/Paper</span>
+            <span>Notes</span>
           </button>
 
           <button
@@ -1084,7 +1108,16 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             title="Speak into microphone OR click to simulate acoustic disturbance (Strike 1/3)"
           >
             <Volume2 className="w-2.5 h-2.5" />
-            <span>Speech/Sound</span>
+            <span>Sound</span>
+          </button>
+
+          <button
+            onClick={triggerScreenshotViolation}
+            className="py-1 px-1 rounded-md text-[9px] font-bold bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:border-red-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
+            title="Press PrintScreen or click to simulate screenshot capture interception (Strike 1/3)"
+          >
+            <CameraOff className="w-2.5 h-2.5" />
+            <span>Screenshot</span>
           </button>
         </div>
       </div>

@@ -27,7 +27,8 @@ import {
   ExternalLink,
   MessageSquare,
   Radio,
-  Volume2
+  Volume2,
+  CameraOff
 } from 'lucide-react';
 import { sampleCandidateBroadcastHistory } from '../../data/governanceSecurityData';
 import examresqLogo from '../../assets/examresq-logo.png';
@@ -72,6 +73,7 @@ export const LiveExam: React.FC = () => {
   const [warningBanner, setWarningBanner] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [communicationHistoryOpen, setCommunicationHistoryOpen] = useState<boolean>(false);
+  const [isScreenshotAlert, setIsScreenshotAlert] = useState<boolean>(false);
 
   // Synchronize Live Exam Progress with Officer Mesh
   useEffect(() => {
@@ -169,13 +171,52 @@ export const LiveExam: React.FC = () => {
     });
   }, [isTerminated, triggerExamTermination, addNotification]);
 
-  // Anti-Screenshot, Anti-DevTools & Anti-Copy Keyboard and Mouse Listeners
+  // Anti-Screenshot, Anti-DevTools & Anti-Copy Keyboard, Mouse & Clipboard Listeners
   useEffect(() => {
+    const triggerScreenshotInterception = (method: string) => {
+      // 1. Instantly overwrite clipboard with strict security notice
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('⚠️ [EXAMRESQ SECURITY WARNING] Unauthorized screen capture intercepted! Incident committed to Merkle ledger with candidate roll number & station ID.').catch(() => {});
+        }
+      } catch {}
+
+      // 2. Trigger blackout shield on screen for 3.5s so screen snips only capture black security warning
+      setIsScreenshotAlert(true);
+      setTimeout(() => {
+        setIsScreenshotAlert(false);
+      }, 3500);
+
+      // 3. Issue formal security strike
+      handleSecurityStrike(`Screen capture / screenshot attempt intercepted (${method})`, false);
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Block PrintScreen
-      if (e.key === 'PrintScreen') {
+      // Catch PrintScreen keydown
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
         e.preventDefault();
-        handleSecurityStrike('Screen capture / PrintScreen attempt blocked');
+        triggerScreenshotInterception('PrintScreen key');
+        return;
+      }
+
+      // Catch Windows Snipping Tool (Win/Ctrl + Shift + S)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 's' || e.key === 'S' || e.code === 'KeyS')) {
+        e.preventDefault();
+        triggerScreenshotInterception('Snipping Tool shortcut (Win/Ctrl+Shift+S)');
+        return;
+      }
+
+      // Catch macOS Screenshot shortcuts (Cmd+Shift+3, Cmd+Shift+4, Cmd+Shift+5)
+      if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
+        e.preventDefault();
+        triggerScreenshotInterception('macOS screen capture shortcut');
+        return;
+      }
+
+      // Catch Alt + PrintScreen
+      if (e.altKey && (e.key === 'PrintScreen' || e.code === 'PrintScreen')) {
+        e.preventDefault();
+        triggerScreenshotInterception('Alt+PrintScreen window capture');
         return;
       }
 
@@ -222,6 +263,13 @@ export const LiveExam: React.FC = () => {
       }
     };
 
+    const handleKeyUp = (e: KeyboardEvent) => {
+      // Windows 10/11 browsers often only dispatch PrintScreen on keyup
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+        triggerScreenshotInterception('PrintScreen keyup');
+      }
+    };
+
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
       handleSecurityStrike('Right-click context menu inspection blocked');
@@ -237,14 +285,27 @@ export const LiveExam: React.FC = () => {
       handleSecurityStrike('Content cut attempt blocked');
     };
 
-    // Tab Switch / Visibility Change Listener (Tab change only, not window blur)
+    // Tab Switch / Visibility Change Listener
     const handleVisibilityChange = () => {
       if (document.hidden) {
         handleSecurityStrike('Candidate navigated away from examination tab (Visibility loss)', false);
       }
     };
 
+    // Window Blur (Detects external Snipping Tool stealing window focus)
+    const handleBlur = () => {
+      if (!isTerminated) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText('⚠️ [EXAMRESQ SECURITY] Clipboard scrubbed due to window defocus.').catch(() => {});
+          }
+        } catch {}
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
     window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('copy', handleCopy);
     window.addEventListener('cut', handleCut);
@@ -252,12 +313,14 @@ export const LiveExam: React.FC = () => {
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
       window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('copy', handleCopy);
       window.removeEventListener('cut', handleCut);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [handleSecurityStrike]);
+  }, [handleSecurityStrike, isTerminated]);
 
   // Fullscreen Container Mode
   const toggleFullscreen = () => {
@@ -379,6 +442,26 @@ export const LiveExam: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Real-Time Anti-Screenshot Blackout Overlay Shield */}
+      {isScreenshotAlert && (
+        <div className="fixed inset-0 z-50 bg-black/98 flex flex-col items-center justify-center p-6 text-center select-none animate-in fade-in">
+          <div className="w-20 h-20 rounded-2xl bg-red-600 text-white flex items-center justify-center mx-auto shadow-2xl animate-bounce">
+            <CameraOff className="w-10 h-10" />
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider mt-4">
+            SCREENSHOT ATTEMPT BLOCKED & RECORDED
+          </h2>
+          <p className="text-sm font-mono text-red-300 max-w-md mt-2">
+            Screen clipping / PrintScreen is strictly prohibited. Security Strike logged with Invigilator console. Clipboard has been cleared.
+          </p>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full bg-red-950 text-red-400 border border-red-800 text-xs font-mono font-bold">
+              MALPRACTICE AUDIT PROOF GENERATED
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Floating Warning Banner when Violation Occurs */}
       {warningBanner.show && (
