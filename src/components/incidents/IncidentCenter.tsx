@@ -348,7 +348,7 @@ export const IncidentCenter: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      {/* Requirement 3 Institutional Header */}
+      {/* Incident Center Header */}
       <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-xs relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-red-500/10 via-amber-500/5 to-transparent pointer-events-none rounded-bl-full" />
         
@@ -357,37 +357,37 @@ export const IncidentCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#C62828]/10 text-[#C62828] border border-[#C62828]/30 flex items-center gap-1">
                 <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
-                REQUIREMENT 3: AUTOMATED INCIDENT DETECTION & ESCALATION
+                Incident Control
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> 1.2s Detection Latency
+                <Clock className="w-3 h-3" /> 1.2s Detection
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-              Automated Incident Management & Escalation Engine
+              Incident Center
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Instantly detects operational failures, classifies their <strong className="text-gray-900 dark:text-white">type & severity</strong>, automatically creates tamper-proof incident records, and triggers multi-tier escalation to the <strong className="text-gray-900 dark:text-white">Centre Supervisor</strong> and the <strong className="text-gray-900 dark:text-white">Central Examination Authority</strong>.
+              Automated failure detection, severity classification, and escalation management.
             </p>
           </div>
 
-          {/* Quick Simulation Trigger Dropdown for Hackathon Judges */}
+          {/* Quick Simulation Trigger Dropdown */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <div className="relative group">
               <button
                 disabled={isSimulatingTrigger}
-                className="px-4 py-2.5 rounded-xl text-xs font-black bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95"
               >
                 {isSimulatingTrigger ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Detecting Incident...</span>
+                    <span>Detecting...</span>
                   </>
                 ) : (
                   <>
-                    <Zap className="w-4 h-4 text-yellow-300 animate-bounce" />
-                    <span>Simulate Automated Trigger</span>
+                    <Zap className="w-4 h-4 text-yellow-300" />
+                    <span>Simulate Incident</span>
                   </>
                 )}
               </button>
@@ -395,7 +395,7 @@ export const IncidentCenter: React.FC = () => {
               {/* Hover Dropdown to pick category */}
               <div className="absolute right-0 mt-1 w-56 bg-white dark:bg-[#181B26] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl py-1 hidden group-hover:block z-30 animate-in fade-in">
                 <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 dark:border-gray-800">
-                  Select Category to Simulate:
+                  Select Incident:
                 </div>
                 {(['Server Failure', 'Network Failure', 'Session Interruption', 'Data Mismatch', 'Security Alert'] as IncidentCategory[]).map(cat => (
                   <button
@@ -413,27 +413,24 @@ export const IncidentCenter: React.FC = () => {
         </div>
       </div>
 
-      {/* Featured ExamResQ Requirement 3 Example Callout */}
-      <div className="bg-gradient-to-r from-red-500/10 via-amber-500/10 to-transparent dark:from-red-950/40 dark:via-amber-950/20 rounded-2xl border border-red-200 dark:border-red-900/60 p-5 shadow-xs">
+      {/* Active Incident Snapshot */}
+      <div className="bg-gradient-to-r from-red-500/10 via-amber-500/10 to-transparent dark:from-red-950/40 dark:via-amber-950/20 rounded-2xl border border-red-200 dark:border-red-900/60 p-4 sm:p-5 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
+          <div className="flex items-center gap-3.5">
             <div className="p-2.5 rounded-xl bg-[#C62828] text-white shrink-0 shadow-md">
-              <Server className="w-6 h-6 animate-pulse" />
+              <Server className="w-5 h-5 animate-pulse" />
             </div>
-            <div className="space-y-1">
+            <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-black text-[#C62828] uppercase tracking-wider">
-                  ExamResQ Automated Incident Example
-                </span>
-                <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/80 text-[#C62828]">
-                  CRITICAL SEVERITY
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                  Server Edge Node Memory Bottleneck (#INC-2026-SRV-901)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/80 text-[#C62828]">
+                  CRITICAL
                 </span>
               </div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">
-                Server Failure Recorded as Critical — Central Control Team Receives Immediate Alert
-              </h3>
-              <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl">
-                When a primary server Edge Node crashes at Centre 08, the sub-second watchdog detects the event within <strong>1.2 seconds</strong>, automatically generates incident ticket <strong>#INC-2026-SRV-901</strong>, and instantly notifies the <strong>Central Examination Authority Control Room</strong> while rerouting active candidates to hot standby.
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                Centre 08: Watchdog detected pod degradation in 1.2s. Hot-standby failover active.
               </p>
             </div>
           </div>
@@ -441,10 +438,10 @@ export const IncidentCenter: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => handleSimulateAutomatedIncident('Server Failure')}
-              className="px-3.5 py-2 rounded-xl text-xs font-black bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-yellow-300" />
-              <span>Simulate Server Failure</span>
+              <span>Simulate Failure</span>
             </button>
           </div>
         </div>

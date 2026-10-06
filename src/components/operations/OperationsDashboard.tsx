@@ -75,14 +75,14 @@ export const OperationsDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider text-gray-500 font-mono">
-                ExamresQ Institutional Operations Room
+                Operations
               </span>
             </div>
             <h1 className="text-2xl font-black text-gray-900 mt-1">
-              National Examination Operations Center
+              Operations Center
             </h1>
             <p className="text-xs text-gray-500 mt-0.5">
-              Live observability, sub-second failure detection & automated resilience governance
+              Live observability and resilience telemetry.
             </p>
           </div>
 
@@ -90,7 +90,7 @@ export const OperationsDashboard: React.FC = () => {
             {networkStatus === 'connected' ? (
               <button
                 onClick={triggerNetworkInterruption}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
               >
                 <WifiOff className="w-3.5 h-3.5" />
                 <span>Simulate Outage</span>
@@ -98,7 +98,7 @@ export const OperationsDashboard: React.FC = () => {
             ) : (
               <button
                 onClick={restoreNetwork}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#16803C] hover:bg-emerald-700 text-white transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#16803C] hover:bg-emerald-700 text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Wifi className="w-3.5 h-3.5" />
                 <span>Restore Network</span>
@@ -110,7 +110,7 @@ export const OperationsDashboard: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#171717] hover:bg-black text-white transition-colors cursor-pointer shadow-xs"
             >
               <PlayCircle className="w-3.5 h-3.5 text-[#E53935]" />
-              <span>Run Resilience Demo</span>
+              <span>Run Demo</span>
             </button>
           </div>
         </div>
@@ -194,12 +194,12 @@ export const OperationsDashboard: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                  Live Assessments in Progress
+                  Live Assessments
                 </h3>
-                <p className="text-xs text-gray-500">Continuous telemetry monitoring active session slots</p>
+                <p className="text-xs text-gray-500">Active session telemetry</p>
               </div>
               <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] font-semibold">
-                1 Session Active
+                1 Active
               </span>
             </div>
 
@@ -264,9 +264,9 @@ export const OperationsDashboard: React.FC = () => {
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                  Assessment System Health
+                  System Health
                 </h3>
-                <p className="text-xs text-gray-500">Overall index: 99.4% Operational</p>
+                <p className="text-xs text-gray-500">99.4% Operational</p>
               </div>
               <span className="text-xs font-bold font-mono text-[#16803C]">
                 ✓ VERIFIED
@@ -327,17 +327,17 @@ export const OperationsDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* 3. CENTRE TOPOLOGY MAP (Per Requirement 7) */}
+        {/* 3. CENTRE TOPOLOGY MAP */}
         <CentreMap />
 
-        {/* 4. LIVE ACTIVITY STREAM (Per Requirement 7) */}
+        {/* 4. LIVE ACTIVITY STREAM */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
             <div>
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                Live Activity & Watchdog Stream
+                Live Activity Stream
               </h3>
-              <p className="text-xs text-gray-500">Chronological telemetry events across all regional centres</p>
+              <p className="text-xs text-gray-500">Real-time telemetry events</p>
             </div>
             <span className="text-[11px] font-mono text-gray-500 flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" /> Real-time UDP Log

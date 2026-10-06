@@ -73,17 +73,17 @@ export const AuditTrust: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#16803C]">
-                Requirement 5: Secure & Tamper-Evident Storage
+                Audit & Trust
               </span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200">
-                WORM Ledger Locked
+                WORM Locked
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Cryptographic Audit & Tamper-Proof Storage Ledger
+              Audit Ledger
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Provides verifiable evidence that examination responses have not been improperly altered, paired with immutable access logs and role-restricted inspection.
+              Cryptographic response validation and immutable access logs.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export const AuditTrust: React.FC = () => {
               title="Test system rejection of unauthorized response editing"
             >
               <ShieldAlert className="w-3.5 h-3.5 text-[#C62828]" />
-              <span>Simulate Tamper Attempt</span>
+              <span>Simulate Tamper</span>
             </button>
 
             <button
@@ -102,12 +102,11 @@ export const AuditTrust: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
             >
               <Award className="w-4 h-4" />
-              <span>Generate Integrity Certificate</span>
+              <span>Generate Certificate</span>
             </button>
           </div>
         </div>
 
-        {/* Featured Requirement 5 Callout Banner */}
         {/* Short & Clean WORM Security Callout */}
         <div className="flex items-center justify-between rounded-xl bg-emerald-950/40 border border-emerald-800/50 px-4 py-3 text-white text-xs">
           <div className="flex items-center gap-2.5">
@@ -115,8 +114,8 @@ export const AuditTrust: React.FC = () => {
               <Lock className="w-4 h-4" />
             </span>
             <div>
-              <span className="font-bold text-emerald-200">Immutable WORM Policy: </span>
-              <span className="text-gray-300">Read-only auditor inspection with zero-edit cryptographic tamper protection.</span>
+              <span className="font-bold text-emerald-200">WORM Policy: </span>
+              <span className="text-gray-300">Read-only inspection with tamper protection.</span>
             </div>
           </div>
           <span className="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700">

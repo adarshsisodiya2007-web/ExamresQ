@@ -172,15 +172,15 @@ export const LiveCandidateMonitor: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-[11px] font-mono uppercase tracking-widest text-[#C62828] dark:text-[#38BDF8] font-bold">
-                Institutional Live Surveillance & Telemetry Hub
+                Monitoring Room
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white mt-1 flex items-center gap-2.5">
               <Users className="w-6 h-6 text-[#C62828] dark:text-[#38BDF8]" />
-              Multi-Student Real-Time Monitoring Room
+              Candidate Monitor
             </h1>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 max-w-2xl">
-              Continuous sub-second telemetry across all concurrent candidate terminals. Observe answers saved, offline local encryption queues, proctor gaze alerts, and instant invigilator directives.
+              Real-time telemetry across all active candidate terminals.
             </p>
           </div>
         </div>
@@ -189,47 +189,47 @@ export const LiveCandidateMonitor: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => setShowAttendanceSheet(true)}
-            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
-            title="Open Physical Attendance Sheet & Signature Roll"
+            className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+            title="Open Attendance Sheet"
           >
             <span>📋</span>
-            <span>{language === 'hi' ? 'उपस्थिति पत्रक' : 'Attendance Sheet'}</span>
+            <span>{language === 'hi' ? 'उपस्थिति पत्रक' : 'Attendance'}</span>
           </button>
 
           <button
             onClick={() => setShowAnnouncementModal(true)}
-            className="px-4 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] dark:bg-linear-to-r dark:from-blue-600 dark:to-indigo-600 dark:hover:from-blue-700 dark:hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] dark:bg-linear-to-r dark:from-blue-600 dark:to-indigo-600 dark:hover:from-blue-700 dark:hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
           >
             <Megaphone className="w-4 h-4" />
-            <span>Broadcast Notice</span>
+            <span>Broadcast</span>
           </button>
 
           {networkStatus === 'connected' ? (
             <button
               onClick={triggerNetworkInterruption}
-              className="px-4 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-colors shadow-md flex items-center gap-2 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-[#C62828] hover:bg-[#8E1B1B] text-white text-xs font-bold transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
               title="Test multi-candidate offline response buffer"
             >
               <WifiOff className="w-4 h-4" />
-              <span>Simulate Lab Outage</span>
+              <span>Simulate Outage</span>
             </button>
           ) : (
             <button
               onClick={restoreNetwork}
-              className="px-4 py-2 rounded-xl bg-[#16803C] hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-md flex items-center gap-2 cursor-pointer animate-pulse"
+              className="px-3.5 py-2 rounded-xl bg-[#16803C] hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-md flex items-center gap-1.5 cursor-pointer animate-pulse"
             >
               <Wifi className="w-4 h-4" />
-              <span>Restore & Sync All</span>
+              <span>Restore Network</span>
             </button>
           )}
 
           <button
             onClick={() => setCurrentView('live_exam')}
-            className="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-gray-800 border border-red-200 dark:bg-white/10 dark:hover:bg-white/15 dark:text-gray-200 dark:border-white/10 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-gray-800 border border-red-200 dark:bg-white/10 dark:hover:bg-white/15 dark:text-gray-200 dark:border-white/10 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
             title="Switch directly to candidate terminal view"
           >
             <Radio className="w-4 h-4 text-[#C62828] dark:text-[#E53935]" />
-            <span>Go to Candidate Room</span>
+            <span>Candidate View</span>
           </button>
         </div>
       </div>
@@ -743,21 +743,17 @@ export const LiveCandidateMonitor: React.FC = () => {
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-[#C62828] dark:text-[#38BDF8]" />
               <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-gray-900 dark:text-white">
-                Live Audit & Telemetry Stream
+                Live Audit Stream
               </h2>
             </div>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           </div>
 
-          <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed font-sans">
-            Real-time feed of multi-candidate activity arriving from Station 14, 15, 16, and 17. Every answer click, socket degradation, and proctor flag streams here automatically.
-          </p>
-
           {/* Scrollable Live Event List */}
           <div className="space-y-2.5 max-h-[580px] overflow-y-auto pr-1 font-mono text-[11px] custom-scrollbar">
             {telemetryEvents.map((evt) => {
-              const isWarning = evt.severity === 'warning';
               const isCritical = evt.severity === 'critical';
+              const isWarning = evt.severity === 'warning';
               const isSuccess = evt.severity === 'success';
 
               return (
@@ -791,15 +787,9 @@ export const LiveCandidateMonitor: React.FC = () => {
             })}
           </div>
 
-          {/* Quick Network Outage Tester Notice */}
-          <div className="p-3 rounded-xl bg-red-50/50 border border-red-100 dark:bg-[#0D1527] dark:border-[#1E2A42] text-[11px] text-gray-600 dark:text-gray-400 space-y-1.5 font-sans">
-            <span className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 font-mono text-[10px] text-[#C62828] dark:text-[#38BDF8]">
-              <Sparkles className="w-3.5 h-3.5" />
-              EVALUATOR TEST TIP:
-            </span>
-            <p>
-              Switch back to the <strong>Student View</strong> in the left sidebar, click any answer in the exam, or hit <strong>Simulate Outage</strong>. Return here to see the telemetry update instantaneously!
-            </p>
+          <div className="p-2.5 rounded-xl bg-red-50/40 border border-red-100 dark:bg-[#0D1527] dark:border-[#1E2A42] text-[11px] text-gray-600 dark:text-gray-400 font-sans flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#C62828] dark:text-[#38BDF8] shrink-0" />
+            <span>Telemetry streams live from all connected workstations.</span>
           </div>
         </div>
 

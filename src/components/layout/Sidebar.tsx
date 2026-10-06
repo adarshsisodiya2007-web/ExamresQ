@@ -84,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Student Navigation: Clean, Short & Focused
   const studentSections: SidebarSection[] = [
     {
-      title: language === 'hi' ? 'परीक्षा कक्ष (EXAM)' : 'EXAMINATION TERMINAL',
+      title: language === 'hi' ? 'परीक्षा कक्ष' : 'EXAMINATION',
       items: [
         {
           id: 'live_exam',
@@ -100,7 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         },
         {
           id: 'audit',
-          label: language === 'hi' ? 'सबमिशन पावती व ऑडिट' : 'Submission Proof',
+          label: language === 'hi' ? 'सबमिशन पावती' : 'Submission Proof',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'SHA-256',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
@@ -112,42 +112,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Officer Navigation: Short, Crisp, Enterprise Grade
   const officerSections: SidebarSection[] = [
     {
-      title: language === 'hi' ? 'निगरानी एवं मॉनिटरिंग' : 'SURVEILLANCE & MONITOR',
+      title: language === 'hi' ? 'निगरानी एवं केंद्र' : 'MONITORING',
       items: [
         {
           id: 'candidate_monitor',
-          label: language === 'hi' ? 'लाइव छात्र निगरानी कक्ष' : 'Live Student Monitor',
+          label: language === 'hi' ? 'लाइव छात्र निगरानी' : 'Live Monitor',
           icon: <Users className="w-4 h-4 text-[#38BDF8]" />,
-          badge: `${activeCandidates.length} ${language === 'hi' ? 'लाइव' : 'ONLINE'}`,
+          badge: `${activeCandidates.length} ${language === 'hi' ? 'लाइव' : 'LIVE'}`,
           badgeColor: 'bg-cyan-950/90 text-[#38BDF8] border-cyan-800 animate-pulse'
         },
         {
           id: 'operations',
-          label: language === 'hi' ? 'ऑपरेशन्स केंद्र' : 'Operations Center',
+          label: language === 'hi' ? 'ऑपरेशन्स केंद्र' : 'Operations',
           icon: <Compass className="w-4 h-4 text-cyan-400" />,
           badge: language === 'hi' ? 'सक्रिय' : 'ACTIVE',
           badgeColor: 'bg-cyan-950/80 text-cyan-300 border-cyan-800'
         },
         {
           id: 'centres',
-          label: language === 'hi' ? 'परीक्षा केंद्र स्थिति' : 'Centre Monitoring',
+          label: language === 'hi' ? 'परीक्षा केंद्र स्थिति' : 'Centre Status',
           icon: <Building2 className="w-4 h-4 text-blue-400" />
         }
       ]
     },
     {
-      title: language === 'hi' ? 'घटना प्रबंधन एवं बैकअप' : 'INCIDENT & RECOVERY',
+      title: language === 'hi' ? 'घटना एवं रिकवरी' : 'INCIDENT & RECOVERY',
       items: [
         {
           id: 'early_detection',
-          label: language === 'hi' ? 'पूर्व चेतावनी प्रणाली' : 'Early Detection',
+          label: language === 'hi' ? 'पूर्व चेतावनी' : 'Early Detection',
           icon: <Radar className="w-4 h-4 text-amber-400" />,
-          badge: language === 'hi' ? 'एआई भविष्यवाणी' : 'AI PREDICT',
+          badge: language === 'hi' ? 'भविष्यवाणी' : 'PREDICT',
           badgeColor: 'bg-amber-950/80 text-amber-300 border-amber-800'
         },
         {
           id: 'incidents',
-          label: language === 'hi' ? 'घटना नियंत्रण केंद्र' : 'Incident Center',
+          label: language === 'hi' ? 'घटना नियंत्रण' : 'Incident Center',
           icon: <AlertOctagon className="w-4 h-4 text-red-400" />,
           badge: language === 'hi' ? '१ सक्रिय' : '1 OPEN',
           badgeColor: 'bg-red-950/80 text-red-300 border-red-800'
@@ -160,47 +160,47 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ]
     },
     {
-      title: language === 'hi' ? 'फॉरेंसिक एवं ऑडिट लेजर' : 'FORENSICS & AUDIT',
+      title: language === 'hi' ? 'फॉरेंसिक एवं लेजर' : 'FORENSICS & AUDIT',
       items: [
         {
           id: 'audit',
-          label: language === 'hi' ? 'ब्लॉकचेन ऑडिट लेजर' : 'Audit Ledger',
+          label: language === 'hi' ? 'ऑडिट लेजर' : 'Audit Ledger',
           icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
           badge: 'WORM',
           badgeColor: 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
         },
         {
           id: 'suspicious_patterns',
-          label: language === 'hi' ? 'संदेहास्पद हलचल जांच' : 'Suspicious Patterns',
+          label: language === 'hi' ? 'संदेहास्पद हलचल' : 'Suspicious Patterns',
           icon: <Eye className="w-4 h-4 text-orange-400" />
         },
         {
           id: 'reconciliation',
-          label: language === 'hi' ? 'डेटा मिलान (रिकंसीलेशन)' : 'Reconciliation',
+          label: language === 'hi' ? 'डेटा मिलान' : 'Reconciliation',
           icon: <GitCompare className="w-4 h-4 text-purple-400" />,
-          badge: '100% MATCH',
+          badge: 'MATCH',
           badgeColor: 'bg-purple-950/80 text-purple-300 border-purple-800'
         }
       ]
     },
     {
-      title: language === 'hi' ? 'प्रशासन एवं नीतियां' : 'GOVERNANCE',
+      title: language === 'hi' ? 'प्रशासन' : 'GOVERNANCE',
       items: [
         {
           id: 'decision_support',
-          label: language === 'hi' ? 'निर्णय सहायता प्रणाली' : 'Decision Support',
+          label: language === 'hi' ? 'निर्णय सहायता' : 'Decision Support',
           icon: <Scale className="w-4 h-4 text-cyan-400" />
         },
         {
           id: 'reports',
-          label: language === 'hi' ? 'आधिकारिक साक्ष्य रिपोर्ट' : 'Evidence Reports',
+          label: language === 'hi' ? 'साक्ष्य रिपोर्ट' : 'Evidence Reports',
           icon: <BarChart3 className="w-4 h-4 text-gray-300" />,
           badge: language === 'hi' ? 'सत्यापित' : 'SEALED',
           badgeColor: 'bg-gray-800 text-gray-300 border-gray-700'
         },
         {
           id: 'settings',
-          label: language === 'hi' ? 'सिस्टम नीतियां व सेटिंग्स' : 'Governance Settings',
+          label: language === 'hi' ? 'सेटिंग्स' : 'Settings',
           icon: <SettingsIcon className="w-4 h-4 text-gray-400" />
         }
       ]
@@ -307,7 +307,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={onOpenHackathonModal}
               className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold bg-red-50/80 hover:bg-red-100 text-gray-700 border border-red-200 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-300 dark:border-white/10 text-center cursor-pointer transition-colors"
             >
-              🏛️ Challenge Architecture & Guidelines
+              Architecture & Guidelines
             </button>
           </div>
         )}
@@ -316,7 +316,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {userRole === 'student' && (
           <div className="p-3 rounded-xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-[#1E2A42] space-y-2 shadow-2xs">
             <div className="flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400">
-              <span className="uppercase font-bold tracking-wider">Candidate Terminal</span>
+              <span className="uppercase font-bold tracking-wider">Terminal</span>
               <span className="text-emerald-600 dark:text-emerald-400 font-bold">STATION-14</span>
             </div>
 
@@ -325,13 +325,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>{studentName} (ET-4418)</span>
             </div>
 
-            <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-snug">
-              Client Encrypted Buffer: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">ACTIVE</strong>. Any network interruption automatically freezes timer with zero data loss.
-            </p>
+            <div className="flex items-center justify-between text-[11px] font-mono text-gray-600 dark:text-gray-400">
+              <span>Encrypted Buffer:</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">ACTIVE</span>
+            </div>
 
             {networkStatus === 'interrupted' && (
               <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-[10px] text-[#C62828] dark:bg-red-950/80 dark:border-red-800 dark:text-red-200 font-mono animate-pulse">
-                ⚠ Network Interrupted. Responses encrypted locally in IndexedDB.
+                Offline: Responses saved locally.
               </div>
             )}
           </div>

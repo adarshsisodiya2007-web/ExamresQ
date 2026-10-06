@@ -87,23 +87,23 @@ export const DecisionSupportCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">
-                Requirements 9 & 10: Decision Support & Fairness
+                Governance & Parity
               </span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200">
-                Human-in-the-Loop Governance
+                Human Sign-Off
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Disruption Decision Support & Parity Engine
+              Decision Support
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Equips examination authorities with empirical impact evidence to decide whether exams can Resume, Extend, Pause, Reschedule, or Re-Conduct fairly.
+              Impact assessment, evidence-based resolutions, and compensatory time parity.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-800 border border-gray-300">
-              Zero Arbitrary Cancellation Mandate Active
+              Fairness Protocol Active
             </span>
           </div>
         </div>
@@ -114,14 +114,14 @@ export const DecisionSupportCenter: React.FC = () => {
             <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
             <div>
               <strong className="text-emerald-300">Human Sign-Off: </strong>
-              <span>Empirical evidence provided; system never cancels without official authority authorization.</span>
+              <span>Empirical evidence provided; system never cancels without official sign-off.</span>
             </div>
           </div>
           <div className="flex items-center gap-2.5 p-3 rounded-xl bg-sky-950/40 border border-sky-800/50 text-gray-200">
             <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0" />
             <div>
               <strong className="text-sky-300">Fairness Parity: </strong>
-              <span>Standardized formula [T_comp = T_outage + 60s] guarantees equal compensation across labs.</span>
+              <span>Standardized compensation formula guarantees equal parity across labs.</span>
             </div>
           </div>
         </div>
@@ -130,10 +130,10 @@ export const DecisionSupportCenter: React.FC = () => {
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
           <div className="border-b border-gray-100 pb-3">
             <h3 className="text-base font-black text-gray-900">
-              The 5 Authorized Decision Pathways (Requirement 9)
+              5 Decision Pathways
             </h3>
             <p className="text-xs text-gray-500">
-              Evidence-based options available for Central Examination Authority authorization
+              Authorized options for examination authority sign-off
             </p>
           </div>
 

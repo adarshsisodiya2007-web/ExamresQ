@@ -60,81 +60,60 @@ export const SuspiciousPatternCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#C62828] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C62828]">
-                Requirement 6: Suspicious Pattern Identification
+                Behavior Monitoring
               </span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-50 text-[#C62828] border border-red-200">
-                Evidence-Based Review
+                Evidence-Based
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Intelligent Suspicious Pattern & Review Queue
+              Suspicious Patterns
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Deterministic identification of abnormal session dynamics, unusual response velocities, and multi-session breaches — audited with evidence before any action.
+              Anomaly detection and evidence-based review queue.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
-              {alerts.filter(a => a.status === 'Flagged for Review' || a.status === 'Under Investigation').length} Cases Awaiting Official Action
+              {alerts.filter(a => a.status === 'Flagged for Review' || a.status === 'Under Investigation').length} Pending Action
             </span>
           </div>
         </div>
 
-        {/* Featured Requirement 6 Callout Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-red-950 via-[#1A1414] to-gray-900 border border-red-900/60 p-6 text-white shadow-lg">
-          <div className="space-y-2 max-w-3xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1">
-                <Scale className="w-3 h-3 text-red-400" />
-                Judicial Fairness Mandate
-              </span>
-              <span className="text-xs text-gray-400 font-mono">Evidence-Based Flagging vs Automatic Accusations</span>
-            </div>
-
-            <blockquote className="text-base sm:text-lg font-bold text-gray-100 italic border-l-4 border-[#C62828] pl-3.5 leading-snug">
-              “Several unusual session events are flagged for review, and an authorized official checks the evidence before taking action.”
-            </blockquote>
-
-            <p className="text-xs text-gray-300">
-              ExamresQ never abruptly cancels a candidate's session based on automated false positives. Suspicious telemetry (such as rapid IP migration during edge failover) is logged with forensic telemetry into an official review queue for human examination authority sign-off.
-            </p>
-          </div>
-        </div>
-
-        {/* 4 Pillars of Requirement 6 */}
+        {/* 4 Pillars of Pattern Detection */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
             <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-[#C62828]">
               <BrainCircuit className="w-4 h-4" />
             </div>
             <h4 className="text-xs font-bold uppercase text-gray-900">Pattern Telemetry</h4>
             <p className="text-xs text-gray-500">
-              Detects sub-cognitive response bursts (&lt;2s/question), irregular keystroke intervals, and paste injections.
+              Sub-cognitive bursts and irregular cadence.
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
               <Fingerprint className="w-4 h-4" />
             </div>
             <h4 className="text-xs font-bold uppercase text-gray-900">Session Integrity</h4>
             <p className="text-xs text-gray-500">
-              Monitors concurrent login breaches, repeated abnormal session tokens, and IP subnet hops.
+              Concurrent logins and network hops.
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
             <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
               <Scale className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold uppercase text-gray-900">Official Review Queue</h4>
+            <h4 className="text-xs font-bold uppercase text-gray-900">Review Queue</h4>
             <p className="text-xs text-gray-500">
-              Authorized supervisors evaluate the complete evidence dossier with timestamps before issuing any sanction.
+              Official supervisor evidence sign-off.
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+          <div className="bg-white p-4.5 rounded-2xl border border-gray-200 shadow-xs space-y-1.5">
             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-[#16803C]">
               <ShieldAlert className="w-4 h-4" />
             </div>

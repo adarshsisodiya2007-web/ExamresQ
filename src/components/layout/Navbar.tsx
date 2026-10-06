@@ -37,37 +37,37 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
   const getCurrentViewLabel = () => {
     switch (currentView) {
       case 'landing':
-        return 'Platform Architecture';
+        return 'Overview';
       case 'live_exam':
-        return 'Live Exam Terminal';
+        return 'Live Exam';
       case 'candidate_portal':
         return 'Candidate Portal';
       case 'candidate_monitor':
-        return 'Live Student Monitor';
+        return 'Live Monitor';
       case 'operations':
-        return 'Operations Center';
+        return 'Operations';
       case 'early_detection':
         return 'Early Detection';
       case 'centres':
-        return 'Centre Monitoring';
+        return 'Centre Status';
       case 'incidents':
         return 'Incident Center';
       case 'recovery':
         return 'Disaster Recovery';
       case 'audit':
-        return userRole === 'student' ? 'My Submission Proof' : 'Audit Ledger';
+        return userRole === 'student' ? 'Submission Proof' : 'Audit Ledger';
       case 'suspicious_patterns':
         return 'Suspicious Patterns';
       case 'reconciliation':
-        return 'Response Reconciliation';
+        return 'Reconciliation';
       case 'decision_support':
         return 'Decision Support';
       case 'reports':
         return 'Evidence Reports';
       case 'settings':
-        return 'Governance Settings';
+        return 'Settings';
       default:
-        return 'ExamresQ Suite';
+        return 'ExamresQ';
     }
   };
 
@@ -106,7 +106,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         {/* Center: Real-Time Protocol Chip (Hidden on mobile) */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-red-50/50 dark:bg-white/5 border border-red-200 dark:border-white/10 text-[11px] font-mono text-gray-700 dark:text-gray-300">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>{language === 'hi' ? '100% सुरक्षित स्थानीय कंप्यूटर बफर' : 'Zero-Loss SHA-256 Safe Ledger'}</span>
+          <span>{language === 'hi' ? 'सुरक्षित स्थानीय बफर' : 'Zero-Loss SHA-256 Ledger'}</span>
         </div>
 
         {/* Right: Language Switcher + Theme Switch + Traffic Light + Role Switcher + Notification Bell */}

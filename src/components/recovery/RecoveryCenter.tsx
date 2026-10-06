@@ -148,17 +148,17 @@ export const RecoveryCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
-                Requirement 4: Backup & Disaster Recovery
+                Disaster Recovery
               </span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">
-                Zero-Data-Loss Architecture
+                Zero-Loss
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Disaster Recovery & Session Continuity Center
+              Disaster Recovery
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Deterministic protection guaranteeing periodic saving, multi-tier data redundancy, automated time compensation, and catastrophic physical fallback.
+              Periodic auto-saving, multi-tier data redundancy, and session resumption.
             </p>
           </div>
 
@@ -166,7 +166,7 @@ export const RecoveryCenter: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={forcePeriodicSave}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors cursor-pointer border border-gray-300 flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors cursor-pointer border border-gray-300 flex items-center gap-1.5"
               title="Trigger immediate client heartbeat response save"
             >
               <Radio className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
@@ -179,7 +179,7 @@ export const RecoveryCenter: React.FC = () => {
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
               >
                 <WifiOff className="w-3.5 h-3.5" />
-                <span>Simulate Network Outage</span>
+                <span>Simulate Outage</span>
               </button>
             ) : (
               <button
@@ -187,7 +187,7 @@ export const RecoveryCenter: React.FC = () => {
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-[#16803C] hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-xs flex items-center gap-1.5 animate-pulse"
               >
                 <Wifi className="w-3.5 h-3.5" />
-                <span>Restore Network & Auto-Sync</span>
+                <span>Restore Network</span>
               </button>
             )}
 
@@ -199,35 +199,32 @@ export const RecoveryCenter: React.FC = () => {
               className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#171717] hover:bg-black text-white transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <UserCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>Controlled Resumption</span>
+              <span>Controlled Resume</span>
             </button>
           </div>
         </div>
 
-        {/* FEATURED EXAMRESQ CALLOUT BANNER (Problem Statement Mandatory Callout) */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-red-950 via-[#1F1414] to-gray-900 border border-red-900/60 p-6 sm:p-7 text-white shadow-lg">
-          <div className="absolute top-0 right-0 translate-x-8 -translate-y-8 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-3 max-w-3xl">
+        {/* Resilience Overview Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-red-950 via-[#1F1414] to-gray-900 border border-red-900/60 p-5 sm:p-6 text-white shadow-lg">
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1.5 max-w-2xl">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-red-400" />
-                  Mandated Requirement 4 Specification
+                  Session Continuity
                 </span>
-                <span className="text-xs text-gray-400 font-mono hidden sm:inline">Idea & Innovation Hackathon 2026</span>
               </div>
 
-              <blockquote className="text-base sm:text-lg font-bold text-gray-100 italic border-l-4 border-[#C62828] pl-3.5 leading-snug">
-                “After a temporary network outage, the candidate reconnects and resumes from the last safely saved response, if the system supports that recovery.”
-              </blockquote>
+              <h3 className="text-base font-bold text-gray-100">
+                Continuous Client-Side Cryptographic Hashing
+              </h3>
 
               <p className="text-xs text-gray-300 leading-relaxed">
-                ExamResQ fulfills this by combining <strong>continuous client-side cryptographic hashing</strong>, an <strong>auto-freezing timer</strong> with automatic compensatory credit (+60s buffer), and <strong>proctor-verified instant re-entry</strong> right at Question 14.
+                Auto-freezing timers, automatic compensatory credits, and verified instant re-entry at the exact saved question.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
+            <div className="flex flex-wrap gap-2.5 shrink-0">
               <button
                 onClick={() => {
                   if (networkStatus === 'connected') {
@@ -236,17 +233,17 @@ export const RecoveryCenter: React.FC = () => {
                     restoreNetwork();
                   }
                 }}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-md text-center flex items-center justify-center gap-2"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-all cursor-pointer shadow-md flex items-center gap-1.5"
               >
-                <Zap className="w-4 h-4 text-amber-300" />
-                <span>{networkStatus === 'connected' ? 'Test Outage & Recovery Flow' : 'Complete Recovery Now'}</span>
+                <Zap className="w-3.5 h-3.5 text-amber-300" />
+                <span>{networkStatus === 'connected' ? 'Test Outage' : 'Complete Recovery'}</span>
               </button>
 
               <button
                 onClick={() => setCurrentView('live_exam')}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer border border-white/20 text-center flex items-center justify-center gap-2"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer border border-white/20 flex items-center gap-1.5"
               >
-                <span>View Candidate Workstation</span>
+                <span>Candidate View</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

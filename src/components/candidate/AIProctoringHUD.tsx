@@ -1047,47 +1047,47 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
       <div className="pt-2 border-t border-gray-100 dark:border-gray-800 space-y-2">
         <div className="flex items-center justify-between text-[10px] font-mono text-gray-500 font-bold">
           <span className="flex items-center gap-1">
-            <ShieldAlert className="w-3 h-3 text-[#C62828]" /> AI CHEATING DETECTION TRIGGERS:
+            <ShieldAlert className="w-3 h-3 text-[#C62828]" /> Simulation Controls:
           </span>
-          <span className="text-[9px] text-[#C62828] font-bold">Auto-Lock Active</span>
+          <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">Active</span>
         </div>
 
         {/* Critical Immediate Lock Actions */}
         <div className="grid grid-cols-2 gap-1.5">
           <button
             onClick={triggerPhoneRecordingViolation}
-            className="py-1.5 px-2 rounded-lg text-[10px] font-black bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 text-[#C62828] border border-red-300 dark:border-red-800 transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs hover:scale-[1.02] active:scale-[0.98]"
-            title="Hold a real phone to camera OR click to simulate (Triggers instant exam termination)"
+            className="py-1.5 px-2 rounded-lg text-[10px] font-bold bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 text-[#C62828] border border-red-300 dark:border-red-800 transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+            title="Simulate phone detected"
           >
             <Smartphone className="w-3 h-3 text-[#C62828]" />
-            <span>Phone Recording (Lock)</span>
+            <span>Phone (Lock)</span>
           </button>
 
           <button
             onClick={triggerSecondaryFaceViolation}
-            className="py-1.5 px-2 rounded-lg text-[10px] font-black bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 text-[#C62828] border border-red-300 dark:border-red-800 transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs hover:scale-[1.02] active:scale-[0.98]"
-            title="Have someone enter camera OR click to simulate (Triggers instant exam termination)"
+            className="py-1.5 px-2 rounded-lg text-[10px] font-bold bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 text-[#C62828] border border-red-300 dark:border-red-800 transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+            title="Simulate 2nd person detected"
           >
             <Users className="w-3 h-3 text-[#C62828]" />
             <span>2nd Person (Lock)</span>
           </button>
         </div>
 
-        {/* Warning / Strike Actions (5 Columns: Look Away, Face Absent, Notes, Sound, Screenshot) */}
+        {/* Warning / Strike Actions */}
         <div className="grid grid-cols-5 gap-1">
           <button
             onClick={triggerGazeViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
-            title="Look away from camera OR click to simulate (Strike 1/3)"
+            title="Simulate gaze away"
           >
             <EyeOff className="w-2.5 h-2.5" />
-            <span>Look Away</span>
+            <span>Gaze</span>
           </button>
 
           <button
             onClick={triggerFaceAbsentViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
-            title="Leave camera view OR click to simulate (Strike 1/3)"
+            title="Simulate absent"
           >
             <UserXIcon className="w-2.5 h-2.5" />
             <span>Absent</span>
@@ -1096,7 +1096,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           <button
             onClick={triggerNotesViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
-            title="Hold a book/paper to camera OR click to simulate (Strike 1/3)"
+            title="Simulate notes"
           >
             <FileText className="w-2.5 h-2.5" />
             <span>Notes</span>
@@ -1105,7 +1105,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           <button
             onClick={triggerAudioViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-[#C77A00] border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
-            title="Speak into microphone OR click to simulate acoustic disturbance (Strike 1/3)"
+            title="Simulate sound"
           >
             <Volume2 className="w-2.5 h-2.5" />
             <span>Sound</span>
@@ -1114,10 +1114,10 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
           <button
             onClick={triggerScreenshotViolation}
             className="py-1 px-1 rounded-md text-[9px] font-bold bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-[#C62828] border border-red-200 dark:border-red-800 transition-colors cursor-pointer flex items-center justify-center gap-0.5"
-            title="Press PrintScreen or click to simulate screenshot capture interception (Strike 1/3)"
+            title="Simulate screenshot"
           >
             <CameraOff className="w-2.5 h-2.5" />
-            <span>Screenshot</span>
+            <span>Clip</span>
           </button>
         </div>
       </div>

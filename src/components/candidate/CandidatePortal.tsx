@@ -100,13 +100,13 @@ export const CandidatePortal: React.FC = () => {
                     Engineering Mathematics III
                   </h2>
                   <p className="text-xs text-gray-600 dark:text-gray-300 max-w-xl">
-                    National Higher Technical Assessment 2026. Equipped with ExamresQ Sub-Second Resilience Protocol.
+                    National Higher Technical Assessment 2026.
                   </p>
 
                   <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-gray-500 dark:text-gray-400">
                     <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-[#C62828]" /> 60 Minutes</span>
                     <span className="flex items-center gap-1.5"><FileSpreadsheet className="w-4 h-4 text-[#C62828]" /> 40 Questions</span>
-                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-[#16803C]" /> Offline Buffer Reserved</span>
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-[#16803C]" /> Offline Buffer Ready</span>
                   </div>
                 </div>
 
@@ -115,43 +115,43 @@ export const CandidatePortal: React.FC = () => {
                     onClick={() => setCurrentView('live_exam')}
                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white shadow-md shadow-[#C62828]/25 transition-all cursor-pointer"
                   >
-                    <span>Launch Live Examination</span>
+                    <span>Start Exam</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
-                  <span className="text-[11px] text-gray-500 dark:text-gray-400 text-center font-mono">Workstation ID: WS-08-41</span>
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400 text-center font-mono">Terminal: WS-08-41</span>
                 </div>
               </div>
             </div>
 
             {/* Candidate Resilience Guarantee Card */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-2 shadow-2xs">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-[#16803C]">
-                  <HardDrive className="w-5 h-5" />
+              <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-1.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-[#16803C]">
+                  <HardDrive className="w-4 h-4" />
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Zero Lost Clicks</h3>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Protected Responses</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Every answer you click is committed locally to an encrypted device ledger before sending. Even if the network drops, your work is 100% safe.
+                  Answers save locally to an encrypted device ledger before synchronization.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-2 shadow-2xs">
-                <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-[#C62828]">
-                  <Clock className="w-5 h-5" />
+              <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-1.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-[#C62828]">
+                  <Clock className="w-4 h-4" />
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Fair Timer Protection</h3>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Timer Protection</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                  If an official centre disruption exceeds 15 seconds, the central watchdog records the exact millisecond pause and compensates automatically.
+                  Network disruptions automatically freeze your clock with fair compensation.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-2 shadow-2xs">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600">
-                  <FileCheck2 className="w-5 h-5" />
+              <div className="p-4.5 rounded-2xl bg-white dark:bg-[#0D1527] border border-red-100 dark:border-gray-800 space-y-1.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600">
+                  <FileCheck2 className="w-4 h-4" />
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Verifiable Submission</h3>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Verified Proof</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Upon finishing, you receive an immutable cryptographic receipt (SHA-256 Merkle hash) proving your exact submission timestamp.
+                  Receive an immutable cryptographic receipt upon examination submission.
                 </p>
               </div>
             </div>

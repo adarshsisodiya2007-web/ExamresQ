@@ -392,7 +392,7 @@ export const EarlyDetectionDashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      {/* Header Banner - Requirement 2 Alignment */}
+      {/* Early Detection Header */}
       <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-xs relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-amber-500/10 via-red-500/5 to-transparent pointer-events-none rounded-bl-full" />
         
@@ -401,18 +401,18 @@ export const EarlyDetectionDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#C62828]/10 text-[#C62828] border border-[#C62828]/30 flex items-center gap-1">
                 <Radar className="w-3.5 h-3.5 animate-pulse" />
-                REQUIREMENT 2: EARLY DETECTION & PREDICTION
+                Predictive Telemetry
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> AI Predictive Telemetry Active
+                <CheckCircle2 className="w-3 h-3" /> AI Active
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-              Early Detection & Predictive Risk Dashboard
+              Early Detection
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Identify and neutralize potential technical or operational failures <strong className="text-gray-900 dark:text-white">before</strong> they cause widespread candidate disruption. Real-time telemetry predicts gateway disconnections, jitter flutters, and hardware degradation across all 38 test centres.
+              Predictive risk analysis across test centres to mitigate disruptions before they occur.
             </p>
           </div>
 
@@ -420,10 +420,10 @@ export const EarlyDetectionDashboard: React.FC = () => {
             <button
               onClick={handleSimulateInstabilitySpike}
               className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-[#C77A00] border border-amber-300 dark:border-amber-800 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-              title="Simulate network instability on Centre 08 to test predictive alerts"
+              title="Simulate network instability on Centre 08"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
-              <span>Simulate Instability Spike</span>
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              <span>Simulate Anomaly</span>
             </button>
 
             <button
@@ -441,27 +441,24 @@ export const EarlyDetectionDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Featured ExamResQ Predictive Example Card (Direct Match to Prompt) */}
-      <div className="bg-gradient-to-r from-red-500/10 via-amber-500/10 to-transparent dark:from-red-950/40 dark:via-amber-950/20 rounded-2xl border border-red-200 dark:border-red-900/60 p-5 shadow-xs">
+      {/* Early Warning Card */}
+      <div className="bg-gradient-to-r from-red-500/10 via-amber-500/10 to-transparent dark:from-red-950/40 dark:via-amber-950/20 rounded-2xl border border-red-200 dark:border-red-900/60 p-4 sm:p-5 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
+          <div className="flex items-center gap-3.5">
             <div className="p-2.5 rounded-xl bg-[#C62828] text-white shrink-0 shadow-md">
-              <ShieldAlert className="w-6 h-6 animate-pulse" />
+              <ShieldAlert className="w-5 h-5 animate-pulse" />
             </div>
-            <div className="space-y-1">
+            <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-black text-[#C62828] uppercase tracking-wider">
-                  ExamResQ Early Warning Dispatch
-                </span>
-                <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/80 text-[#C62828]">
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                  Centre 08 (New Delhi) — Connectivity Instability Warning
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/80 text-[#C62828]">
                   CRITICAL PROBABILITY: 84%
                 </span>
               </div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">
-                Centre 08 (North Academic Complex, New Delhi) — Repeated Connectivity Instability
-              </h3>
-              <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl">
-                Centre showing <strong>5 repeated connectivity drops</strong> and latency fluctuations (&gt;210ms) over the last 45 minutes. A pre-emptive warning has been transmitted to the Centre Superintendent to verify secondary fiber connectivity and pre-cache local cryptographic ledgers <strong>before the next exam shift begins</strong>.
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                5 repeated latency spikes detected over last 45 minutes. Pre-emptive failover available.
               </p>
             </div>
           </div>

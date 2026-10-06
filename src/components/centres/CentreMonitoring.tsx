@@ -53,20 +53,20 @@ export const CentreMonitoring: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-gray-500">
-                Centre Telemetry Command
+                Centres
               </span>
             </div>
             <h1 className="text-2xl font-black text-gray-900 mt-1">
-              Assessment Centre Monitoring (38 / 38)
+              Centre Status (38 / 38)
             </h1>
             <p className="text-xs text-gray-500 mt-0.5">
-              Edge server status, WAN uplink health, candidate session counts, and failover states
+              Edge server status, WAN uplink health, and failover state telemetry.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <span className="text-xs font-mono text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
-              Heartbeat: 500ms Active
+              Heartbeat: 500ms
             </span>
           </div>
         </div>

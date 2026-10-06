@@ -52,14 +52,14 @@ export const Settings: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#C62828] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C62828] dark:text-[#38BDF8]">
-                System Governance & Policy Configuration
+                Governance
               </span>
             </div>
             <h1 className="text-2xl font-black text-gray-900 dark:text-white mt-1">
-              Resilience Ecosystem Settings
+              Settings
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Tune sub-second watchdog thresholds, failover preferences, and local ledger storage budgets
+              Watchdog thresholds, failover configurations, and local storage rules.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ export const Settings: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Defaults</span>
+              <span>Reset</span>
             </button>
 
             <button
@@ -77,7 +77,7 @@ export const Settings: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white transition-colors cursor-pointer shadow-xs"
             >
               {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-              <span>{isSaved ? 'Policies Saved' : 'Save Policies'}</span>
+              <span>{isSaved ? 'Saved' : 'Save'}</span>
             </button>
           </div>
         </div>
