@@ -23,7 +23,9 @@ import {
   GraduationCap,
   ChevronDown,
   ChevronUp,
-  LogOut
+  LogOut,
+  Flame,
+  Zap
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -105,79 +107,98 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
           badge: 'VERIFIED',
           badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        },
+        {
+          id: 'simulation_lab',
+          label: language === 'hi' ? 'आपदा सिमुलेशन लैब' : 'Disruption Simulator',
+          icon: <Flame className="w-4 h-4 text-rose-500 animate-pulse" />,
+          badge: 'DEMO',
+          badgeColor: 'bg-rose-50 text-rose-700 border-rose-200 font-bold'
         }
       ]
     }
   ];
 
-  // Officer / Faculty Navigation: Clean, Presentation-Ready, 5 Core + More
+  // Officer / Control Room Navigation: 8 Core Pillars + Disruption Simulator Showcase
   const officerSections: SidebarSection[] = [
     {
-      title: language === 'hi' ? 'मुख्य अवलोकन' : 'MAIN',
+      title: language === 'hi' ? 'हैकथॉन डेमो' : 'HACKATHON DEMO LAB',
+      items: [
+        {
+          id: 'simulation_lab',
+          label: language === 'hi' ? 'आपदा सिम्युलेटर' : 'Disruption Simulator',
+          icon: <Flame className="w-4 h-4 text-rose-600 dark:text-rose-400 animate-pulse" />,
+          badge: 'LIVE DEMO',
+          badgeColor: 'bg-gradient-to-r from-red-600 to-rose-600 text-white font-black'
+        }
+      ]
+    },
+    {
+      title: language === 'hi' ? 'कंट्रोल रूम (8 पिलर्स)' : 'CONTROL ROOM (8 PILLARS)',
       items: [
         {
           id: 'operations',
-          label: language === 'hi' ? 'डैशबोर्ड' : 'Dashboard',
+          label: language === 'hi' ? '01 अवलोकन डैशबोर्ड' : '01 Overview Dashboard',
           icon: <Compass className="w-4 h-4 text-[#B91C3C]" />
         },
         {
           id: 'candidate_monitor',
-          label: language === 'hi' ? 'लाइव मॉनिटरिंग' : 'Live Monitoring',
+          label: language === 'hi' ? '02 लाइव मॉनिटरिंग' : '02 Live Monitoring',
           icon: <Users className="w-4 h-4 text-[#B91C3C]" />,
           badge: `${activeCandidates.length} LIVE`,
           badgeColor: 'bg-red-50 text-[#B91C3C] border-red-200 font-bold'
         },
         {
-          id: 'suspicious_patterns',
-          label: language === 'hi' ? 'सुरक्षा अलर्ट' : 'Security Alerts',
-          icon: <Eye className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
-          badge: '02',
-          badgeColor: 'bg-amber-50 text-amber-800 border-amber-200'
+          id: 'incidents',
+          label: language === 'hi' ? '03 घटना प्रबंधन' : '03 Incident Center',
+          icon: <AlertOctagon className="w-4 h-4 text-red-500" />
+        },
+        {
+          id: 'recovery',
+          label: language === 'hi' ? '04 रिकवरी केंद्र' : '04 Recovery Center',
+          icon: <RotateCcw className="w-4 h-4 text-blue-500" />
+        },
+        {
+          id: 'decision_support',
+          label: language === 'hi' ? '05 AI निर्णय केंद्र' : '05 AI Decision Center',
+          icon: <Scale className="w-4 h-4 text-cyan-600" />
+        },
+        {
+          id: 'audit',
+          label: language === 'hi' ? '06 विश्वास एवं लेजर' : '06 Trust & Evidence',
+          icon: <FileCheck2 className="w-4 h-4 text-emerald-600" />
         },
         {
           id: 'reports',
-          label: language === 'hi' ? 'परिणाम एवं रिपोर्ट' : 'Results & Reports',
+          label: language === 'hi' ? '07 रिपोर्ट एवं एनालिटिक्स' : '07 Intelligence Reports',
           icon: <BarChart3 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
         }
       ]
     },
     {
-      title: language === 'hi' ? 'अतिरिक्त मॉड्यूल' : 'EXPLORE CAPABILITIES',
+      title: language === 'hi' ? 'उन्नत फोरेंसिक टूल्स' : 'ADVANCED FORENSIC TOOLS',
       items: [
-        {
-          id: 'centres',
-          label: language === 'hi' ? 'परीक्षा केंद्र' : 'Exam Centres',
-          icon: <Building2 className="w-4 h-4 text-gray-500" />
-        },
-        {
-          id: 'early_detection',
-          label: language === 'hi' ? 'पूर्व चेतावनी' : 'Early Warning',
-          icon: <Radar className="w-4 h-4 text-amber-500" />
-        },
-        {
-          id: 'incidents',
-          label: language === 'hi' ? 'घटना प्रबंधन' : 'Event Timeline',
-          icon: <AlertOctagon className="w-4 h-4 text-red-500" />
-        },
-        {
-          id: 'recovery',
-          label: language === 'hi' ? 'ऑटो बैकअप' : 'Resilience Backup',
-          icon: <RotateCcw className="w-4 h-4 text-blue-500" />
-        },
-        {
-          id: 'audit',
-          label: language === 'hi' ? 'सुरक्षा लेजर' : 'Verification Ledger',
-          icon: <FileCheck2 className="w-4 h-4 text-emerald-600" />
-        },
         {
           id: 'reconciliation',
           label: language === 'hi' ? 'डेटा मिलान' : 'Data Match Proof',
           icon: <GitCompare className="w-4 h-4 text-purple-600" />
         },
         {
-          id: 'decision_support',
-          label: language === 'hi' ? 'निर्णय सहायता' : 'Policy Assistant',
-          icon: <Scale className="w-4 h-4 text-cyan-600" />
+          id: 'early_detection',
+          label: language === 'hi' ? 'पूर्व चेतावनी (जिटर)' : 'Predictive Jitter AI',
+          icon: <Radar className="w-4 h-4 text-amber-500" />
+        },
+        {
+          id: 'suspicious_patterns',
+          label: language === 'hi' ? 'सुरक्षा अलर्ट' : 'Anti-Cheat Patterns',
+          icon: <Eye className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
+          badge: '02',
+          badgeColor: 'bg-amber-50 text-amber-800 border-amber-200'
+        },
+        {
+          id: 'centres',
+          label: language === 'hi' ? 'परीक्षा केंद्र' : 'Exam Centres',
+          icon: <Building2 className="w-4 h-4 text-gray-500" />
         },
         {
           id: 'settings',

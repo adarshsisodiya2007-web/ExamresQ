@@ -29,3 +29,5 @@ src - Copy/
 *.pyc
 __pycache__/
 test_cropped.png
+
+.vercel

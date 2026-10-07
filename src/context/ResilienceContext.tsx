@@ -67,7 +67,8 @@ export type AppView =
   | 'reconciliation'
   | 'decision_support'
   | 'reports' 
-  | 'settings';
+  | 'settings'
+  | 'simulation_lab';
 
 export type ResponseProtectionStage = 
   | 'normal_saved'

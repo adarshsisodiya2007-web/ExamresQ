@@ -23,6 +23,7 @@ import { RoleTransitionSplash } from './components/layout/RoleTransitionSplash';
 import { DecisionSupportCenter } from './components/operations/DecisionSupportCenter';
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
+import { SimulationLab } from './components/simulation/SimulationLab';
 
 const AppContent: React.FC = () => {
   const { currentView } = useResilience();
@@ -61,6 +62,8 @@ const AppContent: React.FC = () => {
         return <Reports />;
       case 'settings':
         return <Settings />;
+      case 'simulation_lab':
+        return <SimulationLab />;
       default:
         return <LandingPage />;
     }
