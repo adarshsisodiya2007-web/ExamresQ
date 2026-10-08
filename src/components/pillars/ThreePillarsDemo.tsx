@@ -459,15 +459,6 @@ export const ThreePillarsDemo: React.FC = () => {
                 );
               })}
             </div>
-
-            {/* Educational Callout for Judges */}
-            <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 text-xs text-blue-900 dark:text-blue-300 space-y-1">
-              <strong className="block font-bold">Why This Beats TCS iON & Global Portals:</strong>
-              <p>
-                In TCS iON, every college depends on 1 server in the basement. If a wire cuts, 500 students freeze. 
-                ExamResQ turns the examination hall into a <strong>self-protecting hive</strong>: No single server, zero required WAN, and 3-second terminal hot-swapping!
-              </p>
-            </div>
           </div>
         )}
 
@@ -579,15 +570,6 @@ export const ThreePillarsDemo: React.FC = () => {
                 );
               })}
             </div>
-
-            {/* Educational Callout for Judges */}
-            <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-900 dark:text-rose-300 space-y-1">
-              <strong className="block font-bold">Why This Solves India's Biggest Exam Scams:</strong>
-              <p>
-                In high-stakes exams, scams happen in the evening between 1:00 PM and 4:00 PM when corrupt admins alter answers in SQL databases. 
-                With ExamResQ's <strong>Digital DNA Time-Lock</strong>, even the Chairman of NTA cannot alter an answer without triggering an indelible forensic alarm in High Court!
-              </p>
-            </div>
           </div>
         )}
 
@@ -696,15 +678,6 @@ export const ThreePillarsDemo: React.FC = () => {
                 </div>
               </div>
 
-            </div>
-
-            {/* Educational Callout for Judges */}
-            <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 text-xs text-emerald-900 dark:text-emerald-300 space-y-1">
-              <strong className="block font-bold">Why This Touches the Judges' Hearts:</strong>
-              <p>
-                Every year, 17-year-old students cry in exam halls because timers run out during glitches, driving suicides in coaching hubs. 
-                ExamResQ is the <strong>first assessment ecosystem built with human empathy</strong>, completely eliminating arbitrary grace-mark scandals in the Supreme Court!
-              </p>
             </div>
           </div>
         )}
