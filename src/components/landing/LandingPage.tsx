@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
-  const { setCurrentView, startDemo } = useResilience();
+  const { setCurrentView, setUserRole, startDemo } = useResilience();
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -61,7 +61,10 @@ export const LandingPage: React.FC = () => {
           {/* CTAs */}
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => setCurrentView('three_pillars')}
+              onClick={() => {
+                setUserRole('officer');
+                setCurrentView('three_pillars');
+              }}
               className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-black bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-600 hover:to-red-700 text-white shadow-xl shadow-amber-500/25 hover:shadow-2xl transition-all cursor-pointer hover:scale-105"
             >
               <Sparkles className="w-4 h-4 text-yellow-200 animate-pulse" />
@@ -112,7 +115,10 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
           <button
-            onClick={() => setCurrentView('three_pillars')}
+            onClick={() => {
+              setUserRole('officer');
+              setCurrentView('three_pillars');
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-700 hover:to-red-700 text-white text-xs font-black tracking-wide shadow-md hover:scale-105 transition-all shrink-0 cursor-pointer"
           >
             <span>Launch Interactive Sandbox</span>

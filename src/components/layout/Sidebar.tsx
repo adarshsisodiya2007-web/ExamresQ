@@ -108,20 +108,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
           badge: 'VERIFIED',
           badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        },
-        {
-          id: 'simulation_lab',
-          label: language === 'hi' ? 'आपदा सिमुलेशन लैब' : 'Disruption Simulator',
-          icon: <Flame className="w-4 h-4 text-rose-500 animate-pulse" />,
-          badge: 'DEMO',
-          badgeColor: 'bg-rose-50 text-rose-700 border-rose-200 font-bold'
-        },
-        {
-          id: 'three_pillars',
-          label: language === 'hi' ? '3 विजेता पिलर्स' : '3 Breakthrough Pillars',
-          icon: <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />,
-          badge: 'USP ⭐',
-          badgeColor: 'bg-amber-100 text-amber-800 border-amber-300 font-bold'
         }
       ]
     }
