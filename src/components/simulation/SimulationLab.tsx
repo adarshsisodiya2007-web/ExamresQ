@@ -244,6 +244,35 @@ export const SimulationLab: React.FC = () => {
           </div>
         </div>
 
+        {/* Switcher Banner: Link to 3 Breakthrough Pillars (USP) */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-red-600/15 border-2 border-amber-400/50 dark:border-amber-500/30 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-red-600 text-white flex items-center justify-center font-black text-lg shadow-md shrink-0">
+              ⭐
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 font-mono">
+                  JUDGES' CHOICE WINNING PILLARS
+                </span>
+                <span className="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded-full uppercase">
+                  USP
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100">
+                Pillar 1: P2P Hive Mesh (Sever Main Internet Link & Hot-Swap) • Pillar 2: Digital DNA • Pillar 3: Anti-Panic
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setCurrentView('three_pillars')}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-700 hover:to-red-700 text-white text-xs font-black tracking-wide shadow-md hover:scale-105 transition-all shrink-0 cursor-pointer"
+          >
+            <span>Open 3 Breakthrough Pillars Demo</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
         {/* Grid: Left Controls (Disaster Selection) + Right Live Cascade Tracker */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 

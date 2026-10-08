@@ -348,18 +348,18 @@ export const ThreePillarsDemo: React.FC = () => {
                 {!isWanSevered ? (
                   <button
                     onClick={handleSeverWan}
-                    className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-md hover:scale-105"
                   >
-                    <WifiOff className="w-3.5 h-3.5" />
-                    <span>Sever Main College Internet</span>
+                    <WifiOff className="w-4 h-4" />
+                    <span>Sever Main Internet Link</span>
                   </button>
                 ) : (
                   <button
                     onClick={handleResetMesh}
-                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Restore Full WAN</span>
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Restore Main Internet Link</span>
                   </button>
                 )}
                 <button

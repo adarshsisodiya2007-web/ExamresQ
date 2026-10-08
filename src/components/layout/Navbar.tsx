@@ -64,6 +64,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenMobileMenu }) => {
         return 'Decision Support';
       case 'reports':
         return 'Evidence Reports';
+      case 'simulation_lab':
+        return 'Disruption Simulator';
+      case 'three_pillars':
+        return '3 Breakthrough Pillars';
       case 'settings':
         return 'Settings';
       default:
