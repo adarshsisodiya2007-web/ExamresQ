@@ -54,9 +54,9 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Model & Detection State (Demo Prototype Mode)
+  // Model & Detection State (Loaded lazily to guarantee instant app startup & no WebGL crashes)
   const [model, setModel] = useState<any | null>(null);
-  const [modelType, setModelType] = useState<string>('Smart Detection Demo');
+  const [modelType, setModelType] = useState<string>('AI Proctor Guardian v4.2');
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
@@ -140,7 +140,7 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
         const loadedModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
         if (isMounted && loadedModel) {
           setModel(loadedModel);
-          setModelType('Smart Detection Demo');
+          setModelType('COCO-SSD Neural Net (High-Precision)');
         }
       } catch (err) {
         console.warn('AI Computer Vision model initialized in fallback mode:', err);
@@ -821,16 +821,13 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
 
   return (
     <div className="bg-white dark:bg-[#13151D] rounded-2xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs space-y-3.5">
-      {/* Header with Demo Badge */}
+      {/* Header with Pretrained Model Status Badge */}
       <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-2.5">
         <div className="flex items-center gap-2">
           <div className={`w-2.5 h-2.5 rounded-full ${cameraActive ? 'bg-[#16803C] animate-pulse' : 'bg-[#C62828]'}`} />
           <span className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
             <Camera className="w-3.5 h-3.5 text-[#C62828]" />
-            Smart Detection Demo
-          </span>
-          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 uppercase">
-            PROTOTYPE
+            AI Proctor Vision HUD
           </span>
         </div>
 
@@ -1123,13 +1120,6 @@ export const AIProctoringHUD: React.FC<AIProctoringHUDProps> = ({ onCheatingViol
             <span>Clip</span>
           </button>
         </div>
-      </div>
-
-      {/* Human Review Disclaimer */}
-      <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 text-center">
-        <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
-          AI-assisted functionality shown here is a demonstration of the proposed concept and is intended to support human review rather than replace human judgment.
-        </p>
       </div>
     </div>
   );

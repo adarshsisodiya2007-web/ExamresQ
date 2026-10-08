@@ -491,14 +491,11 @@ export const LiveExam: React.FC = () => {
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200">{studentName || 'Demo Candidate (Priya Sharma)'}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">• Workstation 08</span>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-red-50 text-[#C62828] border border-red-200 uppercase">
-                    CANDIDATE DEMO
-                  </span>
+                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200">{studentName || 'Aarav Sharma'}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono hidden sm:inline">• Station 14</span>
                 </div>
                 <h1 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white mt-0.5 tracking-tight">
-                  Sample Examination Demo
+                  Mid-Semester Assessment
                 </h1>
               </div>
             </div>

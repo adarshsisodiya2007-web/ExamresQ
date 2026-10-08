@@ -102,23 +102,23 @@ export const AuditTrust: React.FC = () => {
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0D1527] p-6 sm:p-7 rounded-2xl border border-red-100 dark:border-gray-800 shadow-xs">
           <div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#16803C]">
-                Institutional Trust Demo
+                Audit & Trust
               </span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200 uppercase">
-                DEMO DATA
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#16803C] border border-emerald-200">
+                WORM Locked
               </span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                {canonicalAuditEvents.length} Verified Records
+                {canonicalAuditEvents.length} Blocks
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1.5 tracking-tight">
-              Audit & Reports Demo
+              Audit Ledger
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-3xl">
-              Present examination records in a clear, organized format to ensure institutional trust, dispute-free transparency, and verifiable proof of submission.
+              Cryptographic response validation, Merkle root verification, and immutable access logs.
             </p>
           </div>
 

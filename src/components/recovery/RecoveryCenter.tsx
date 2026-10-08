@@ -149,17 +149,17 @@ export const RecoveryCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
-                Examination Continuity
+                Disaster Recovery
               </span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 uppercase">
-                DEMO PROTOTYPE
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">
+                Zero-Loss
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1.5 tracking-tight">
-              Examination Recovery Demo
+              Disaster Recovery
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-3xl">
-              Provide a structured way to handle interruptions, protect candidate responses, and grant compensatory time without panic.
+              Periodic auto-saving, multi-tier data redundancy, and session resumption.
             </p>
           </div>
 

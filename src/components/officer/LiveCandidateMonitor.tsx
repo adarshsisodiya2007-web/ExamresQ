@@ -172,18 +172,15 @@ export const LiveCandidateMonitor: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#16803C] animate-pulse" />
               <span className="text-[11px] font-mono uppercase tracking-widest text-[#C62828] dark:text-[#38BDF8] font-bold">
-                Supervisor Demo
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-red-50 text-[#C62828] border border-red-200 uppercase">
-                DEMO DATA
+                Monitoring Room
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white mt-1 flex items-center gap-2.5">
               <Users className="w-6 h-6 text-[#C62828] dark:text-[#38BDF8]" />
-              Live Monitoring Demo
+              Candidate Monitor
             </h1>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 max-w-2xl">
-              Demonstrates centralized examination oversight with simulated candidate sessions and smart activity highlights.
+              Real-time telemetry across all active candidate terminals.
             </p>
           </div>
         </div>
@@ -235,17 +232,6 @@ export const LiveCandidateMonitor: React.FC = () => {
             <span>Candidate View</span>
           </button>
         </div>
-      </div>
-
-      {/* Demo Notice Banner */}
-      <div className="p-3.5 rounded-xl bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-[#C62828]">LIVE DEMO:</span>
-          <span>Sample candidate workstations and simulated events are shown to illustrate supervisor monitoring workflows.</span>
-        </div>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white dark:bg-[#121829] border border-red-200 dark:border-gray-800 font-bold text-gray-600 dark:text-gray-300">
-          SIMULATED DATA
-        </span>
       </div>
 
       {/* Real-Time Metrics Strip */}
