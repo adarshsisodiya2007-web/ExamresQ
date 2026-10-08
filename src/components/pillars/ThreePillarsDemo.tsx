@@ -218,12 +218,14 @@ export const ThreePillarsDemo: React.FC = () => {
               <Zap className="w-4 h-4" />
               <span>Open Disruption Simulation Lab</span>
             </button>
-            <button
-              onClick={downloadAuditDossierPDF}
+            <a
+              href="/ExamResQ_The_Three_Pillars_Implementation_Blueprint.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Download Pitch Deck PDF</span>
-            </button>
+              <span>Download 3 Pillars Blueprint PDF</span>
+            </a>
           </div>
         </div>
 
