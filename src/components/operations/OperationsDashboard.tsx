@@ -31,37 +31,37 @@ export const OperationsDashboard: React.FC = () => {
     {
       time: "10:44:18",
       centre: "Centre 08",
-      text: "7 buffered candidate responses synchronized via secondary backhaul. 0% loss.",
+      text: "Candidate answers safely synchronized without any loss. Exam uninterrupted.",
       type: "success"
     },
     {
       time: "10:43:10",
       centre: "Centre 08",
-      text: "Edge Gateway B auto-switched to backup microwave link. Latency 38ms.",
+      text: "Backup network connection active. Assessment continuity preserved smoothly.",
       type: "info"
     },
     {
       time: "10:42:05",
       centre: "Centre 08",
-      text: "Local cryptographic IndexedDB ledger locked for candidate session WS-08-41.",
+      text: "Candidate responses safely secured in local workstation memory.",
       type: "warning"
     },
     {
       time: "10:42:01",
       centre: "Centre 08",
-      text: "Carrier uplink drop detected on ISP-A WAN fiber. Automated watchdog engaged.",
+      text: "Temporary network drop detected. Automatic response protection enabled.",
       type: "alert"
     },
     {
       time: "10:41:50",
       centre: "Centre 01",
-      text: "Heartbeat sync acknowledged for 318 active candidate workstations. 14ms ping.",
+      text: "All 318 active candidate workstations reporting normal assessment status.",
       type: "info"
     },
     {
       time: "10:40:00",
-      centre: "National Mesh",
-      text: "Scheduled Merkle state tree batch checkpoint committed with SHA-256.",
+      centre: "All Centres",
+      text: "Scheduled examination checkpoint verified for institutional records.",
       type: "info"
     }
   ];
@@ -76,14 +76,17 @@ export const OperationsDashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider text-[#B91C3C] dark:text-[#38BDF8]">
-                Central Control
+                Central Control Demo
+              </span>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-red-50 text-[#B91C3C] border border-red-200 uppercase">
+                DEMO DATA
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
-              Assessment Dashboard
+              Examination Overview Demo
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Real-time overview of active assessments and student safety
+              Centralized view of active examination progress and student response protection (Demo Mode)
             </p>
           </div>
 

@@ -354,21 +354,21 @@ export const IncidentCenter: React.FC = () => {
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div className="space-y-1.5 max-w-2xl">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#C62828]/10 text-[#C62828] border border-[#C62828]/30 flex items-center gap-1">
                 <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
-                Incident Control
+                Incident Control Demo
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#16803C] border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> 1.2s Detection
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-50 text-[#C62828] border border-red-200 uppercase">
+                DEMO DATA
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-              Incident Center
+              Incident Management Demo
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              Automated failure detection, severity classification, and escalation management.
+              Organize and review examination-related incidents in one place with structured context and response workflows.
             </p>
           </div>
 
