@@ -25,7 +25,8 @@ import {
   ChevronUp,
   LogOut,
   Flame,
-  Zap
+  Zap,
+  Sparkles
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -114,6 +115,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: <Flame className="w-4 h-4 text-rose-500 animate-pulse" />,
           badge: 'DEMO',
           badgeColor: 'bg-rose-50 text-rose-700 border-rose-200 font-bold'
+        },
+        {
+          id: 'three_pillars',
+          label: language === 'hi' ? '3 विजेता पिलर्स' : '3 Breakthrough Pillars',
+          icon: <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />,
+          badge: 'USP ⭐',
+          badgeColor: 'bg-amber-100 text-amber-800 border-amber-300 font-bold'
         }
       ]
     }
@@ -124,6 +132,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       title: language === 'hi' ? 'हैकथॉन डेमो' : 'HACKATHON DEMO LAB',
       items: [
+        {
+          id: 'three_pillars',
+          label: language === 'hi' ? '⭐ 3 विजेता पिलर्स (USP)' : '⭐ 3 Breakthrough Pillars (USP)',
+          icon: <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />,
+          badge: 'WINNING USP',
+          badgeColor: 'bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-black shadow-sm'
+        },
         {
           id: 'simulation_lab',
           label: language === 'hi' ? 'आपदा सिम्युलेटर' : 'Disruption Simulator',

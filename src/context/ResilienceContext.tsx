@@ -68,7 +68,8 @@ export type AppView =
   | 'decision_support'
   | 'reports' 
   | 'settings'
-  | 'simulation_lab';
+  | 'simulation_lab'
+  | 'three_pillars';
 
 export type ResponseProtectionStage = 
   | 'normal_saved'

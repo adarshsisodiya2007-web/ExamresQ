@@ -24,6 +24,7 @@ import { DecisionSupportCenter } from './components/operations/DecisionSupportCe
 import { Reports } from './components/reports/Reports';
 import { Settings } from './components/settings/Settings';
 import { SimulationLab } from './components/simulation/SimulationLab';
+import { ThreePillarsDemo } from './components/pillars/ThreePillarsDemo';
 
 const AppContent: React.FC = () => {
   const { currentView } = useResilience();
@@ -64,6 +65,8 @@ const AppContent: React.FC = () => {
         return <Settings />;
       case 'simulation_lab':
         return <SimulationLab />;
+      case 'three_pillars':
+        return <ThreePillarsDemo />;
       default:
         return <LandingPage />;
     }

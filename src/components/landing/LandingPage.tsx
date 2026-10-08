@@ -14,7 +14,8 @@ import {
   CheckCircle2, 
   XCircle,
   Building2,
-  Activity
+  Activity,
+  Sparkles
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
@@ -57,8 +58,16 @@ export const LandingPage: React.FC = () => {
             A resilient online assessment ecosystem designed to maintain exam continuity, protect candidate responses during disruptions, provide real-time operational visibility, and create a transparent audit trail.
           </p>
 
-          {/* CTAs (Per instruction: Primary CTA "Explore ExamresQ", Secondary CTA "See How It Works". DO NOT put "Start Exam" on the hero.) */}
+          {/* CTAs */}
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+            <button
+              onClick={() => setCurrentView('three_pillars')}
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-black bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-600 hover:to-red-700 text-white shadow-xl shadow-amber-500/25 hover:shadow-2xl transition-all cursor-pointer hover:scale-105"
+            >
+              <Sparkles className="w-4 h-4 text-yellow-200 animate-pulse" />
+              <span>3 Breakthrough Pillars (Live Demo)</span>
+            </button>
+
             <button
               onClick={() => scrollToSection('architecture')}
               className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold bg-[#C62828] hover:bg-[#8E1B1B] text-white shadow-lg shadow-[#C62828]/25 hover:shadow-xl hover:shadow-[#C62828]/35 transition-all cursor-pointer hover:scale-105"
@@ -80,6 +89,35 @@ export const LandingPage: React.FC = () => {
         {/* Hero Interactive Animation */}
         <div className="mt-8">
           <HeroVisualization />
+        </div>
+
+        {/* Hackathon Winning Trinity Spotlight Strip */}
+        <div className="mt-10 max-w-5xl mx-auto p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-red-600/10 border-2 border-amber-400/40 dark:border-amber-500/30 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-rose-600 text-white flex items-center justify-center font-black text-lg shadow-md shrink-0">
+              ⚡
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 font-mono">
+                  Judges' Choice • The 3 Winning Pillars
+                </span>
+                <span className="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded-full uppercase">
+                  USP
+                </span>
+              </div>
+              <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                Self-Healing Peer Mesh • Tamper-Proof Digital DNA • Anti-Panic Co-Pilot
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setCurrentView('three_pillars')}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-700 hover:to-red-700 text-white text-xs font-black tracking-wide shadow-md hover:scale-105 transition-all shrink-0 cursor-pointer"
+          >
+            <span>Launch Interactive Sandbox</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </section>
 
